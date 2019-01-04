@@ -35,6 +35,8 @@ class InstallSchema implements InstallSchemaInterface
     /**
      * @param SchemaSetupInterface   $setup
      * @param ModuleContextInterface $context
+     *
+     * @throws \Zend_Db_Exception
      */
     public function install(SchemaSetupInterface $setup, ModuleContextInterface $context)
     {
@@ -65,6 +67,34 @@ class InstallSchema implements InstallSchemaInterface
             foreach ($columns as $name => $definition) {
                 $connection->addColumn($userTable, $name, $definition);
             }
+        }
+
+        if (!$installer->tableExists('mageplaza_twofactorauth_trusted')) {
+            $table = $installer->getConnection()
+                ->newTable($installer->getTable('mageplaza_twofactorauth_trusted'))
+                ->addColumn('trusted_id', Table::TYPE_INTEGER, null, [
+                    'identity' => true,
+                    'nullable' => false,
+                    'primary'  => true,
+                    'unsigned' => true,
+                ], 'Trusted ID')
+                ->addColumn('user_id', Table::TYPE_INTEGER, null, ['unsigned' => true, 'nullable' => false], 'User ID')
+                ->addColumn('name', Table::TYPE_TEXT, 255, ['nullable => false'], 'Device Name')
+                ->addColumn('device_ip', Table::TYPE_TEXT, '64k', [], 'Device IP')
+                ->addColumn('last_login', Table::TYPE_TIMESTAMP, null, [], 'Device Last Login')
+                ->addColumn('created_at', Table::TYPE_TIMESTAMP, null, [], 'Trusted Created At')
+                ->addIndex($installer->getIdxName('mageplaza_twofactorauth_trusted', ['trusted_id']), ['trusted_id'])
+                ->addIndex($installer->getIdxName('mageplaza_twofactorauth_trusted', ['user_id']), ['user_id'])
+                ->addForeignKey(
+                    $installer->getFkName('mageplaza_twofactorauth_trusted', 'user_id', 'admin_user', 'user_id'),
+                    'user_id',
+                    $installer->getTable('admin_user'),
+                    'user_id',
+                    Table::ACTION_CASCADE
+                )
+                ->setComment('Trusted Device Table');
+
+            $installer->getConnection()->createTable($table);
         }
 
         $installer->endSetup();

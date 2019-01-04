@@ -21,7 +21,11 @@
 
 namespace Mageplaza\TwoFactorAuth\Helper;
 
+use Magento\Framework\App\Helper\Context;
+use Magento\Framework\ObjectManagerInterface;
+use Magento\Store\Model\StoreManagerInterface;
 use Mageplaza\Core\Helper\AbstractData;
+use Mageplaza\TwoFactorAuth\Model\TrustedFactory;
 
 /**
  * Class Data
@@ -30,4 +34,43 @@ use Mageplaza\Core\Helper\AbstractData;
 class Data extends AbstractData
 {
     const CONFIG_MODULE_PATH = 'mptwofactorauth';
+
+    /**
+     * @var TrustedFactory
+     */
+    protected $_trustedFactory;
+
+    /**
+     * Data constructor.
+     *
+     * @param Context                $context
+     * @param ObjectManagerInterface $objectManager
+     * @param StoreManagerInterface  $storeManager
+     * @param TrustedFactory         $trustedFactory
+     */
+    public function __construct(
+        Context $context,
+        ObjectManagerInterface $objectManager,
+        StoreManagerInterface $storeManager,
+        TrustedFactory $trustedFactory
+    )
+    {
+        $this->_trustedFactory = $trustedFactory;
+
+        parent::__construct($context, $objectManager, $storeManager);
+    }
+
+    /**
+     * @param $userId
+     *
+     * @return \Mageplaza\TwoFactorAuth\Model\ResourceModel\Trusted\Collection
+     */
+    public function getTrustedCollection($userId)
+    {
+        /** @var \Mageplaza\TwoFactorAuth\Model\ResourceModel\Trusted\Collection $trustedCollection */
+        $trustedCollection = $this->_trustedFactory->create()->getCollection();
+        $trustedCollection->addFieldToFilter('user_id', $userId);
+
+        return $trustedCollection;
+    }
 }

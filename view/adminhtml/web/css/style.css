@@ -1,0 +1,72 @@
+/**
+ * Mageplaza
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Mageplaza.com license that is
+ * available through the world-wide-web at this URL:
+ * https://www.mageplaza.com/LICENSE.txt
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this extension to newer
+ * version in the future.
+ *
+ * @category    Mageplaza
+ * @package     Mageplaza_TwoFactorAuth
+ * @copyright   Copyright (c) Mageplaza (https://www.mageplaza.com/)
+ * @license     https://www.mageplaza.com/LICENSE.txt
+ */
+
+#user_mp_tfa_register, #user_mp_tfa_disable {
+    width: 36%;
+}
+
+#user_mp_tfa_register:hover {
+    background: #ffc107;
+    box-shadow: 0 0 0 1px #007bdb;
+    color: #fff;
+    text-decoration: none;
+}
+
+#user_mp_tfa_register:focus {
+    background: #ffc107;
+    box-shadow: 0 0 0 1px #007bdb;
+    color: #fff;
+    text-decoration: none;
+}
+
+.mp-tfa-qrcode-img {
+    float: left;
+    width: 28%;
+    margin-right: 40px;
+}
+
+.mp-tfa-qrcode-description {
+    float: left;
+    width: 60%;
+    padding: 30px 20px 45px;
+    border: solid 1px #dfdfdf;
+    height: auto;
+}
+
+#user_mp_tfa_trust_device {
+    margin-left: 30px;
+}
+
+.mp-tfa-trusted-devices table {
+    width: 100%;
+}
+
+.mp-tfa-trusted-devices td, .mp-tfa-trusted-devices th {
+    text-align: left;
+    padding: 8px;
+}
+
+.mp-tfa-trusted-devices thead tr {
+    border-bottom: 1px solid #dddddd;
+}
+
+.mp-tfa-trusted-devices tbody .mp-device-action {
+    width: 15%;
+}
