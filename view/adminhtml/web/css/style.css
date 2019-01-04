@@ -22,20 +22,6 @@
     width: 36%;
 }
 
-#user_mp_tfa_register:hover {
-    background: #ffc107;
-    box-shadow: 0 0 0 1px #007bdb;
-    color: #fff;
-    text-decoration: none;
-}
-
-#user_mp_tfa_register:focus {
-    background: #ffc107;
-    box-shadow: 0 0 0 1px #007bdb;
-    color: #fff;
-    text-decoration: none;
-}
-
 .mp-tfa-qrcode-img {
     float: left;
     width: 28%;

@@ -60,7 +60,7 @@ class DisableButton extends AbstractElement
     public function getElementHtml()
     {
         $html = '';
-        $html .= '<button id="' . $this->getHtmlId() . '" type="button" class="primary">';
+        $html .= '<button id="' . $this->getHtmlId() . '" type="button">';
         $html .= '<span>' . __('Disable two-factor authentication') . '</span>';
         $html .= '</button>';
 

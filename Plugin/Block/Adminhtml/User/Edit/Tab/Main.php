@@ -26,6 +26,7 @@ use Magento\Framework\Registry;
 use Magento\Framework\View\LayoutInterface;
 use Magento\User\Model\UserFactory;
 use Magento\User\Block\User\Edit\Tab\Main as MainPlugin;
+use PHPGangsta\GoogleAuthenticator;
 
 /**
  * Class Main
@@ -53,25 +54,32 @@ class Main
      */
     protected $_layout;
 
-    /**
-     * Main constructor.
-     *
-     * @param Enabledisable   $enableDisable
-     * @param UserFactory     $userFactory
-     * @param Registry        $coreRegistry
-     * @param LayoutInterface $layout
-     */
+	/**
+	 * @var \PHPGangsta\GoogleAuthenticator
+	 */
+    protected $_googleAuthenticator;
+
+	/**
+	 * Main constructor.
+	 * @param \Magento\Config\Model\Config\Source\Enabledisable $enableDisable
+	 * @param \Magento\User\Model\UserFactory $userFactory
+	 * @param \Magento\Framework\Registry $coreRegistry
+	 * @param \Magento\Framework\View\LayoutInterface $layout
+	 * @param \PHPGangsta\GoogleAuthenticator $googleAuthenticator
+	 */
     public function __construct(
         Enabledisable $enableDisable,
         UserFactory $userFactory,
         Registry $coreRegistry,
-        LayoutInterface $layout
+        LayoutInterface $layout,
+		GoogleAuthenticator $googleAuthenticator
     )
     {
         $this->_enableDisable = $enableDisable;
         $this->_userFactory   = $userFactory;
         $this->_coreRegistry  = $coreRegistry;
         $this->_layout        = $layout;
+        $this->_googleAuthenticator = $googleAuthenticator;
     }
 
     /**
@@ -88,6 +96,7 @@ class Main
         $form = $subject->getForm();
         /** @var $model \Magento\User\Model\User */
         $model = $this->_coreRegistry->registry('permissions_user');
+        $secret = ($model->getMpTfaSecret()) ? : $this->_googleAuthenticator->createSecret();
 
         if (is_object($form)) {
             $mpTfaFieldset = $form->addFieldset('mp_tfa_security', ['legend' => __('Security')]);
@@ -106,8 +115,8 @@ class Main
                 $model->setMpTfaEnable(1);
             }
 
-            $mpTfaFieldset->addField('mp_tfa_qr_code', '\Mageplaza\TwoFactorAuth\Block\Adminhtml\User\Edit\Tab\Renderer\QrCode', [
-                'name' => 'mp_tfa_qr_code'
+            $mpTfaFieldset->addField('mp_tfa_secret_temp', '\Mageplaza\TwoFactorAuth\Block\Adminhtml\User\Edit\Tab\Renderer\QrCode', [
+                'name' => 'mp_tfa_secret_temp'
             ]);
 
             $mpTfaFieldset->addField('mp_tfa_one_code', 'text', [
@@ -128,6 +137,7 @@ class Main
                 'name' => 'mp_tfa_trusted_device',
             ])->setAfterElementHtml($this->getTrustedDeviceHtml($model));
             $data = $model->getData();
+            $data['mp_tfa_secret_temp'] = $secret;
 
             $form->setValues($data);
             $subject->setForm($form);
@@ -138,7 +148,6 @@ class Main
 
     /**
      * @param $model
-     *
      * @return mixed
      */
     public function getTrustedDeviceHtml($model)
