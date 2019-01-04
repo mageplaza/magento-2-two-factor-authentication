@@ -29,5 +29,5 @@ use Mageplaza\Core\Helper\AbstractData;
  */
 class Data extends AbstractData
 {
-    const CONFIG_MODULE_PATH = 'twofactorauth';
+    const CONFIG_MODULE_PATH = 'mptwofactorauth';
 }
