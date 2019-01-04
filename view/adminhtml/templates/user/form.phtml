@@ -1,0 +1,62 @@
+<?php
+/**
+ * Mageplaza
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Mageplaza.com license that is
+ * available through the world-wide-web at this URL:
+ * https://www.mageplaza.com/LICENSE.txt
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this extension to newer
+ * version in the future.
+ *
+ * @category    Mageplaza
+ * @package     Mageplaza_TwoFactorAuth
+ * @copyright   Copyright (c) Mageplaza (https://www.mageplaza.com/)
+ * @license     https://www.mageplaza.com/LICENSE.txt
+ */
+?>
+<script>
+    require(['jquery'], function ($) {
+        var tfa_enable = $('#user_mp_tfa_enable');
+        var registerBtn = $('#user_mp_tfa_register');
+
+        fieldDependence(tfa_enable);
+        tfa_enable.on('change', function () {
+            fieldDependence(this);
+        });
+
+        function fieldDependence(tfa_enable) {
+            if ($(tfa_enable).val() === '1') {
+                $('.field-mp_tfa_one_code').show();
+                $('.field-mp_tfa_secret_temp').show();
+                $('.field-mp_tfa_register').show();
+                $('#user_mp_tfa_trust_device').show();
+            } else {
+                $('.field-mp_tfa_one_code').hide();
+                $('.field-mp_tfa_secret_temp').hide();
+                $('.field-mp_tfa_register').hide();
+                $('#user_mp_tfa_trust_device').hide();
+            }
+        }
+
+        registerBtn.on('click',function () {
+            $('body').loader('show');
+            $.ajax({
+                url: '<?php echo $block->getUrl('mptwofactorauth/tfa/register', ['form_key' => $block->getFormKey()]);?>',
+                data: {
+                    test:'test'
+                },
+                success: function (result) {
+                    console.log('trest');
+                },
+                complete: function () {
+                    $('body').loader('hide');
+                }
+            });
+        });
+    });
+</script>

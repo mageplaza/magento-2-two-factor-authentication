@@ -22,6 +22,10 @@
     width: 36%;
 }
 
+#user_mp_tfa_disable{
+    display: none;
+}
+
 .mp-tfa-qrcode-img {
     float: left;
     width: 28%;

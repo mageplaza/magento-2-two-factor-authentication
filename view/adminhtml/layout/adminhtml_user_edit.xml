@@ -25,4 +25,9 @@
         <css src="Mageplaza_TwoFactorAuth::css/style.css"/>
         <css src="Mageplaza_Core::css/colors.css"/>
     </head>
+    <body>
+        <referenceContainer name="content">
+            <block class="Magento\Backend\Block\Template" template="Mageplaza_TwoFactorAuth::user/form.phtml" name="mp.twofactorauth.form.before" as="mp_form_before"/>
+        </referenceContainer>
+    </body>
 </page>

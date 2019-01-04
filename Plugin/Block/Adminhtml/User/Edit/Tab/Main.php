@@ -24,7 +24,6 @@ namespace Mageplaza\TwoFactorAuth\Plugin\Block\Adminhtml\User\Edit\Tab;
 use Magento\Config\Model\Config\Source\Enabledisable;
 use Magento\Framework\Registry;
 use Magento\Framework\View\LayoutInterface;
-use Magento\User\Model\UserFactory;
 use Magento\User\Block\User\Edit\Tab\Main as MainPlugin;
 use PHPGangsta\GoogleAuthenticator;
 
@@ -38,11 +37,6 @@ class Main
      * @var Enabledisable
      */
     protected $_enableDisable;
-
-    /**
-     * @var UserFactory
-     */
-    protected $_userFactory;
 
     /**
      * @var Registry
@@ -62,21 +56,18 @@ class Main
 	/**
 	 * Main constructor.
 	 * @param \Magento\Config\Model\Config\Source\Enabledisable $enableDisable
-	 * @param \Magento\User\Model\UserFactory $userFactory
 	 * @param \Magento\Framework\Registry $coreRegistry
 	 * @param \Magento\Framework\View\LayoutInterface $layout
 	 * @param \PHPGangsta\GoogleAuthenticator $googleAuthenticator
 	 */
     public function __construct(
         Enabledisable $enableDisable,
-        UserFactory $userFactory,
         Registry $coreRegistry,
         LayoutInterface $layout,
 		GoogleAuthenticator $googleAuthenticator
     )
     {
         $this->_enableDisable = $enableDisable;
-        $this->_userFactory   = $userFactory;
         $this->_coreRegistry  = $coreRegistry;
         $this->_layout        = $layout;
         $this->_googleAuthenticator = $googleAuthenticator;
