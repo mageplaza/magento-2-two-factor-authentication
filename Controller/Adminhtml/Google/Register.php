@@ -19,7 +19,7 @@
  * @license     https://www.mageplaza.com/LICENSE.txt
  */
 
-namespace Mageplaza\TwoFactorAuth\Controller\Adminhtml\Tfa;
+namespace Mageplaza\TwoFactorAuth\Controller\Adminhtml\Google;
 
 use PHPGangsta\GoogleAuthenticator;
 use Magento\Backend\App\Action;
@@ -30,7 +30,7 @@ use Mageplaza\TwoFactorAuth\Helper\Data as HelperData;
 
 /**
  * Class Register
- * @package Mageplaza\TwoFactorAuth\Controller\Adminhtml\Tfa
+ * @package Mageplaza\TwoFactorAuth\Controller\Adminhtml\Google
  */
 class Register extends Action
 {

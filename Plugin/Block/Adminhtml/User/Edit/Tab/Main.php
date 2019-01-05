@@ -56,9 +56,9 @@ class Main
     /**
      * Main constructor.
      *
-     * @param Enabledisable       $enableDisable
-     * @param Registry            $coreRegistry
-     * @param LayoutInterface     $layout
+     * @param Enabledisable $enableDisable
+     * @param Registry $coreRegistry
+     * @param LayoutInterface $layout
      * @param GoogleAuthenticator $googleAuthenticator
      */
     public function __construct(
@@ -76,7 +76,7 @@ class Main
 
     /**
      * @param MainPlugin $subject
-     * @param \Closure   $proceed
+     * @param \Closure $proceed
      *
      * @return mixed
      */
@@ -87,12 +87,13 @@ class Main
     {
         $form = $subject->getForm();
         /** @var $model \Magento\User\Model\User */
-        $model  = $this->_coreRegistry->registry('permissions_user');
-        $secret = ($model->getMpTfaSecret()) ?: $this->_googleAuthenticator->createSecret();
+        $model       = $this->_coreRegistry->registry('permissions_user');
+        $isNewObject = $model->isObjectNew();
+        $secret      = ($model->getMpTfaSecret()) ?: $this->_googleAuthenticator->createSecret();
 
-        if (is_object($form)) {
+        if (is_object($form) && !$isNewObject) {
             $mpTfaFieldset = $form->addFieldset('mp_tfa_security', ['legend' => __('Security')]);
-            if (!$model->getMpTfaStatus()){
+            if (!$model->getMpTfaStatus()) {
                 $mpTfaFieldset->addField(
                     'mp_tfa_enable',
                     'select',

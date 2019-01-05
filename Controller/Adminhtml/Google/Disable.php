@@ -19,7 +19,7 @@
  * @license     https://www.mageplaza.com/LICENSE.txt
  */
 
-namespace Mageplaza\TwoFactorAuth\Controller\Adminhtml\Tfa;
+namespace Mageplaza\TwoFactorAuth\Controller\Adminhtml\Google;
 
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
@@ -27,8 +27,8 @@ use Magento\User\Model\UserFactory;
 use Mageplaza\TwoFactorAuth\Helper\Data as HelperData;
 
 /**
- * Class Register
- * @package Mageplaza\TwoFactorAuth\Controller\Adminhtml\Tfa
+ * Class Disable
+ * @package Mageplaza\TwoFactorAuth\Controller\Adminhtml\Google
  */
 class Disable extends Action
 {

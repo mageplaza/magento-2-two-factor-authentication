@@ -37,7 +37,7 @@
         });
 
         function fieldDependence(tfa_enable) {
-            if ($(tfa_enable).val() === '1' || typeof(tfa_enable.val()) === 'undefined' ) {
+            if ($(tfa_enable).val() === '1' || typeof($(tfa_enable).val()) === 'undefined' ) {
                 oneCodeField.show();
                 secretField.show();
                 registerField.show();
@@ -58,7 +58,7 @@
 
             $('body').loader('show');
             $.ajax({
-                url: '<?php echo $block->getUrl('mptwofactorauth/tfa/register', ['form_key' => $block->getFormKey()]);?>',
+                url: '<?php echo $block->getUrl('mptwofactorauth/google/register', ['form_key' => $block->getFormKey()]);?>',
                 data: {
                     secret_code: secretCodeTemp,
                     confirm_code: confirmCode,
@@ -90,7 +90,7 @@
 
             $('body').loader('show');
             $.ajax({
-                url: '<?php echo $block->getUrl('mptwofactorauth/tfa/disable', ['form_key' => $block->getFormKey()]);?>',
+                url: '<?php echo $block->getUrl('mptwofactorauth/google/disable', ['form_key' => $block->getFormKey()]);?>',
                 data: {
                     user_id: userId
                 },

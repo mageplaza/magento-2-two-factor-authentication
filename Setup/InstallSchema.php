@@ -50,6 +50,7 @@ class InstallSchema implements InstallSchemaInterface
                     'type'    => Table::TYPE_INTEGER,
                     'length'  => 1,
                     'comment' => 'Mageplaza TFA Enable',
+                    'default'  => '1'
                 ],
                 'mp_tfa_secret' => [
                     'type'    => Table::TYPE_TEXT,

@@ -20,8 +20,12 @@
  * @license     https://www.mageplaza.com/LICENSE.txt
  */
 -->
-<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
-    <event name="controller_action_predispatch">
-        <observer name="mp_twofactorauth_admin_user" instance="Mageplaza\TwoFactorAuth\Observer\Backend\AuthObserver" />
-    </event>
-</config>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <update handle="admin_login"/>
+    <body>
+        <referenceContainer name="login.content">
+            <block class="Mageplaza\TwoFactorAuth\Block\Adminhtml\User\AuthLogin" template="Mageplaza_TwoFactorAuth::user/auth-login.phtml"
+                   name="mp.import.form.before" as="mp_form_before"/>
+        </referenceContainer>
+    </body>
+</page>
