@@ -47,10 +47,12 @@ class QrCode extends AbstractElement
     /**
      * QrCode constructor.
      *
-     * @param Factory $factoryElement
-     * @param CollectionFactory $factoryCollection
-     * @param Escaper $escaper
-     * @param array $data
+     * @param Factory             $factoryElement
+     * @param CollectionFactory   $factoryCollection
+     * @param Escaper             $escaper
+     * @param Registry            $coreRegistry
+     * @param GoogleAuthenticator $googleAuthenticator
+     * @param array               $data
      */
     public function __construct(
         Factory $factoryElement,
@@ -87,10 +89,10 @@ class QrCode extends AbstractElement
         $html      .= '</div><div class="mp-tfa-qrcode-description mp-bg-light">';
         $html      .= '<p>' . __("Can't scan the code?") . '<br>'
             . __("To add the entry manually, provide the following details to the application on your phone.") . '<br>';
-        if ($userEmail){
-            $html      .= __("Account: ") . $userEmail . '<br>';
+        if ($userEmail) {
+            $html .= __("Account: ") . $userEmail . '<br>';
         }
-        $html      .= __("Key: ") . $secret . '<br>'
+        $html .= __("Key: ") . $secret . '<br>'
             . __("Time based: Yes") . '</p>';
         $html .= '</div>';
 

@@ -21,24 +21,17 @@
 
 namespace Mageplaza\TwoFactorAuth\Controller\Adminhtml\Tfa;
 
-use PHPGangsta\GoogleAuthenticator;
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
 use Magento\User\Model\UserFactory;
-use Magento\Framework\Exception\LocalizedException;
 use Mageplaza\TwoFactorAuth\Helper\Data as HelperData;
 
 /**
  * Class Register
  * @package Mageplaza\TwoFactorAuth\Controller\Adminhtml\Tfa
  */
-class Register extends Action
+class Disable extends Action
 {
-    /**
-     * @var \PHPGangsta\GoogleAuthenticator
-     */
-    protected $_googleAuthenticator;
-
     /**
      * User model factory
      *
@@ -54,21 +47,18 @@ class Register extends Action
     /**
      * Register constructor.
      *
-     * @param Context             $context
-     * @param GoogleAuthenticator $googleAuthenticator
-     * @param UserFactory         $userFactory
-     * @param HelperData          $helperData
+     * @param Context     $context
+     * @param UserFactory $userFactory
+     * @param HelperData  $helperData
      */
     public function __construct(
         Context $context,
-        GoogleAuthenticator $googleAuthenticator,
         UserFactory $userFactory,
         HelperData $helperData
     )
     {
-        $this->_googleAuthenticator = $googleAuthenticator;
-        $this->_userFactory         = $userFactory;
-        $this->_helperData          = $helperData;
+        $this->_userFactory = $userFactory;
+        $this->_helperData  = $helperData;
 
         parent::__construct($context);
     }
@@ -78,26 +68,17 @@ class Register extends Action
      */
     public function execute()
     {
-        $data         = $this->getRequest()->getParams();
-        $inputOneCode = $data['confirm_code'];
-        $userId       = $data['user_id'];
-        $secretCode   = $data['secret_code'];
-
-        $checkResult = $this->_googleAuthenticator->verifyCode($secretCode, $inputOneCode, 1);
-        if ($checkResult) {
-            try {
-                /** @var $model \Magento\User\Model\User */
-                $model = $this->_userFactory->create()->load($userId);
-                $model->setMpTfaSecret($secretCode)
-                    ->setMpTfaStatus(1)
-                    ->save();
-                $result = ['status' => 'valid'];
-            } catch (\Exception $e) {
-                $result = ['status' => 'error', 'error' => $e->getMessage()];
-            }
-
-        } else {
-            $result = ['status' => 'invalid'];
+        $data   = $this->getRequest()->getParams();
+        $userId = $data['user_id'];
+        /** @var $model \Magento\User\Model\User */
+        try {
+            $model = $this->_userFactory->create()->load($userId);
+            $model->setMpTfaSecret(null)
+                ->setMpTfaStatus(0)
+                ->save();
+            $result = ['status' => 'ok'];
+        } catch (\Exception $e) {
+            $result = ['status' => 'error', 'error' => $e->getMessage()];
         }
 
         return $this->getResponse()->representJson(HelperData::jsonEncode($result));

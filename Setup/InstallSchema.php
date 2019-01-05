@@ -51,15 +51,16 @@ class InstallSchema implements InstallSchemaInterface
                     'length'  => 1,
                     'comment' => 'Mageplaza TFA Enable',
                 ],
-                'mp_tfa_qr_url' => [
-                    'type'    => Table::TYPE_TEXT,
-                    'length'  => 255,
-                    'comment' => 'Mageplaza TFA QR Code URL',
-                ],
                 'mp_tfa_secret' => [
                     'type'    => Table::TYPE_TEXT,
                     'length'  => 255,
                     'comment' => 'Mageplaza TFA Secret Code',
+                ],
+                'mp_tfa_status' => [
+                    'type'    => Table::TYPE_INTEGER,
+                    'length'  => 1,
+                    'comment' => 'Mageplaza TFA Status',
+                    'default'  => '0'
                 ]
             ];
 

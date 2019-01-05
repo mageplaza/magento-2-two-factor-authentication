@@ -20,10 +20,17 @@
  */
 ?>
 <script>
-    require(['jquery'], function ($) {
-        var tfa_enable = $('#user_mp_tfa_enable');
-        var registerBtn = $('#user_mp_tfa_register');
+    require(['jquery', 'mage/translate'], function ($, $t) {
+        var tfa_enable = $('#user_mp_tfa_enable'),
+            registerBtn = $('#user_mp_tfa_register'),
+            disableBtn = $('#user_mp_tfa_disable'),
+            tfaEnableField = $('.field-mp_tfa_enable'),
+            oneCodeField = $('.field-mp_tfa_one_code'),
+            secretField = $('.field-mp_tfa_secret_temp'),
+            registerField = $('.field-mp_tfa_register'),
+            trustFieldset = $('#user_mp_tfa_trust_device');
 
+        /** tfa field depend on enable/disable field */
         fieldDependence(tfa_enable);
         tfa_enable.on('change', function () {
             fieldDependence(this);
@@ -31,27 +38,74 @@
 
         function fieldDependence(tfa_enable) {
             if ($(tfa_enable).val() === '1') {
-                $('.field-mp_tfa_one_code').show();
-                $('.field-mp_tfa_secret_temp').show();
-                $('.field-mp_tfa_register').show();
-                $('#user_mp_tfa_trust_device').show();
+                oneCodeField.show();
+                secretField.show();
+                registerField.show();
+                trustFieldset.show();
             } else {
-                $('.field-mp_tfa_one_code').hide();
-                $('.field-mp_tfa_secret_temp').hide();
-                $('.field-mp_tfa_register').hide();
-                $('#user_mp_tfa_trust_device').hide();
+                oneCodeField.hide();
+                secretField.hide();
+                registerField.hide();
+                trustFieldset.hide();
             }
         }
 
-        registerBtn.on('click',function () {
+        /** ajax register secret key */
+        registerBtn.on('click', function () {
+            var confirmCode = $('#user_mp_tfa_one_code').val(),
+                secretCodeTemp = $('#user_mp_tfa_secret_temp_hidden').val(),
+                userId = $('#user_user_id').val();
+
             $('body').loader('show');
             $.ajax({
                 url: '<?php echo $block->getUrl('mptwofactorauth/tfa/register', ['form_key' => $block->getFormKey()]);?>',
                 data: {
-                    test:'test'
+                    secret_code: secretCodeTemp,
+                    confirm_code: confirmCode,
+                    user_id: userId
                 },
                 success: function (result) {
-                    console.log('trest');
+                    if (result.status === 'invalid') {
+                        $('.field-mp_tfa_register .error-messages').html($t('Invalid Code'));
+                    } else if (result.status === 'valid') {
+                        oneCodeField.hide();
+                        secretField.hide();
+                        registerField.hide();
+                        tfaEnableField.hide();
+                        disableBtn.removeClass('hidden');
+                        $('.field-mp_tfa_disable .success-messages').html($t('You have been registered the TFA for this user'));
+                    } else if (result.status === 'error' && result.hasOwnProperty(error)) {
+                        $('.field-mp_tfa_register .error-messages').html(response.error);
+                    }
+                },
+                complete: function () {
+                    $('body').loader('hide');
+                }
+            });
+        });
+
+        /** ajax disable tfa */
+        disableBtn.on('click', function () {
+            var userId = $('#user_user_id').val();
+
+            $('body').loader('show');
+            $.ajax({
+                url: '<?php echo $block->getUrl('mptwofactorauth/tfa/disable', ['form_key' => $block->getFormKey()]);?>',
+                data: {
+                    user_id: userId
+                },
+                success: function (result) {
+                    if (result.status === 'ok') {
+                        oneCodeField.show();
+                        secretField.show();
+                        registerField.show();
+                        tfaEnableField.show();
+                        disableBtn.addClass('hidden');
+                        $('.field-mp_tfa_register .error-messages').html($t('You have been disabled the tfa for this user'));
+                        $('.field-mp_tfa_disable .success-messages').html('');
+                    } else if (result.status === 'error' && result.hasOwnProperty(error)) {
+                        $('.field-mp_tfa_register .error-messages').html(response.error);
+                    }
                 },
                 complete: function () {
                     $('body').loader('hide');

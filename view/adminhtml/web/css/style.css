@@ -20,10 +20,7 @@
 
 #user_mp_tfa_register, #user_mp_tfa_disable {
     width: 36%;
-}
-
-#user_mp_tfa_disable{
-    display: none;
+    float: left;
 }
 
 .mp-tfa-qrcode-img {
@@ -59,4 +56,9 @@
 
 .mp-tfa-trusted-devices tbody .mp-device-action {
     width: 15%;
+}
+.field-mp_tfa_register .error-messages,.field-mp_tfa_disable .success-messages{
+    float: left;
+    padding: 7px 20px;
+    font-weight: 700;
 }

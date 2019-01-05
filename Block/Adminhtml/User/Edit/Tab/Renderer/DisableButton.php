@@ -21,6 +21,7 @@
 
 namespace Mageplaza\TwoFactorAuth\Block\Adminhtml\User\Edit\Tab\Renderer;
 
+use Magento\Framework\Registry;
 use Magento\Framework\Data\Form\Element\AbstractElement;
 use Magento\Framework\Data\Form\Element\CollectionFactory;
 use Magento\Framework\Data\Form\Element\Factory;
@@ -33,23 +34,33 @@ use Magento\Framework\Escaper;
 class DisableButton extends AbstractElement
 {
     /**
+     * @var Registry
+     */
+    protected $_coreRegistry;
+
+    /**
      * DisableButton constructor.
      *
      * @param Factory           $factoryElement
      * @param CollectionFactory $factoryCollection
      * @param Escaper           $escaper
+     * @param Registry          $coreRegistry
      * @param array             $data
      */
     public function __construct(
         Factory $factoryElement,
         CollectionFactory $factoryCollection,
         Escaper $escaper,
+        Registry $coreRegistry,
         $data = []
     )
     {
+        $this->_coreRegistry = $coreRegistry;
+
         parent::__construct($factoryElement, $factoryCollection, $escaper, $data);
 
         $this->setType('mp_tfa_disable');
+
     }
 
     /**
@@ -59,10 +70,15 @@ class DisableButton extends AbstractElement
      */
     public function getElementHtml()
     {
-        $html = '';
-        $html .= '<button id="' . $this->getHtmlId() . '" type="button">';
-        $html .= '<span>' . __('Disable two-factor authentication') . '</span>';
-        $html .= '</button>';
+        /** @var $model \Magento\User\Model\User */
+        $model        = $this->_coreRegistry->registry('permissions_user');
+        $isHidden     = ($model->getMpTfaStatus()) ? '' : 'hidden';
+        $isRegistered = ($model->getMpTfaStatus()) ? 'This user is registered' : '';
+        $html         = '';
+        $html         .= '<button id="' . $this->getHtmlId() . '" type="button" class="' . $isHidden . '">';
+        $html         .= '<span>' . __('Disable two-factor authentication') . '</span>';
+        $html         .= '</button>';
+        $html         .= '<div class="success-messages mp-success">' . $isRegistered . '</div>';
 
         return $html;
     }
