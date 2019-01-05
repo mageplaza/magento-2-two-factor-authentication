@@ -63,7 +63,7 @@ class RegisterButton extends AbstractElement
         $html .= '<button type="button" id="' . $this->getHtmlId() . '" class="primary">';
         $html .= '<span class="mp-white">' . __('Register') . '</span>';
         $html .= '</button>';
-        $html .= '<div class="error-messages mp-danger"></div>';
+        $html .= '<div class="mp-error-messages mp-danger"></div>';
 
         return $html;
     }

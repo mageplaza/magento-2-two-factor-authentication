@@ -37,7 +37,7 @@
         });
 
         function fieldDependence(tfa_enable) {
-            if ($(tfa_enable).val() === '1') {
+            if ($(tfa_enable).val() === '1' || typeof(tfa_enable.val()) === 'undefined' ) {
                 oneCodeField.show();
                 secretField.show();
                 registerField.show();
@@ -66,16 +66,16 @@
                 },
                 success: function (result) {
                     if (result.status === 'invalid') {
-                        $('.field-mp_tfa_register .error-messages').html($t('Invalid Code'));
+                        $('.field-mp_tfa_register .mp-error-messages').html($t('Invalid Code'));
                     } else if (result.status === 'valid') {
                         oneCodeField.hide();
                         secretField.hide();
                         registerField.hide();
                         tfaEnableField.hide();
                         disableBtn.removeClass('hidden');
-                        $('.field-mp_tfa_disable .success-messages').html($t('You have been registered the TFA for this user'));
+                        $('.field-mp_tfa_disable .mp-success-messages').html($t('You have been registered the TFA for this user'));
                     } else if (result.status === 'error' && result.hasOwnProperty(error)) {
-                        $('.field-mp_tfa_register .error-messages').html(response.error);
+                        $('.field-mp_tfa_register .mp-error-messages').html(response.error);
                     }
                 },
                 complete: function () {
@@ -96,15 +96,10 @@
                 },
                 success: function (result) {
                     if (result.status === 'ok') {
-                        oneCodeField.show();
-                        secretField.show();
-                        registerField.show();
-                        tfaEnableField.show();
                         disableBtn.addClass('hidden');
-                        $('.field-mp_tfa_register .error-messages').html($t('You have been disabled the tfa for this user'));
-                        $('.field-mp_tfa_disable .success-messages').html('');
+                        $('.field-mp_tfa_disable .mp-success-messages').html($t('You have been disabled the TFA for this user, please refresh the page to get the new code'));
                     } else if (result.status === 'error' && result.hasOwnProperty(error)) {
-                        $('.field-mp_tfa_register .error-messages').html(response.error);
+                        $('.field-mp_tfa_disable .mp-error-messages').html(response.error);
                     }
                 },
                 complete: function () {

@@ -57,7 +57,8 @@
 .mp-tfa-trusted-devices tbody .mp-device-action {
     width: 15%;
 }
-.field-mp_tfa_register .error-messages,.field-mp_tfa_disable .success-messages{
+
+.mp-error-messages, .mp-success-messages {
     float: left;
     padding: 7px 20px;
     font-weight: 700;
