@@ -45,10 +45,10 @@ class AuthLogin extends Template
     /**
      * TrustedDevices constructor.
      *
-     * @param Context        $context
+     * @param Context $context
      * @param TrustedFactory $trustedFactory
-     * @param HelperData     $helperData
-     * @param array          $data
+     * @param HelperData $helperData
+     * @param array $data
      */
     public function __construct(
         Context $context,
@@ -58,8 +58,29 @@ class AuthLogin extends Template
     )
     {
         $this->_trustedFactory = $trustedFactory;
-        $this->_helperData = $helperData;
+        $this->_helperData     = $helperData;
 
         parent::__construct($context, $data);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function enableTrustedDevice()
+    {
+        return $this->_helperData->getConfigGeneral('trust_device');
+    }
+
+    /**
+     * @return mixed|string
+     */
+    public function getTrustedLifetime()
+    {
+        $lifetime = ($this->enableTrustedDevice())
+            ? ($this->_helperData->getConfigGeneral('trust_time')) ?: 30
+            : 0;
+
+
+        return $lifetime;
     }
 }
