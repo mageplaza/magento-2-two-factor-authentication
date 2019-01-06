@@ -122,22 +122,22 @@ class Main
             $mpTfaFieldset->addField('mp_tfa_register', '\Mageplaza\TwoFactorAuth\Block\Adminhtml\User\Edit\Tab\Renderer\RegisterButton', [
                 'name' => 'mp_tfa_register'
             ]);
+
+
+            $mpTfaFieldset->addField('mp_tfa_disable', '\Mageplaza\TwoFactorAuth\Block\Adminhtml\User\Edit\Tab\Renderer\DisableButton', [
+                'name' => 'mp_tfa_disable',
+            ]);
+            $mpTfaChildFieldset = $mpTfaFieldset->addFieldset('mp_tfa_trust_device', ['legend' => __('Trusted Devices')]);
+            $mpTfaChildFieldset->addField('mp_tfa_trusted_device', 'label', [
+                'name' => 'mp_tfa_trusted_device',
+            ])->setAfterElementHtml($this->getTrustedDeviceHtml($model));
+            $data                       = $model->getData();
+            $data['mp_tfa_secret_temp'] = $data['mp_tfa_secret_temp_hidden'] = $secret;
+            $data['mp_tfa_status']      = $model->getMpTfaStatus();
+
+            $form->setValues($data);
+            $subject->setForm($form);
         }
-
-        $mpTfaFieldset->addField('mp_tfa_disable', '\Mageplaza\TwoFactorAuth\Block\Adminhtml\User\Edit\Tab\Renderer\DisableButton', [
-            'name' => 'mp_tfa_disable',
-        ]);
-        $mpTfaChildFieldset = $mpTfaFieldset->addFieldset('mp_tfa_trust_device', ['legend' => __('Trusted Devices')]);
-        $mpTfaChildFieldset->addField('mp_tfa_trusted_device', 'label', [
-            'name' => 'mp_tfa_trusted_device',
-        ])->setAfterElementHtml($this->getTrustedDeviceHtml($model));
-        $data                       = $model->getData();
-        $data['mp_tfa_secret_temp'] = $data['mp_tfa_secret_temp_hidden'] = $secret;
-        $data['mp_tfa_status']      = $model->getMpTfaStatus();
-
-        $form->setValues($data);
-        $subject->setForm($form);
-
 
         return $proceed();
     }

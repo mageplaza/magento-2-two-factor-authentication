@@ -26,6 +26,7 @@ use Magento\Framework\Event\Observer as EventObserver;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\ActionFlag;
+use Magento\Framework\Message\ManagerInterface;
 use Magento\Backend\Model\UrlInterface;
 use Magento\Backend\Model\Session;
 use Magento\Backend\Model\Auth\Session as AuthSession;
@@ -80,6 +81,11 @@ class AuthObserver implements ObserverInterface
     protected $_storageSession;
 
     /**
+     * @var ManagerInterface
+     */
+    protected $_messageManager;
+
+    /**
      * @var HelperData
      */
     protected $_helperData;
@@ -93,6 +99,7 @@ class AuthObserver implements ObserverInterface
      * @param AuthSession $authSession
      * @param ActionFlag $actionFlag
      * @param SessionManager $storageSession
+     * @param ManagerInterface $messageManager
      * @param HelperData $helperData
      */
     public function __construct(
@@ -102,6 +109,7 @@ class AuthObserver implements ObserverInterface
         AuthSession $authSession,
         ActionFlag $actionFlag,
         SessionManager $storageSession,
+        ManagerInterface $messageManager,
         HelperData $helperData
     )
     {
@@ -111,6 +119,7 @@ class AuthObserver implements ObserverInterface
         $this->authSession     = $authSession;
         $this->actionFlag      = $actionFlag;
         $this->_storageSession = $storageSession;
+        $this->_messageManager = $messageManager;
         $this->_helperData     = $helperData;
     }
 
@@ -143,11 +152,23 @@ class AuthObserver implements ObserverInterface
             'adminhtml_auth_logout'
         ];
 
+        $force2faActionList = [
+            'adminhtml_user_edit',
+            'adminhtml_auth_logout'
+        ];
         /** @var \Magento\Framework\App\Action\Action $controller */
         $controller = $observer->getEvent()->getControllerAction();
         /** @var \Magento\Framework\App\RequestInterface $request */
         $request = $observer->getEvent()->getRequest();
-
+        if ($user
+            && $this->_helperData->getConfigGeneral('force_2fa')
+            && !$user->getMpTfaStatus()
+            && !in_array($request->getFullActionName(), $force2faActionList)) {
+            $this->actionFlag->set('', Action::FLAG_NO_DISPATCH, true);
+            $url = $this->url->getUrl('adminhtml/user/edit', ['user_id' => $user->getId()]);
+            $this->_messageManager->addError(__('Force 2FA is enabled, please must register the 2FA authentication.'));
+            $controller->getResponse()->setRedirect($url);
+        }
         if ($user
             && !in_array($request->getFullActionName(), $actionList)
             && $user->getMpTfaStatus()
