@@ -61,12 +61,15 @@ class Register extends Action
         $data         = $this->getRequest()->getParams();
         $inputOneCode = $data['confirm_code'];
         $secretCode   = $data['secret_code'];
-
-        $checkResult = $this->_googleAuthenticator->verifyCode($secretCode, $inputOneCode, 1);
-        if ($checkResult) {
-            $result = ['status' => 'valid', 'secret_code' => $secretCode];
-        } else {
-            $result = ['status' => 'invalid'];
+        try {
+            $checkResult = $this->_googleAuthenticator->verifyCode($secretCode, $inputOneCode, 1);
+            if ($checkResult) {
+                $result = ['status' => 'valid', 'secret_code' => $secretCode];
+            } else {
+                $result = ['status' => 'invalid'];
+            }
+        } catch (\Exception $e) {
+            $result = ['status' => 'error', 'error' => $e->getMessage()];
         }
 
         return $this->getResponse()->representJson(HelperData::jsonEncode($result));

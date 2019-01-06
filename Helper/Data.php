@@ -34,6 +34,7 @@ use Mageplaza\TwoFactorAuth\Model\TrustedFactory;
 class Data extends AbstractData
 {
     const CONFIG_MODULE_PATH = 'mptwofactorauth';
+    const MP_GOOGLE_AUTH = 'mp_google_auth';
 
     /**
      * @var TrustedFactory

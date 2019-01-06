@@ -26,6 +26,7 @@ use Magento\Framework\Session\SessionManager;
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
 use Magento\Backend\Model\Auth\Session as AuthSession;
+use Mageplaza\TwoFactorAuth\Helper\Data as HelperData;
 
 /**
  * Class Auth
@@ -85,15 +86,20 @@ class Auth extends Action
         $authCode   = $this->_request->getParam('auth-code');
         $user       = $this->_authSession->getUser();
         $secretCode = $user->getMpTfaSecret();
+        try {
+            $checkResult = $this->_googleAuthenticator->verifyCode($secretCode, $authCode, 1);
+            if ($checkResult) {
+                $this->_storageSession->setData(HelperData::MP_GOOGLE_AUTH, true);
 
-        $checkResult = $this->_googleAuthenticator->verifyCode($secretCode, $authCode, 1);
-        if ($checkResult) {
-            $this->_storageSession->setData('mp_google_auth', true);
+                return $this->_getRedirect($this->_backendUrl->getStartupPageUrl());
+            } else {
+                $this->_storageSession->setData(HelperData::MP_GOOGLE_AUTH, false);
+                $this->messageManager->addError(__('Invalid key.'));
 
-            return $this->_getRedirect($this->_backendUrl->getStartupPageUrl());
-        } else {
-            $this->_storageSession->setData('mp_google_auth', false);
-            $this->messageManager->addError(__('Invalid key.'));
+                return $this->_getRedirect('mptwofactorauth/google/index');
+            }
+        } catch (\Exception $e) {
+            $this->messageManager->addError($e->getMessage());
 
             return $this->_getRedirect('mptwofactorauth/google/index');
         }

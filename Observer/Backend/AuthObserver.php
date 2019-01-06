@@ -21,14 +21,12 @@
 
 namespace Mageplaza\TwoFactorAuth\Observer\Backend;
 
-use Magento\Framework\AuthorizationInterface;
 use Magento\Framework\Event\Observer as EventObserver;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\ActionFlag;
 use Magento\Framework\Message\ManagerInterface;
 use Magento\Backend\Model\UrlInterface;
-use Magento\Backend\Model\Session;
 use Magento\Backend\Model\Auth\Session as AuthSession;
 use Magento\Framework\Session\SessionManager;
 use Mageplaza\TwoFactorAuth\Helper\Data as HelperData;
@@ -40,13 +38,6 @@ use Mageplaza\TwoFactorAuth\Helper\Data as HelperData;
 class AuthObserver implements ObserverInterface
 {
     /**
-     * Authorization interface
-     *
-     * @var \Magento\Framework\AuthorizationInterface
-     */
-    protected $authorization;
-
-    /**
      * Backend url interface
      *
      * @var \Magento\Backend\Model\UrlInterface
@@ -54,19 +45,11 @@ class AuthObserver implements ObserverInterface
     protected $url;
 
     /**
-     * Backend session
-     *
-     * @var \Magento\Backend\Model\Session
-     */
-    protected $session;
-
-    /**
      * Backend authorization session
      *
      * @var \Magento\Backend\Model\Auth\Session
      */
     protected $authSession;
-
 
     /**
      * Action flag
@@ -93,9 +76,7 @@ class AuthObserver implements ObserverInterface
     /**
      * AuthObserver constructor.
      *
-     * @param AuthorizationInterface $authorization
      * @param UrlInterface $url
-     * @param Session $session
      * @param AuthSession $authSession
      * @param ActionFlag $actionFlag
      * @param SessionManager $storageSession
@@ -103,9 +84,7 @@ class AuthObserver implements ObserverInterface
      * @param HelperData $helperData
      */
     public function __construct(
-        AuthorizationInterface $authorization,
         UrlInterface $url,
-        Session $session,
         AuthSession $authSession,
         ActionFlag $actionFlag,
         SessionManager $storageSession,
@@ -113,9 +92,7 @@ class AuthObserver implements ObserverInterface
         HelperData $helperData
     )
     {
-        $this->authorization   = $authorization;
         $this->url             = $url;
-        $this->session         = $session;
         $this->authSession     = $authSession;
         $this->actionFlag      = $actionFlag;
         $this->_storageSession = $storageSession;
@@ -172,7 +149,7 @@ class AuthObserver implements ObserverInterface
         if ($user
             && !in_array($request->getFullActionName(), $actionList)
             && $user->getMpTfaStatus()
-            && !$this->_storageSession->getData('mp_google_auth')) {
+            && !$this->_storageSession->getData(HelperData::MP_GOOGLE_AUTH)) {
             $this->actionFlag->set('', Action::FLAG_NO_DISPATCH, true);
             $url = $this->url->getUrl('mptwofactorauth/google/index');
             $controller->getResponse()->setRedirect($url);
