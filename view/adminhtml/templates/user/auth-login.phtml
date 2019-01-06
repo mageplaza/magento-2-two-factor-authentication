@@ -21,4 +21,27 @@
 
 /** @var \Mageplaza\TwoFactorAuth\Block\Adminhtml\User\AuthLogin $block */
 ?>
-<h1>test</h1>
+<form method="post" action="<?php echo $block->getUrl('mptwofactorauth/google/auth', ['form_key' => $block->getFormKey()]) ?>" id="auth-login-form" data-mage-init='{"form": {}, "validation": {}}'>
+    <fieldset class="admin__fieldset">
+        <legend class="admin__legend"><span><?php /* @escapeNotVerified */ echo __('Two-Factor Authentication'); ?></span></legend><br/>
+        <input name="form_key" type="hidden" value="<?php /* @escapeNotVerified */ echo $block->getFormKey(); ?>" />
+
+        <div class="admin__field _required field-email">
+            <label for="auth-code" class="admin__field-label"><span><?php /* @escapeNotVerified */ echo __('Authentication code'); ?></span></label>
+            <div class="admin__field-control">
+                <input type="text" id="auth-code" name="auth-code" value="" data-validate="{required:true}" class="admin__control-text" />
+            </div>
+        </div>
+        <p class="admin__field-info"><?php /* @escapeNotVerified */ echo __('Enter the code from the two-factor app on your mobile device.'); ?></p>
+        <div class="form-actions">
+            <div class="actions">
+                <button class="action-retrieve action-primary" type="submit"><span><?php /* @escapeNotVerified */ echo __('Verify code'); ?></span></button>
+            </div>
+            <div class="links">
+                <a class="action-back" href="<?php /* @escapeNotVerified */ echo $block->getUrl('adminhtml/auth/logout', ['form_key' => $block->getFormKey()]); ?>">
+                    <?php /* @escapeNotVerified */ echo __('Login with other user'); ?>
+                </a>
+            </div>
+        </div>
+    </fieldset>
+</form>

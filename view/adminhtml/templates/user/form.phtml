@@ -26,7 +26,9 @@
             disableBtn = $('#user_mp_tfa_disable'),
             tfaEnableField = $('.field-mp_tfa_enable'),
             oneCodeField = $('.field-mp_tfa_one_code'),
-            secretField = $('.field-mp_tfa_secret_temp'),
+            secretField = $('#user_mp_tfa_secret'),
+            tfaStatusField = $('#user_mp_tfa_status'),
+            secretFieldTemp = $('.field-mp_tfa_secret_temp'),
             registerField = $('.field-mp_tfa_register'),
             trustFieldset = $('#user_mp_tfa_trust_device');
 
@@ -37,17 +39,23 @@
         });
 
         function fieldDependence(tfa_enable) {
-            if ($(tfa_enable).val() === '1' || typeof($(tfa_enable).val()) === 'undefined' ) {
+            if ($(tfa_enable).val() === '1' && tfaStatusField.val() === '0') {
                 oneCodeField.show();
-                secretField.show();
+                secretFieldTemp.show();
                 registerField.show();
                 trustFieldset.show();
             } else {
                 oneCodeField.hide();
-                secretField.hide();
+                secretFieldTemp.hide();
                 registerField.hide();
+            }
+            if ($(tfa_enable).val() !== '1') {
                 trustFieldset.hide();
             }
+        }
+
+        if (tfaStatusField.val() === '1') {
+            tfaEnableField.hide();
         }
 
         /** ajax register secret key */
@@ -68,14 +76,14 @@
                     if (result.status === 'invalid') {
                         $('.field-mp_tfa_register .mp-error-messages').html($t('Invalid Code'));
                     } else if (result.status === 'valid') {
+                        tfaStatusField.val(1);
+                        secretField.val(result.secret_code);
                         oneCodeField.hide();
-                        secretField.hide();
+                        secretFieldTemp.hide();
                         registerField.hide();
                         tfaEnableField.hide();
                         disableBtn.removeClass('hidden');
-                        $('.field-mp_tfa_disable .mp-success-messages').html($t('You have been registered the TFA for this user'));
-                    } else if (result.status === 'error' && result.hasOwnProperty(error)) {
-                        $('.field-mp_tfa_register .mp-error-messages').html(response.error);
+                        $('.field-mp_tfa_disable .mp-success-messages').html($t('You have been registered the TFA for this user, please save the user to finish the configuration'));
                     }
                 },
                 complete: function () {
@@ -86,26 +94,14 @@
 
         /** ajax disable tfa */
         disableBtn.on('click', function () {
-            var userId = $('#user_user_id').val();
-
-            $('body').loader('show');
-            $.ajax({
-                url: '<?php echo $block->getUrl('mptwofactorauth/google/disable', ['form_key' => $block->getFormKey()]);?>',
-                data: {
-                    user_id: userId
-                },
-                success: function (result) {
-                    if (result.status === 'ok') {
-                        disableBtn.addClass('hidden');
-                        $('.field-mp_tfa_disable .mp-success-messages').html($t('You have been disabled the TFA for this user, please refresh the page to get the new code'));
-                    } else if (result.status === 'error' && result.hasOwnProperty(error)) {
-                        $('.field-mp_tfa_disable .mp-error-messages').html(response.error);
-                    }
-                },
-                complete: function () {
-                    $('body').loader('hide');
-                }
-            });
+            $(this).addClass('hidden');
+            oneCodeField.show();
+            secretFieldTemp.show();
+            registerField.show();
+            tfaEnableField.show();
+            tfaStatusField.val(0);
+            secretField.val('');
+            $('.field-mp_tfa_disable .mp-success-messages').html('');
         });
     });
 </script>

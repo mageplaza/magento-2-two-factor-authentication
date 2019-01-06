@@ -24,8 +24,6 @@ namespace Mageplaza\TwoFactorAuth\Controller\Adminhtml\Google;
 use PHPGangsta\GoogleAuthenticator;
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
-use Magento\User\Model\UserFactory;
-use Magento\Framework\Exception\LocalizedException;
 use Mageplaza\TwoFactorAuth\Helper\Data as HelperData;
 
 /**
@@ -40,35 +38,17 @@ class Register extends Action
     protected $_googleAuthenticator;
 
     /**
-     * User model factory
-     *
-     * @var \Magento\User\Model\UserFactory
-     */
-    protected $_userFactory;
-
-    /**
-     * @var HelperData
-     */
-    protected $_helperData;
-
-    /**
      * Register constructor.
      *
-     * @param Context             $context
+     * @param Context $context
      * @param GoogleAuthenticator $googleAuthenticator
-     * @param UserFactory         $userFactory
-     * @param HelperData          $helperData
      */
     public function __construct(
         Context $context,
-        GoogleAuthenticator $googleAuthenticator,
-        UserFactory $userFactory,
-        HelperData $helperData
+        GoogleAuthenticator $googleAuthenticator
     )
     {
         $this->_googleAuthenticator = $googleAuthenticator;
-        $this->_userFactory         = $userFactory;
-        $this->_helperData          = $helperData;
 
         parent::__construct($context);
     }
@@ -80,22 +60,11 @@ class Register extends Action
     {
         $data         = $this->getRequest()->getParams();
         $inputOneCode = $data['confirm_code'];
-        $userId       = $data['user_id'];
         $secretCode   = $data['secret_code'];
 
         $checkResult = $this->_googleAuthenticator->verifyCode($secretCode, $inputOneCode, 1);
         if ($checkResult) {
-            try {
-                /** @var $model \Magento\User\Model\User */
-                $model = $this->_userFactory->create()->load($userId);
-                $model->setMpTfaSecret($secretCode)
-                    ->setMpTfaStatus(1)
-                    ->save();
-                $result = ['status' => 'valid'];
-            } catch (\Exception $e) {
-                $result = ['status' => 'error', 'error' => $e->getMessage()];
-            }
-
+            $result = ['status' => 'valid', 'secret_code' => $secretCode];
         } else {
             $result = ['status' => 'invalid'];
         }

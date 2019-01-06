@@ -29,6 +29,8 @@ use Magento\Framework\App\ActionFlag;
 use Magento\Backend\Model\UrlInterface;
 use Magento\Backend\Model\Session;
 use Magento\Backend\Model\Auth\Session as AuthSession;
+use Magento\Framework\Session\SessionManager;
+use Mageplaza\TwoFactorAuth\Helper\Data as HelperData;
 
 /**
  * Class AuthObserver
@@ -64,12 +66,23 @@ class AuthObserver implements ObserverInterface
      */
     protected $authSession;
 
+
     /**
      * Action flag
      *
      * @var \Magento\Framework\App\ActionFlag
      */
     protected $actionFlag;
+
+    /**
+     * @var SessionManager
+     */
+    protected $_storageSession;
+
+    /**
+     * @var HelperData
+     */
+    protected $_helperData;
 
     /**
      * AuthObserver constructor.
@@ -79,20 +92,26 @@ class AuthObserver implements ObserverInterface
      * @param Session $session
      * @param AuthSession $authSession
      * @param ActionFlag $actionFlag
+     * @param SessionManager $storageSession
+     * @param HelperData $helperData
      */
     public function __construct(
         AuthorizationInterface $authorization,
         UrlInterface $url,
         Session $session,
         AuthSession $authSession,
-        ActionFlag $actionFlag
+        ActionFlag $actionFlag,
+        SessionManager $storageSession,
+        HelperData $helperData
     )
     {
-        $this->authorization = $authorization;
-        $this->url           = $url;
-        $this->session       = $session;
-        $this->authSession   = $authSession;
-        $this->actionFlag    = $actionFlag;
+        $this->authorization   = $authorization;
+        $this->url             = $url;
+        $this->session         = $session;
+        $this->authSession     = $authSession;
+        $this->actionFlag      = $actionFlag;
+        $this->_storageSession = $storageSession;
+        $this->_helperData     = $helperData;
     }
 
     /**
@@ -112,18 +131,27 @@ class AuthObserver implements ObserverInterface
      */
     public function execute(EventObserver $observer)
     {
-        $user = $this->getUser();
+        if (!$this->_helperData->isEnabled()) {
+            return;
+        }
+
+        $user       = $this->getUser();
         $actionList = [
-            'mptwofactorauth_google_index'
+            'mptwofactorauth_google_index',
+            'mptwofactorauth_google_auth',
+            'adminhtml_auth_forgotpassword',
+            'adminhtml_auth_logout'
         ];
 
         /** @var \Magento\Framework\App\Action\Action $controller */
         $controller = $observer->getEvent()->getControllerAction();
         /** @var \Magento\Framework\App\RequestInterface $request */
         $request = $observer->getEvent()->getRequest();
+
         if ($user
             && !in_array($request->getFullActionName(), $actionList)
-            && $this->authSession->isFirstPageAfterLogin()) {
+            && $user->getMpTfaStatus()
+            && !$this->_storageSession->getData('mp_google_auth')) {
             $this->actionFlag->set('', Action::FLAG_NO_DISPATCH, true);
             $url = $this->url->getUrl('mptwofactorauth/google/index');
             $controller->getResponse()->setRedirect($url);
