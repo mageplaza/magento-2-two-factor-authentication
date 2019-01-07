@@ -24,12 +24,13 @@ namespace Mageplaza\TwoFactorAuth\Controller\Adminhtml\Google;
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
 use Magento\Framework\View\Result\PageFactory;
+use Mageplaza\TwoFactorAuth\Helper\Data as HelperData;
 
 /**
- * Class Index
+ * Class AuthIndex
  * @package Mageplaza\TwoFactorAuth\Controller\Adminhtml\Google
  */
-class Index extends Action
+class AuthIndex extends Action
 {
     /**
      * Page result factory
@@ -39,17 +40,25 @@ class Index extends Action
     public $resultPageFactory;
 
     /**
-     * Index constructor.
+     * @var HelperData
+     */
+    protected $_helperData;
+
+    /**
+     * AuthIndex constructor.
      *
      * @param Context $context
      * @param PageFactory $resultPageFactory
+     * @param HelperData $helperData
      */
     public function __construct(
         Context $context,
-        PageFactory $resultPageFactory
+        PageFactory $resultPageFactory,
+        HelperData $helperData
     )
     {
         $this->resultPageFactory = $resultPageFactory;
+        $this->_helperData = $helperData;
 
         parent::__construct($context);
     }
@@ -64,5 +73,15 @@ class Index extends Action
         $resultPage = $this->resultPageFactory->create();
 
         return $resultPage;
+    }
+
+    /**
+     * Check if user has permissions to access this controller
+     *
+     * @return bool
+     */
+    protected function _isAllowed()
+    {
+        return true;
     }
 }

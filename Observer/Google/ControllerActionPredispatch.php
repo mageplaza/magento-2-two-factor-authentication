@@ -19,7 +19,7 @@
  * @license     https://www.mageplaza.com/LICENSE.txt
  */
 
-namespace Mageplaza\TwoFactorAuth\Observer\Backend;
+namespace Mageplaza\TwoFactorAuth\Observer\Google;
 
 use Magento\Framework\Event\Observer as EventObserver;
 use Magento\Framework\Event\ObserverInterface;
@@ -32,10 +32,10 @@ use Magento\Framework\Session\SessionManager;
 use Mageplaza\TwoFactorAuth\Helper\Data as HelperData;
 
 /**
- * Class AuthObserver
+ * Class ControllerActionPredispatch
  * @package Mageplaza\TwoFactorAuth\Observer\Backend
  */
-class AuthObserver implements ObserverInterface
+class ControllerActionPredispatch implements ObserverInterface
 {
     /**
      * Backend url interface
@@ -122,36 +122,25 @@ class AuthObserver implements ObserverInterface
         }
 
         $user       = $this->getUser();
-        $actionList = [
-            'mptwofactorauth_google_index',
-            'mptwofactorauth_google_auth',
-            'adminhtml_auth_forgotpassword',
-            'adminhtml_auth_logout'
-        ];
-
-        $force2faActionList = [
+        $allowForce2faActionList = [
             'adminhtml_user_edit',
-            'adminhtml_auth_logout'
+            'adminhtml_auth_logout',
+            'adminhtml_user_validate',
+            'adminhtml_user_save',
+            'mptwofactorauth_google_register'
         ];
         /** @var \Magento\Framework\App\Action\Action $controller */
         $controller = $observer->getEvent()->getControllerAction();
         /** @var \Magento\Framework\App\RequestInterface $request */
         $request = $observer->getEvent()->getRequest();
+
         if ($user
             && $this->_helperData->getConfigGeneral('force_2fa')
             && !$user->getMpTfaStatus()
-            && !in_array($request->getFullActionName(), $force2faActionList)) {
+            && !in_array($request->getFullActionName(), $allowForce2faActionList)) {
             $this->actionFlag->set('', Action::FLAG_NO_DISPATCH, true);
             $url = $this->url->getUrl('adminhtml/user/edit', ['user_id' => $user->getId()]);
             $this->_messageManager->addError(__('Force 2FA is enabled, please must register the 2FA authentication.'));
-            $controller->getResponse()->setRedirect($url);
-        }
-        if ($user
-            && !in_array($request->getFullActionName(), $actionList)
-            && $user->getMpTfaStatus()
-            && !$this->_storageSession->getData(HelperData::MP_GOOGLE_AUTH)) {
-            $this->actionFlag->set('', Action::FLAG_NO_DISPATCH, true);
-            $url = $this->url->getUrl('mptwofactorauth/google/index');
             $controller->getResponse()->setRedirect($url);
         }
     }

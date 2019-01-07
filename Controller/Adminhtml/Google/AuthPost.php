@@ -25,27 +25,15 @@ use PHPGangsta\GoogleAuthenticator;
 use Magento\Framework\Session\SessionManager;
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
-use Magento\Backend\Model\Auth\Session as AuthSession;
+use Magento\Security\Model\AdminSessionsManager;
 use Mageplaza\TwoFactorAuth\Helper\Data as HelperData;
 
 /**
- * Class Auth
+ * Class AuthPost
  * @package Mageplaza\TwoFactorAuth\Controller\Adminhtml\Google
  */
-class Auth extends Action
+class AuthPost extends Action
 {
-    /**
-     * Page result factory
-     *
-     * @var \Magento\Framework\View\Result\PageFactory
-     */
-    public $resultPageFactory;
-
-    /**
-     * @var AuthSession
-     */
-    protected $_authSession;
-
     /**
      * @var \PHPGangsta\GoogleAuthenticator
      */
@@ -57,23 +45,28 @@ class Auth extends Action
     protected $_storageSession;
 
     /**
-     * Auth constructor.
+     * @var AdminSessionsManager
+     */
+    protected $sessionsManager;
+
+    /**
+     * AuthPost constructor.
      *
      * @param Context $context
-     * @param AuthSession $authSession
      * @param GoogleAuthenticator $googleAuthenticator
      * @param SessionManager $storageSession
+     * @param AdminSessionsManager $sessionsManager
      */
     public function __construct(
         Context $context,
-        AuthSession $authSession,
         GoogleAuthenticator $googleAuthenticator,
-        SessionManager $storageSession
+        SessionManager $storageSession,
+        AdminSessionsManager $sessionsManager
     )
     {
-        $this->_authSession         = $authSession;
         $this->_googleAuthenticator = $googleAuthenticator;
         $this->_storageSession      = $storageSession;
+        $this->sessionsManager      = $sessionsManager;
 
         parent::__construct($context);
     }
@@ -84,24 +77,39 @@ class Auth extends Action
     public function execute()
     {
         $authCode   = $this->_request->getParam('auth-code');
-        $user       = $this->_authSession->getUser();
+        $user       = $this->_storageSession->getData('user');
         $secretCode = $user->getMpTfaSecret();
         try {
             $checkResult = $this->_googleAuthenticator->verifyCode($secretCode, $authCode, 1);
             if ($checkResult) {
                 $this->_storageSession->setData(HelperData::MP_GOOGLE_AUTH, true);
 
+                /** perform login */
+                $this->_auth->getAuthStorage()->setUser($user);
+                $this->_auth->getAuthStorage()->processLogin();
+
+                $this->_eventManager->dispatch(
+                    'backend_auth_user_login_success',
+                    ['user' => $user]
+                );
+
+                /** security auth */
+                $this->sessionsManager->processLogin();
+                if ($this->sessionsManager->getCurrentSession()->isOtherSessionsTerminated()) {
+                    $this->messageManager->addWarning(__('All other open sessions for this account were terminated.'));
+                }
+
                 return $this->_getRedirect($this->_backendUrl->getStartupPageUrl());
             } else {
                 $this->_storageSession->setData(HelperData::MP_GOOGLE_AUTH, false);
                 $this->messageManager->addError(__('Invalid key.'));
 
-                return $this->_getRedirect('mptwofactorauth/google/index');
+                return $this->_getRedirect('mptwofactorauth/google/authindex');
             }
         } catch (\Exception $e) {
             $this->messageManager->addError($e->getMessage());
 
-            return $this->_getRedirect('mptwofactorauth/google/index');
+            return $this->_getRedirect('mptwofactorauth/google/authindex');
         }
     }
 
@@ -118,5 +126,15 @@ class Auth extends Action
         $resultRedirect->setPath($path);
 
         return $resultRedirect;
+    }
+
+    /**
+     * Check if user has permissions to access this controller
+     *
+     * @return bool
+     */
+    protected function _isAllowed()
+    {
+        return true;
     }
 }

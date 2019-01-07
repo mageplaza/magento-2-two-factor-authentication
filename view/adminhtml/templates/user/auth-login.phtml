@@ -21,7 +21,7 @@
 
 /** @var \Mageplaza\TwoFactorAuth\Block\Adminhtml\User\AuthLogin $block */
 ?>
-<form method="post" action="<?php echo $block->getUrl('mptwofactorauth/google/auth', ['form_key' => $block->getFormKey()]) ?>" id="auth-login-form" data-mage-init='{"form": {}, "validation": {}}'>
+<form method="post" action="<?php echo $block->getUrl('mptwofactorauth/google/authpost', ['form_key' => $block->getFormKey()]) ?>" id="auth-login-form" data-mage-init='{"form": {}, "validation": {}}'>
     <fieldset class="admin__fieldset">
         <legend class="admin__legend"><span><?php /* @escapeNotVerified */ echo __('Two-Factor Authentication'); ?></span></legend><br/>
         <input name="form_key" type="hidden" value="<?php /* @escapeNotVerified */ echo $block->getFormKey(); ?>" />
