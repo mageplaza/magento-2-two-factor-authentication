@@ -123,10 +123,9 @@ class ControllerActionPredispatch implements ObserverInterface
 
         $user       = $this->getUser();
         $allowForce2faActionList = [
-            'adminhtml_user_edit',
+            'adminhtml_system_account_index',
             'adminhtml_auth_logout',
-            'adminhtml_user_validate',
-            'adminhtml_user_save',
+            'adminhtml_system_account_save',
             'mptwofactorauth_google_register'
         ];
         /** @var \Magento\Framework\App\Action\Action $controller */
@@ -139,7 +138,7 @@ class ControllerActionPredispatch implements ObserverInterface
             && !$user->getMpTfaStatus()
             && !in_array($request->getFullActionName(), $allowForce2faActionList)) {
             $this->actionFlag->set('', Action::FLAG_NO_DISPATCH, true);
-            $url = $this->url->getUrl('adminhtml/user/edit', ['user_id' => $user->getId()]);
+            $url = $this->url->getUrl('adminhtml/system_account/index');
             $this->_messageManager->addError(__('Force 2FA is enabled, please must register the 2FA authentication.'));
             $controller->getResponse()->setRedirect($url);
         }
