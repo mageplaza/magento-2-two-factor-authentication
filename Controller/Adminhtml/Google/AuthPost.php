@@ -84,7 +84,7 @@ class AuthPost extends Action
         $this->_storageSession      = $storageSession;
         $this->_sessionsManager     = $sessionsManager;
         $this->_remoteAddress       = $remoteAddress;
-        $this->_trustedFactory = $trustedFactory;
+        $this->_trustedFactory      = $trustedFactory;
 
         parent::__construct($context);
     }
@@ -94,40 +94,44 @@ class AuthPost extends Action
      */
     public function execute()
     {
-        $authCode   = $this->_request->getParam('auth-code');
-        $user       = $this->_storageSession->getData('user');
-        $secretCode = $user->getMpTfaSecret();
-        try {
-            $checkResult = $this->_googleAuthenticator->verifyCode($secretCode, $authCode, 1);
-            if ($checkResult) {
-                $this->_storageSession->setData(HelperData::MP_GOOGLE_AUTH, true);
+        $params    = $this->_request->getParams();
+        $authCode  = $params['auth-code'];
+        $isTrusted = (isset($params['trust-device'])) ? true : false;
 
-                /** perform login */
-                $this->_auth->getAuthStorage()->setUser($user);
-                $this->_auth->getAuthStorage()->processLogin();
+        if ($user = $this->_storageSession->getData('user')) {
+            $secretCode = $user->getMpTfaSecret();
+            try {
+                $checkResult = $this->_googleAuthenticator->verifyCode($secretCode, $authCode, 1);
+                if ($checkResult) {
+                    $this->_storageSession->setData(HelperData::MP_GOOGLE_AUTH, true);
 
-                $this->_eventManager->dispatch(
-                    'backend_auth_user_login_success',
-                    ['user' => $user]
-                );
+                    /** perform login */
+                    $this->_auth->getAuthStorage()->setUser($user);
+                    $this->_auth->getAuthStorage()->processLogin();
 
-                /** security auth */
-                $this->_sessionsManager->processLogin();
-                if ($this->_sessionsManager->getCurrentSession()->isOtherSessionsTerminated()) {
-                    $this->messageManager->addWarning(__('All other open sessions for this account were terminated.'));
+                    $this->_eventManager->dispatch(
+                        'mageplaza_tfa_backend_auth_user_login_success',
+                        ['user' => $user, 'mp_is_trusted' => $isTrusted]
+                    );
+
+                    /** security auth */
+                    $this->_sessionsManager->processLogin();
+                    if ($this->_sessionsManager->getCurrentSession()->isOtherSessionsTerminated()) {
+                        $this->messageManager->addWarning(__('All other open sessions for this account were terminated.'));
+                    }
+
+                    return $this->_getRedirect($this->_backendUrl->getStartupPageUrl());
+                } else {
+                    $this->_storageSession->setData(HelperData::MP_GOOGLE_AUTH, false);
+                    $this->messageManager->addError(__('Invalid key.'));
+
+                    return $this->_getRedirect('mptwofactorauth/google/authindex');
                 }
-
-                return $this->_getRedirect($this->_backendUrl->getStartupPageUrl());
-            } else {
-                $this->_storageSession->setData(HelperData::MP_GOOGLE_AUTH, false);
-                $this->messageManager->addError(__('Invalid key.'));
+            } catch (\Exception $e) {
+                $this->messageManager->addError($e->getMessage());
 
                 return $this->_getRedirect('mptwofactorauth/google/authindex');
             }
-        } catch (\Exception $e) {
-            $this->messageManager->addError($e->getMessage());
-
-            return $this->_getRedirect('mptwofactorauth/google/authindex');
         }
     }
 

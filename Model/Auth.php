@@ -21,6 +21,8 @@
 
 namespace Mageplaza\TwoFactorAuth\Model;
 
+use Source\UserAgentParser;
+use Magento\Framework\HTTP\PhpEnvironment\RemoteAddress;
 use Magento\Framework\Exception\Plugin\AuthenticationException as PluginAuthenticationException;
 use Magento\Framework\Event\ManagerInterface;
 use Magento\Backend\Helper\Data;
@@ -28,6 +30,7 @@ use Magento\Backend\Model\Auth\StorageInterface;
 use Magento\Backend\Model\Auth\Credential\StorageInterface as CredentialStorageInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Data\Collection\ModelFactory;
+use Magento\Framework\Stdlib\DateTime\DateTime;
 use Mageplaza\TwoFactorAuth\Helper\Data as HelperData;
 
 /**
@@ -36,9 +39,29 @@ use Mageplaza\TwoFactorAuth\Helper\Data as HelperData;
 class Auth extends \Magento\Backend\Model\Auth
 {
     /**
+     * @var UserAgentParser
+     */
+    protected $_userAgentParser;
+
+    /**
+     * @var RemoteAddress
+     */
+    protected $_remoteAddress;
+
+    /**
+     * @var DateTime
+     */
+    protected $_dateTime;
+
+    /**
      * @var HelperData
      */
     protected $_helperData;
+
+    /**
+     * @var \Mageplaza\TwoFactorAuth\Model\TrustedFactory
+     */
+    protected $_trustedFactory;
 
     /**
      * Auth constructor.
@@ -49,7 +72,11 @@ class Auth extends \Magento\Backend\Model\Auth
      * @param CredentialStorageInterface $credentialStorage
      * @param ScopeConfigInterface $coreConfig
      * @param ModelFactory $modelFactory
+     * @param RemoteAddress $remoteAddress
+     * @param UserAgentParser $userAgentParser
+     * @param DateTime $dateTime
      * @param HelperData $helperData
+     * @param TrustedFactory $trustedFactory
      */
     public function __construct(
         ManagerInterface $eventManager,
@@ -58,10 +85,18 @@ class Auth extends \Magento\Backend\Model\Auth
         CredentialStorageInterface $credentialStorage,
         ScopeConfigInterface $coreConfig,
         ModelFactory $modelFactory,
-        HelperData $helperData
+        RemoteAddress $remoteAddress,
+        UserAgentParser $userAgentParser,
+        DateTime $dateTime,
+        HelperData $helperData,
+        TrustedFactory $trustedFactory
     )
     {
+        $this->_userAgentParser = $userAgentParser;
+        $this->_remoteAddress   = $remoteAddress;
+        $this->_dateTime = $dateTime;
         $this->_helperData = $helperData;
+        $this->_trustedFactory = $trustedFactory;
 
         parent::__construct($eventManager, $backendData, $authStorage, $credentialStorage, $coreConfig, $modelFactory);
     }
@@ -84,13 +119,23 @@ class Auth extends \Magento\Backend\Model\Auth
             $this->_initCredentialStorage();
             $this->getCredentialStorage()->login($username, $password);
             if ($this->getCredentialStorage()->getId()) {
+                /** @var \Mageplaza\TwoFactorAuth\Model\Trusted $trusted */
+                $trusted = $this->_trustedFactory->create();
+                $userAgent  = $this->_userAgentParser->parse_user_agent();
+                $deviceName = $userAgent['platform'] . '-' . $userAgent['browser'] . '-' . $userAgent['version'];
+                $existTrusted = $trusted->getResource()->getExistTrusted(
+                    $this->getCredentialStorage()->getId(),
+                    $deviceName,
+                    $this->_remoteAddress->getRemoteAddress());
                 if ($this->_helperData->isEnabled()
-                    && $this->getCredentialStorage()->getMpTfaStatus()) {
+                    && $this->getCredentialStorage()->getMpTfaStatus()
+                    && !$existTrusted) {
                     $this->_eventManager->dispatch(
-                        'backend_auth_user_before_login_success',
+                        'mageplaza_tfa_backend_auth_user_before_login_success',
                         ['user' => $this->getCredentialStorage()]
                     );
                 } else {
+                    $trusted->load($existTrusted)->setLastLogin($this->_dateTime->date())->save();
                     $this->getAuthStorage()->setUser($this->getCredentialStorage());
                     $this->getAuthStorage()->processLogin();
 

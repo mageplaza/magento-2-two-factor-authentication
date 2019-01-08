@@ -38,4 +38,6 @@ class Collection extends AbstractCollection
     {
         $this->_init('Mageplaza\TwoFactorAuth\Model\Trusted', 'Mageplaza\TwoFactorAuth\Model\ResourceModel\Trusted');
     }
+
+
 }
