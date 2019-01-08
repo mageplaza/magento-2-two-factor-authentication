@@ -18,7 +18,7 @@
  * @license     https://www.mageplaza.com/LICENSE.txt
  */
 
-#user_mp_tfa_register, #user_mp_tfa_disable {
+#mp_tfa_register, #mp_tfa_disable {
     width: 36%;
     float: left;
 }
@@ -37,8 +37,8 @@
     height: auto;
 }
 
-#user_mp_tfa_trust_device {
-    margin-left: 30px;
+#mp_tfa_trust_device {
+    margin-left: 16%;
 }
 
 .mp-tfa-trusted-devices table {

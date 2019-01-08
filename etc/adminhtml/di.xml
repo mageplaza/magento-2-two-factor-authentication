@@ -22,10 +22,11 @@
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
-    <type name="Magento\User\Block\User\Edit\Tab\Main">
+    <type name="Magento\Backend\Block\System\Account\Edit\Form">
         <plugin name="mp-twofactorauth-user-edit"
-                type="Mageplaza\TwoFactorAuth\Plugin\Block\Adminhtml\User\Edit\Tab\Main" sortOrder="10"/>
+                type="Mageplaza\TwoFactorAuth\Plugin\Adminhtml\Block\System\Account\Edit\Form" sortOrder="20"/>
     </type>
+    <preference for="Magento\Backend\Controller\Adminhtml\System\Account\Save" type="Mageplaza\TwoFactorAuth\Controller\Adminhtml\System\Account\Save"/>
     <preference for="Magento\Backend\Model\Auth" type="Mageplaza\TwoFactorAuth\Model\Auth"/>
     <preference for="Magento\Backend\App\Action\Plugin\Authentication"
                 type="Mageplaza\TwoFactorAuth\App\Action\Plugin\Authentication"/>

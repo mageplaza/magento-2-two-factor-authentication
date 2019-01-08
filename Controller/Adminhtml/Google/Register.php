@@ -61,6 +61,7 @@ class Register extends Action
         $data         = $this->getRequest()->getParams();
         $inputOneCode = $data['confirm_code'];
         $secretCode   = $data['secret_code'];
+
         try {
             $checkResult = $this->_googleAuthenticator->verifyCode($secretCode, $inputOneCode, 1);
             if ($checkResult) {

@@ -88,7 +88,7 @@ class QrCode extends AbstractElement
     public function getElementHtml()
     {
         /** @var $model \Magento\User\Model\User */
-        $model       = $this->_coreRegistry->registry('permissions_user');
+        $model       = $this->_coreRegistry->registry('mp_permissions_user');
         $secret      = $this->getValue();
         $userEmail   = $model->getEmail();
         $storeUrl    = $this->_storeManager->getStore()->getBaseUrl();

@@ -22,11 +22,13 @@
 namespace Mageplaza\TwoFactorAuth\Controller\Adminhtml\Google;
 
 use PHPGangsta\GoogleAuthenticator;
+use Magento\Framework\HTTP\PhpEnvironment\RemoteAddress;
 use Magento\Framework\Session\SessionManager;
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
 use Magento\Security\Model\AdminSessionsManager;
 use Mageplaza\TwoFactorAuth\Helper\Data as HelperData;
+use Mageplaza\TwoFactorAuth\Model\TrustedFactory;
 
 /**
  * Class AuthPost
@@ -47,7 +49,17 @@ class AuthPost extends Action
     /**
      * @var AdminSessionsManager
      */
-    protected $sessionsManager;
+    protected $_sessionsManager;
+
+    /**
+     * @var RemoteAddress
+     */
+    protected $_remoteAddress;
+
+    /**
+     * @var TrustedFactory
+     */
+    protected $_trustedFactory;
 
     /**
      * AuthPost constructor.
@@ -56,17 +68,23 @@ class AuthPost extends Action
      * @param GoogleAuthenticator $googleAuthenticator
      * @param SessionManager $storageSession
      * @param AdminSessionsManager $sessionsManager
+     * @param RemoteAddress $remoteAddress
+     * @param TrustedFactory $trustedFactory
      */
     public function __construct(
         Context $context,
         GoogleAuthenticator $googleAuthenticator,
         SessionManager $storageSession,
-        AdminSessionsManager $sessionsManager
+        AdminSessionsManager $sessionsManager,
+        RemoteAddress $remoteAddress,
+        TrustedFactory $trustedFactory
     )
     {
         $this->_googleAuthenticator = $googleAuthenticator;
         $this->_storageSession      = $storageSession;
-        $this->sessionsManager      = $sessionsManager;
+        $this->_sessionsManager     = $sessionsManager;
+        $this->_remoteAddress       = $remoteAddress;
+        $this->_trustedFactory = $trustedFactory;
 
         parent::__construct($context);
     }
@@ -94,8 +112,8 @@ class AuthPost extends Action
                 );
 
                 /** security auth */
-                $this->sessionsManager->processLogin();
-                if ($this->sessionsManager->getCurrentSession()->isOtherSessionsTerminated()) {
+                $this->_sessionsManager->processLogin();
+                if ($this->_sessionsManager->getCurrentSession()->isOtherSessionsTerminated()) {
                     $this->messageManager->addWarning(__('All other open sessions for this account were terminated.'));
                 }
 

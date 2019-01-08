@@ -43,11 +43,6 @@
             <div class="actions">
                 <button class="action-retrieve action-primary" type="submit"><span><?php /* @escapeNotVerified */ echo __('Verify code'); ?></span></button>
             </div>
-            <div class="links">
-                <a class="action-back" href="<?php /* @escapeNotVerified */ echo $block->getUrl('adminhtml/auth/logout', ['form_key' => $block->getFormKey()]); ?>">
-                    <?php /* @escapeNotVerified */ echo __('Login with other user'); ?>
-                </a>
-            </div>
         </div>
     </fieldset>
 </form>
