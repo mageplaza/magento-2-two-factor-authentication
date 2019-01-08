@@ -44,7 +44,7 @@
                 </field>
                 <field id="trust_time" translate="label comment" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Trusted Time</label>
-                    <validate>validate-number</validate>
+                    <validate>validate-greater-than-zero validate-digits</validate>
                     <comment><![CDATA[day(s)]]></comment>
                     <depends>
                         <field id="trust_device">1</field>

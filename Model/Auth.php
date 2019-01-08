@@ -64,6 +64,11 @@ class Auth extends \Magento\Backend\Model\Auth
     protected $_trustedFactory;
 
     /**
+     * @var bool
+     */
+    protected $_isTrusted = false;
+
+    /**
      * Auth constructor.
      *
      * @param ManagerInterface $eventManager
@@ -94,9 +99,9 @@ class Auth extends \Magento\Backend\Model\Auth
     {
         $this->_userAgentParser = $userAgentParser;
         $this->_remoteAddress   = $remoteAddress;
-        $this->_dateTime = $dateTime;
-        $this->_helperData = $helperData;
-        $this->_trustedFactory = $trustedFactory;
+        $this->_dateTime        = $dateTime;
+        $this->_helperData      = $helperData;
+        $this->_trustedFactory  = $trustedFactory;
 
         parent::__construct($eventManager, $backendData, $authStorage, $credentialStorage, $coreConfig, $modelFactory);
     }
@@ -106,7 +111,8 @@ class Auth extends \Magento\Backend\Model\Auth
      *
      * @param string $username
      * @param string $password
-     * @return void
+     * @throws PluginAuthenticationException
+     * @throws \Exception
      * @throws \Magento\Framework\Exception\AuthenticationException
      */
     public function login($username, $password)
@@ -120,22 +126,36 @@ class Auth extends \Magento\Backend\Model\Auth
             $this->getCredentialStorage()->login($username, $password);
             if ($this->getCredentialStorage()->getId()) {
                 /** @var \Mageplaza\TwoFactorAuth\Model\Trusted $trusted */
-                $trusted = $this->_trustedFactory->create();
+                $trusted    = $this->_trustedFactory->create();
                 $userAgent  = $this->_userAgentParser->parse_user_agent();
                 $deviceName = $userAgent['platform'] . '-' . $userAgent['browser'] . '-' . $userAgent['version'];
-                $existTrusted = $trusted->getResource()->getExistTrusted(
+
+                if ($existTrusted = $trusted->getResource()->getExistTrusted(
                     $this->getCredentialStorage()->getId(),
                     $deviceName,
-                    $this->_remoteAddress->getRemoteAddress());
+                    $this->_remoteAddress->getRemoteAddress())) {
+                    $currentDevice         = $trusted->load($existTrusted);
+                    $currentDeviceCreateAt = new \DateTime($currentDevice->getCreatedAt(), new \DateTimeZone('UTC'));
+                    $currentDateObj        = new \DateTime($this->_dateTime->date(), new \DateTimeZone('UTC'));
+                    $dateDiff              = date_diff($currentDateObj, $currentDeviceCreateAt);
+                    $dateDiff              = (int) $dateDiff->format('%d');
+                    if ($dateDiff > (int) $this->_helperData->getConfigGeneral('trust_time')) {
+                        $currentDevice->delete();
+                    }else{
+                        $currentDevice->setLastLogin($this->_dateTime->date())->save();
+                        $this->_isTrusted = true;
+                    }
+                }
+                /** verify auth code */
                 if ($this->_helperData->isEnabled()
                     && $this->getCredentialStorage()->getMpTfaStatus()
-                    && !$existTrusted) {
+                    && !$this->_isTrusted) {
                     $this->_eventManager->dispatch(
                         'mageplaza_tfa_backend_auth_user_before_login_success',
                         ['user' => $this->getCredentialStorage()]
                     );
+                    /** login process  */
                 } else {
-                    $trusted->load($existTrusted)->setLastLogin($this->_dateTime->date())->save();
                     $this->getAuthStorage()->setUser($this->getCredentialStorage());
                     $this->getAuthStorage()->processLogin();
 
