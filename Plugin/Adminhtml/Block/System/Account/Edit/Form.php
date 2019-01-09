@@ -27,6 +27,7 @@ use Magento\Framework\View\LayoutInterface;
 use Magento\Backend\Model\Auth\Session;
 use Magento\User\Model\UserFactory;
 use PHPGangsta\GoogleAuthenticator;
+use Mageplaza\TwoFactorAuth\Helper\Data as HelperData;
 
 /**
  * Class Form
@@ -65,6 +66,11 @@ class Form
     protected $_googleAuthenticator;
 
     /**
+     * @var HelperData
+     */
+    protected $_helperData;
+
+    /**
      * Form constructor.
      *
      * @param Enabledisable $enableDisable
@@ -73,6 +79,7 @@ class Form
      * @param Session $authSession
      * @param UserFactory $userFactory
      * @param GoogleAuthenticator $googleAuthenticator
+     * @param HelperData $helperData
      */
     public function __construct(
         Enabledisable $enableDisable,
@@ -80,7 +87,8 @@ class Form
         LayoutInterface $layout,
         Session $authSession,
         UserFactory $userFactory,
-        GoogleAuthenticator $googleAuthenticator
+        GoogleAuthenticator $googleAuthenticator,
+        HelperData $helperData
     )
     {
         $this->_enableDisable       = $enableDisable;
@@ -89,6 +97,7 @@ class Form
         $this->_authSession         = $authSession;
         $this->_userFactory         = $userFactory;
         $this->_googleAuthenticator = $googleAuthenticator;
+        $this->_helperData          = $helperData;
     }
 
     /**
@@ -109,7 +118,7 @@ class Form
         $this->_coreRegistry->register('mp_permissions_user', $user);
 
         $secret = ($user->getMpTfaSecret()) ?: $this->_googleAuthenticator->createSecret();
-        if (is_object($form)) {
+        if (is_object($form) && $this->_helperData->isEnabled()) {
             $mpTfaFieldset = $form->addFieldset('mp_tfa_security', ['legend' => __('Security')]);
             $mpTfaFieldset->addField(
                 'mp_tfa_enable',
@@ -127,8 +136,7 @@ class Form
             }
 
             $mpTfaFieldset->addField('mp_tfa_secret_temp', '\Mageplaza\TwoFactorAuth\Block\Adminhtml\User\Edit\Tab\Renderer\QrCode', [
-                'name' => 'mp_tfa_secret_temp',
-                'label' => __(''),
+                'name'  => 'mp_tfa_secret_temp'
             ]);
             $mpTfaFieldset->addField('mp_tfa_secret_temp_hidden', 'hidden', ['name' => 'mp_tfa_secret_temp_hidden']);
             $mpTfaFieldset->addField('mp_tfa_secret', 'hidden', ['name' => 'mp_tfa_secret']);
@@ -139,14 +147,12 @@ class Form
                 'title' => __('Confirmation Code')
             ]);
             $mpTfaFieldset->addField('mp_tfa_register', '\Mageplaza\TwoFactorAuth\Block\Adminhtml\User\Edit\Tab\Renderer\RegisterButton', [
-                'name' => 'mp_tfa_register',
-                'label' => __('')
+                'name'  => 'mp_tfa_register'
             ]);
 
 
             $mpTfaFieldset->addField('mp_tfa_disable', '\Mageplaza\TwoFactorAuth\Block\Adminhtml\User\Edit\Tab\Renderer\DisableButton', [
-                'name' => 'mp_tfa_disable',
-                'label' => __('')
+                'name'  => 'mp_tfa_disable'
             ]);
             $mpTfaChildFieldset = $mpTfaFieldset->addFieldset('mp_tfa_trust_device', ['legend' => __('Trusted Devices')]);
             $mpTfaChildFieldset->addField('mp_tfa_trusted_device', 'label', [

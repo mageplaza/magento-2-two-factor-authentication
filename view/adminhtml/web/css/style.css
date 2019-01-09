@@ -63,13 +63,20 @@
     padding: 7px 20px;
     font-weight: 700;
 }
-.field-auth-code{
+
+.field-auth-code {
     margin-bottom: 1rem !important;
 }
-.field-trust-device{
+
+.field-trust-device {
     margin-bottom: 15px;
 }
-#trust-device{
+
+.field-mp_tfa_disable .admin__field-control, .field-mp_tfa_secret_temp .admin__field-control, .field-mp_tfa_register .admin__field-control {
+    margin-left: calc((100%) * .25 + 30px) !important;
+}
+
+#trust-device {
     float: left;
     margin: 5px 5px 0 0;
 }

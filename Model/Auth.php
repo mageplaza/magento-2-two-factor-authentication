@@ -131,9 +131,10 @@ class Auth extends \Magento\Backend\Model\Auth
                 $deviceName = $userAgent['platform'] . '-' . $userAgent['browser'] . '-' . $userAgent['version'];
 
                 if ($existTrusted = $trusted->getResource()->getExistTrusted(
-                    $this->getCredentialStorage()->getId(),
-                    $deviceName,
-                    $this->_remoteAddress->getRemoteAddress())) {
+                        $this->getCredentialStorage()->getId(),
+                        $deviceName,
+                        $this->_remoteAddress->getRemoteAddress())
+                    && $this->_helperData->getConfigGeneral('trust_device')) {
                     $currentDevice         = $trusted->load($existTrusted);
                     $currentDeviceCreateAt = new \DateTime($currentDevice->getCreatedAt(), new \DateTimeZone('UTC'));
                     $currentDateObj        = new \DateTime($this->_dateTime->date(), new \DateTimeZone('UTC'));
@@ -141,7 +142,7 @@ class Auth extends \Magento\Backend\Model\Auth
                     $dateDiff              = (int) $dateDiff->format('%d');
                     if ($dateDiff > (int) $this->_helperData->getConfigGeneral('trust_time')) {
                         $currentDevice->delete();
-                    }else{
+                    } else {
                         $currentDevice->setLastLogin($this->_dateTime->date())->save();
                         $this->_isTrusted = true;
                     }

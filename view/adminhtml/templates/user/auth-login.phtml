@@ -29,7 +29,7 @@
         <div class="admin__field _required field-auth-code">
             <label for="auth-code" class="admin__field-label"><span><?php /* @escapeNotVerified */ echo __('Authentication code'); ?></span></label>
             <div class="admin__field-control">
-                <input type="text" id="auth-code" name="auth-code" value="" data-validate="{required:true}" class="admin__control-text" />
+                <input type="text" id="auth-code" name="auth-code" value="" data-validate="{required:true}" class="admin__control-text" autofocus />
             </div>
         </div>
         <p class="admin__field-info"><?php /* @escapeNotVerified */ echo __('Enter the code from the two-factor app on your mobile device.'); ?></p>
