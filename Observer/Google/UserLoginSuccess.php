@@ -25,9 +25,6 @@ use Source\UserAgentParser;
 use Magento\Framework\HTTP\PhpEnvironment\RemoteAddress;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
-use Magento\Framework\UrlInterface;
-use Magento\Framework\App\Action\Action;
-use Magento\Framework\Session\SessionManager;
 use Magento\Framework\Stdlib\DateTime\DateTime;
 use Magento\Framework\Message\ManagerInterface;
 use Mageplaza\TwoFactorAuth\Model\TrustedFactory;
@@ -38,21 +35,6 @@ use Mageplaza\TwoFactorAuth\Model\TrustedFactory;
  */
 class UserLoginSuccess implements ObserverInterface
 {
-    /**
-     * @var UrlInterface
-     */
-    protected $_url;
-
-    /**
-     * @var Action
-     */
-    protected $_action;
-
-    /**
-     * @var SessionManager
-     */
-    protected $_storageSession;
-
     /**
      * @var RemoteAddress
      */
@@ -81,9 +63,6 @@ class UserLoginSuccess implements ObserverInterface
     /**
      * UserLoginSuccess constructor.
      *
-     * @param UrlInterface $url
-     * @param Action $action
-     * @param SessionManager $storageSession
      * @param RemoteAddress $remoteAddress
      * @param DateTime $dateTime
      * @param ManagerInterface $messageManager
@@ -91,9 +70,6 @@ class UserLoginSuccess implements ObserverInterface
      * @param TrustedFactory $trustedFactory
      */
     public function __construct(
-        UrlInterface $url,
-        Action $action,
-        SessionManager $storageSession,
         RemoteAddress $remoteAddress,
         DateTime $dateTime,
         ManagerInterface $messageManager,
@@ -101,9 +77,6 @@ class UserLoginSuccess implements ObserverInterface
         TrustedFactory $trustedFactory
     )
     {
-        $this->_url             = $url;
-        $this->_action          = $action;
-        $this->_storageSession  = $storageSession;
         $this->_remoteAddress   = $remoteAddress;
         $this->_dateTime        = $dateTime;
         $this->_messageManager  = $messageManager;
