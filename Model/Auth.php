@@ -29,8 +29,13 @@ use Magento\Backend\Helper\Data;
 use Magento\Backend\Model\Auth\StorageInterface;
 use Magento\Backend\Model\Auth\Credential\StorageInterface as CredentialStorageInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\App\ResponseInterface;
+use Magento\Framework\App\ActionFlag;
+use Magento\Framework\Session\SessionManager;
+use Magento\Framework\App\Action\Action;
 use Magento\Framework\Data\Collection\ModelFactory;
 use Magento\Framework\Stdlib\DateTime\DateTime;
+use Magento\Framework\UrlInterface;
 use Mageplaza\TwoFactorAuth\Helper\Data as HelperData;
 
 /**
@@ -52,6 +57,28 @@ class Auth extends \Magento\Backend\Model\Auth
      * @var DateTime
      */
     protected $_dateTime;
+
+    /**
+     * @var UrlInterface
+     */
+    protected $_url;
+
+    /**
+     * @var ResponseInterface
+     */
+    protected $_response;
+
+    /**
+     * @var SessionManager
+     */
+    protected $_storageSession;
+
+    /**
+     * Action flag
+     *
+     * @var \Magento\Framework\App\ActionFlag
+     */
+    protected $actionFlag;
 
     /**
      * @var HelperData
@@ -80,6 +107,10 @@ class Auth extends \Magento\Backend\Model\Auth
      * @param RemoteAddress $remoteAddress
      * @param UserAgentParser $userAgentParser
      * @param DateTime $dateTime
+     * @param UrlInterface $url
+     * @param ResponseInterface $response
+     * @param SessionManager $storageSession
+     * @param ActionFlag $actionFlag
      * @param HelperData $helperData
      * @param TrustedFactory $trustedFactory
      */
@@ -93,15 +124,23 @@ class Auth extends \Magento\Backend\Model\Auth
         RemoteAddress $remoteAddress,
         UserAgentParser $userAgentParser,
         DateTime $dateTime,
+        UrlInterface $url,
+        ResponseInterface $response,
+        SessionManager $storageSession,
+        ActionFlag $actionFlag,
         HelperData $helperData,
         TrustedFactory $trustedFactory
     )
     {
         $this->_userAgentParser = $userAgentParser;
-        $this->_remoteAddress   = $remoteAddress;
-        $this->_dateTime        = $dateTime;
-        $this->_helperData      = $helperData;
-        $this->_trustedFactory  = $trustedFactory;
+        $this->_remoteAddress = $remoteAddress;
+        $this->_dateTime = $dateTime;
+        $this->_url = $url;
+        $this->_response = $response;
+        $this->_storageSession = $storageSession;
+        $this->actionFlag = $actionFlag;
+        $this->_helperData = $helperData;
+        $this->_trustedFactory = $trustedFactory;
 
         parent::__construct($eventManager, $backendData, $authStorage, $credentialStorage, $coreConfig, $modelFactory);
     }
@@ -126,21 +165,21 @@ class Auth extends \Magento\Backend\Model\Auth
             $this->getCredentialStorage()->login($username, $password);
             if ($this->getCredentialStorage()->getId()) {
                 /** @var \Mageplaza\TwoFactorAuth\Model\Trusted $trusted */
-                $trusted      = $this->_trustedFactory->create();
-                $userAgent    = $this->_userAgentParser->parse_user_agent();
-                $deviceName   = $userAgent['platform'] . '-' . $userAgent['browser'] . '-' . $userAgent['version'];
+                $trusted = $this->_trustedFactory->create();
+                $userAgent = $this->_userAgentParser->parse_user_agent();
+                $deviceName = $userAgent['platform'] . '-' . $userAgent['browser'] . '-' . $userAgent['version'];
                 $existTrusted = $trusted->getResource()->getExistTrusted(
                     $this->getCredentialStorage()->getId(),
                     $deviceName,
                     $this->_remoteAddress->getRemoteAddress());
                 if ($existTrusted
                     && $this->_helperData->getConfigGeneral('trust_device')) {
-                    $currentDevice         = $trusted->load($existTrusted);
+                    $currentDevice = $trusted->load($existTrusted);
                     $currentDeviceCreateAt = new \DateTime($currentDevice->getCreatedAt(), new \DateTimeZone('UTC'));
-                    $currentDateObj        = new \DateTime($this->_dateTime->date(), new \DateTimeZone('UTC'));
-                    $dateDiff              = date_diff($currentDateObj, $currentDeviceCreateAt);
-                    $dateDiff              = (int) $dateDiff->format('%d');
-                    if ($dateDiff > (int) $this->_helperData->getConfigGeneral('trust_time')) {
+                    $currentDateObj = new \DateTime($this->_dateTime->date(), new \DateTimeZone('UTC'));
+                    $dateDiff = date_diff($currentDateObj, $currentDeviceCreateAt);
+                    $dateDiff = (int)$dateDiff->format('%d');
+                    if ($dateDiff > (int)$this->_helperData->getConfigGeneral('trust_time')) {
                         $currentDevice->delete();
                     } else {
                         $currentDevice->setLastLogin($this->_dateTime->date())->save();
@@ -151,10 +190,11 @@ class Auth extends \Magento\Backend\Model\Auth
                 if ($this->_helperData->isEnabled()
                     && $this->getCredentialStorage()->getMpTfaStatus()
                     && !$this->_isTrusted) {
-                    $this->_eventManager->dispatch(
-                        'mageplaza_tfa_backend_auth_user_before_login_success',
-                        ['user' => $this->getCredentialStorage()]
-                    );
+                    $user = $this->getCredentialStorage();
+                    $this->actionFlag->set('', Action::FLAG_NO_DISPATCH, true);
+                    $this->_storageSession->setData('user', $user);
+                    $url = $this->_url->getUrl('mptwofactorauth/google/authindex');
+                    $this->_response->setRedirect($url);
                     /** login process  */
                 } else {
                     $this->getAuthStorage()->setUser($this->getCredentialStorage());

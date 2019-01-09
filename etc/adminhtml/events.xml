@@ -26,10 +26,6 @@
         <observer name="mp_twofactorauth_admin_action_predispatch"
                   instance="Mageplaza\TwoFactorAuth\Observer\Google\ControllerActionPredispatch"/>
     </event>
-    <event name="mageplaza_tfa_backend_auth_user_before_login_success">
-        <observer name="mp_twofactorauth_before_login_success"
-                  instance="Mageplaza\TwoFactorAuth\Observer\Google\BeforeLoginProcess"/>
-    </event>
     <event name="mageplaza_tfa_backend_auth_user_login_success">
         <observer name="mp_twofactorauth_login_success"
                   instance="Mageplaza\TwoFactorAuth\Observer\Google\UserLoginSuccess"/>
