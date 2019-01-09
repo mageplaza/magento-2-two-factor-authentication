@@ -124,23 +124,25 @@ class ControllerActionPredispatch implements ObserverInterface
         $user                    = $this->getUser();
         $allowForce2faActionList = [
             'adminhtml_system_account_index',
-            'adminhtml_auth_logout',
             'adminhtml_system_account_save',
-            'mptwofactorauth_google_register'
+            'adminhtml_auth_logout',
+            'mptwofactorauth_google_register',
+            'mui_index_render'
         ];
         /** @var \Magento\Framework\App\Action\Action $controller */
         $controller = $observer->getEvent()->getControllerAction();
         /** @var \Magento\Framework\App\RequestInterface $request */
         $request = $observer->getEvent()->getRequest();
-
+//        \Zend_Debug::dump($request->getFullActionName());die;
         if ($user
             && $this->_helperData->getConfigGeneral('force_2fa')
             && !$user->getMpTfaStatus()
             && !in_array($request->getFullActionName(), $allowForce2faActionList)) {
-            $this->actionFlag->set('', Action::FLAG_NO_DISPATCH, true);
-            $url = $this->url->getUrl('adminhtml/system_account/index');
+
             $this->_messageManager->addError(__('Force 2FA is enabled, please must register the 2FA authentication.'));
-            $controller->getResponse()->setRedirect($url);
+            $controller->getResponse()->setRedirect($this->url->getUrl('adminhtml/system_account/'));
+            $this->actionFlag->set('', \Magento\Framework\App\Action\Action::FLAG_NO_DISPATCH, true);
+            $this->actionFlag->set('', \Magento\Framework\App\Action\Action::FLAG_NO_POST_DISPATCH, true);
         }
     }
 }
