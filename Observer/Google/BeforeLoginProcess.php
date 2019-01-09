@@ -24,8 +24,8 @@ namespace Mageplaza\TwoFactorAuth\Observer\Google;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\UrlInterface;
-use Magento\Framework\App\Action\Action;
 use Magento\Framework\Session\SessionManager;
+use Magento\Framework\App\ResponseInterface;
 
 /**
  * Class BeforeLoginProcess
@@ -39,9 +39,9 @@ class BeforeLoginProcess implements ObserverInterface
     protected $_url;
 
     /**
-     * @var Action
+     * @var ResponseInterface
      */
-    protected $_action;
+    protected $_response;
 
     /**
      * @var SessionManager
@@ -52,17 +52,17 @@ class BeforeLoginProcess implements ObserverInterface
      * BeforeLoginProcess constructor.
      *
      * @param UrlInterface $url
-     * @param Action $action
+     * @param ResponseInterface $response
      * @param SessionManager $storageSession
      */
     public function __construct(
         UrlInterface $url,
-        Action $action,
+        ResponseInterface $response,
         SessionManager $storageSession
     )
     {
-        $this->_url            = $url;
-        $this->_action         = $action;
+        $this->_url = $url;
+        $this->_response = $response;
         $this->_storageSession = $storageSession;
     }
 
@@ -75,7 +75,7 @@ class BeforeLoginProcess implements ObserverInterface
         if ($user) {
             $this->_storageSession->setData('user', $user);
             $url = $this->_url->getUrl('mptwofactorauth/google/authindex');
-            $this->_action->getResponse()->setRedirect($url);
+            $this->_response->setRedirect($url);
         }
     }
 }
