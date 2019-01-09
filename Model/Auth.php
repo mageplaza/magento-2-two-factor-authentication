@@ -126,14 +126,14 @@ class Auth extends \Magento\Backend\Model\Auth
             $this->getCredentialStorage()->login($username, $password);
             if ($this->getCredentialStorage()->getId()) {
                 /** @var \Mageplaza\TwoFactorAuth\Model\Trusted $trusted */
-                $trusted    = $this->_trustedFactory->create();
-                $userAgent  = $this->_userAgentParser->parse_user_agent();
-                $deviceName = $userAgent['platform'] . '-' . $userAgent['browser'] . '-' . $userAgent['version'];
-
-                if ($existTrusted = $trusted->getResource()->getExistTrusted(
-                        $this->getCredentialStorage()->getId(),
-                        $deviceName,
-                        $this->_remoteAddress->getRemoteAddress())
+                $trusted      = $this->_trustedFactory->create();
+                $userAgent    = $this->_userAgentParser->parse_user_agent();
+                $deviceName   = $userAgent['platform'] . '-' . $userAgent['browser'] . '-' . $userAgent['version'];
+                $existTrusted = $trusted->getResource()->getExistTrusted(
+                    $this->getCredentialStorage()->getId(),
+                    $deviceName,
+                    $this->_remoteAddress->getRemoteAddress());
+                if ($existTrusted
                     && $this->_helperData->getConfigGeneral('trust_device')) {
                     $currentDevice         = $trusted->load($existTrusted);
                     $currentDeviceCreateAt = new \DateTime($currentDevice->getCreatedAt(), new \DateTimeZone('UTC'));

@@ -90,7 +90,7 @@ class AuthPost extends Action
     }
 
     /**
-     * @return \Magento\Backend\Model\View\Result\Redirect
+     * @return \Magento\Backend\Model\View\Result\Redirect|\Magento\Framework\App\ResponseInterface|\Magento\Framework\Controller\ResultInterface
      */
     public function execute()
     {
@@ -133,6 +133,8 @@ class AuthPost extends Action
                 return $this->_getRedirect('mptwofactorauth/google/authindex');
             }
         }
+
+        return $this->_getRedirect('mptwofactorauth/google/authindex');
     }
 
     /**

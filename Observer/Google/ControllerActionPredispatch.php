@@ -26,9 +26,9 @@ use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\ActionFlag;
 use Magento\Framework\Message\ManagerInterface;
+use Magento\Framework\Session\SessionManager;
 use Magento\Backend\Model\UrlInterface;
 use Magento\Backend\Model\Auth\Session as AuthSession;
-use Magento\Framework\Session\SessionManager;
 use Mageplaza\TwoFactorAuth\Helper\Data as HelperData;
 
 /**
@@ -121,7 +121,7 @@ class ControllerActionPredispatch implements ObserverInterface
             return;
         }
 
-        $user       = $this->getUser();
+        $user                    = $this->getUser();
         $allowForce2faActionList = [
             'adminhtml_system_account_index',
             'adminhtml_auth_logout',
