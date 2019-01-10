@@ -138,7 +138,7 @@ class ControllerActionPredispatch implements ObserverInterface
             && $this->_helperData->getForceTfaConfig()
             && !$user->getMpTfaStatus()
             && !in_array($request->getFullActionName(), $allowForce2faActionList)) {
-            $this->_messageManager->addError(__('Force 2FA is enabled, please must register the 2FA authentication.'));
+            $this->_messageManager->addError(__('Forced 2FA is enabled, so please register the 2FA authentication.'));
             $controller->getResponse()->setRedirect($this->url->getUrl('adminhtml/system_account/'));
             $this->actionFlag->set('', Action::FLAG_NO_DISPATCH, true);
             $this->actionFlag->set('', Action::FLAG_NO_POST_DISPATCH, true);

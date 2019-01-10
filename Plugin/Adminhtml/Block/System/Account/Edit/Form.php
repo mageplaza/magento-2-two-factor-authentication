@@ -128,7 +128,7 @@ class Form
                     'label'  => __('Enable 2FA'),
                     'title'  => __('Enable 2FA'),
                     'values' => $this->_enableDisable->toOptionArray(),
-                    'note'   => 'Please use your authentication app (such as Authy, Duo or Google Authenticator) to scan this QR code.'
+                    'note'   => 'Please download the authentication app (such as Authy, Google Authentication) to scan this QR code.'
                 ]
             );
             if (!$user->hasData('mp_tfa_enable')) {
@@ -144,7 +144,8 @@ class Form
             $mpTfaFieldset->addField('mp_tfa_one_code', 'text', [
                 'name'  => 'mp_tfa_one_code',
                 'label' => __('Confirmation Code'),
-                'title' => __('Confirmation Code')
+                'title' => __('Confirmation Code'),
+                'note'   => 'Use the code provided by your authentication app.'
             ]);
             $mpTfaFieldset->addField('mp_tfa_register', '\Mageplaza\TwoFactorAuth\Block\Adminhtml\User\Edit\Tab\Renderer\RegisterButton', [
                 'name' => 'mp_tfa_register'

@@ -34,18 +34,19 @@
                     <comment><![CDATA[Select <b>Yes</b> to enable this module.]]></comment>
                 </field>
                 <field id="force_2fa" translate="label comment" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Force Using 2FA</label>
+                    <label>Force to Use 2FA</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                    <comment><![CDATA[If <b>yes</b>, all user will be required to register 2FA.]]></comment>
+                    <comment><![CDATA[If <b>Yes</b>, all admin accounts are required to register 2FA.]]></comment>
                 </field>
                 <field id="trust_device" translate="label comment" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Enable Trusted Device</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[Trusted device will not be required second-factor authentication within specific trusted time.]]></comment>
                 </field>
                 <field id="trust_time" translate="label comment" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Trusted Time</label>
                     <validate>validate-greater-than-zero validate-digits</validate>
-                    <comment><![CDATA[day(s)]]></comment>
+                    <comment><![CDATA[Set trusted time by days.]]></comment>
                     <depends>
                         <field id="trust_device">1</field>
                     </depends>

@@ -83,7 +83,7 @@
                         registerField.hide();
                         tfaEnableField.hide();
                         disableBtn.removeClass('hidden');
-                        $('.field-mp_tfa_disable .mp-success-messages').html($t('You have been registered the TFA for this user, please save the user to finish the configuration'));
+                        $('.field-mp_tfa_disable .mp-success-messages').html($t('Two-factor authentication has been registered for this admin account successfully. Please save to finish this configuration.'));
                     } else if (result.status === 'error' && result.hasOwnProperty(error)) {
                         $('.field-mp_tfa_register .mp-error-messages').html(result.error);
                     }

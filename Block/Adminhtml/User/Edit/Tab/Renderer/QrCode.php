@@ -98,8 +98,8 @@ class QrCode extends AbstractElement
         $html        .= '<div class="mp-tfa-qrcode-img">';
         $html        .= '<img src="' . $qrCodeUrl . '" alt="' . __('Qr Code Image') . '" />';
         $html        .= '</div><div class="mp-tfa-qrcode-description mp-bg-light">';
-        $html        .= '<p>' . __("Can't scan the code?") . '<br>'
-            . __("To add the entry manually, provide the following details to the application on your phone.") . '<br>';
+        $html        .= '<p>' . __("Can not scan the code?") . '<br>'
+            . __("You can add the entry manually, please provide the following details to the application on your phone.") . '<br>';
         if ($userEmail) {
             $html .= __("Account: ") . $accountName . '<br>';
         }

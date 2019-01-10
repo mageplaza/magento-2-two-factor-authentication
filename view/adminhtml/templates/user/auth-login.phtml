@@ -32,11 +32,11 @@
                 <input type="text" id="auth-code" name="auth-code" value="" data-validate="{required:true}" class="admin__control-text" autofocus />
             </div>
         </div>
-        <p class="admin__field-info"><?php /* @escapeNotVerified */ echo __('Enter the code from the two-factor app on your mobile device.'); ?></p>
+        <p class="admin__field-info"><?php /* @escapeNotVerified */ echo __('Enter the code from the authentication app on your mobile phone.'); ?></p>
         <?php if ($block->enableTrustedDevice()): ?>
         <div class="field-trust-device">
             <input type="checkbox" id="trust-device" name="trust-device" value="1" />
-            <label for="trust-device"><span><?php /* @escapeNotVerified */ echo __('Trusted this device for %1 day(s)',$block->getTrustedLifetime()); ?></span></label>
+            <label for="trust-device"><span><?php /* @escapeNotVerified */ echo __('Trust this device within %1 day(s).',$block->getTrustedLifetime()); ?></span></label>
         </div>
         <?php endif; ?>
         <div class="form-actions">

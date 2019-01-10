@@ -83,10 +83,10 @@ class DisableButton extends AbstractElement
         $model        = $this->_coreRegistry->registry('mp_permissions_user');
         $isHidden     = ($model->getMpTfaStatus()) ? '' : 'hidden';
         $isDisabled   = ($this->_helperData->getConfigGeneral('force_2fa')) ? 'disabled' : '';
-        $isRegistered = ($model->getMpTfaStatus()) ? 'This user is registered' : '';
+        $isRegistered = ($model->getMpTfaStatus()) ? 'This admin account has already been registered.' : '';
         $html         = '';
         $html         .= '<button id="' . $this->getHtmlId() . '" type="button" ' . $isDisabled . ' class="' . $isHidden . '">';
-        $html         .= '<span>' . __('Disable two-factor authentication') . '</span>';
+        $html         .= '<span>' . __('Disable Two-Factor Authentication') . '</span>';
         $html         .= '</button>';
         $html         .= '<div class="mp-success-messages mp-success">' . $isRegistered . '</div>';
         $html         .= '<div class="mp-error-messages mp-danger"></div>';
