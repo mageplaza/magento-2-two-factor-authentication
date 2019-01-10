@@ -21,16 +21,16 @@
 ?>
 <script>
     require(['jquery', 'mage/translate'], function ($, $t) {
-        var tfa_enable = $('#user_mp_tfa_enable'),
-            registerBtn = $('#user_mp_tfa_register'),
-            disableBtn = $('#user_mp_tfa_disable'),
+        var tfa_enable = $('#mp_tfa_enable'),
+            registerBtn = $('#mp_tfa_register'),
+            disableBtn = $('#mp_tfa_disable'),
             tfaEnableField = $('.field-mp_tfa_enable'),
             oneCodeField = $('.field-mp_tfa_one_code'),
-            secretField = $('#user_mp_tfa_secret'),
-            tfaStatusField = $('#user_mp_tfa_status'),
+            secretField = $('#mp_tfa_secret'),
+            tfaStatusField = $('#mp_tfa_status'),
             secretFieldTemp = $('.field-mp_tfa_secret_temp'),
             registerField = $('.field-mp_tfa_register'),
-            trustFieldset = $('#user_mp_tfa_trust_device');
+            trustFieldset = $('#mp_tfa_trust_device');
 
         /** tfa field depend on enable/disable field */
         fieldDependence(tfa_enable);
@@ -60,9 +60,9 @@
 
         /** ajax register secret key */
         registerBtn.on('click', function () {
-            var confirmCode = $('#user_mp_tfa_one_code').val(),
-                secretCodeTemp = $('#user_mp_tfa_secret_temp_hidden').val(),
-                userId = $('#user_user_id').val();
+            var confirmCode = $('#mp_tfa_one_code').val(),
+                secretCodeTemp = $('#mp_tfa_secret_temp_hidden').val(),
+                userId = $('#user_id').val();
 
             $('body').loader('show');
             $.ajax({
@@ -83,7 +83,7 @@
                         registerField.hide();
                         tfaEnableField.hide();
                         disableBtn.removeClass('hidden');
-                        $('.field-mp_tfa_disable .mp-success-messages').html($t('You have been registered the TFA for this user, please save the user to finish the configuration'));
+                        $('.field-mp_tfa_disable .mp-success-messages').html($t('Two-factor authentication has been registered for this admin account successfully. Please save to finish this configuration.'));
                     } else if (result.status === 'error' && result.hasOwnProperty(error)) {
                         $('.field-mp_tfa_register .mp-error-messages').html(result.error);
                     }

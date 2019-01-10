@@ -44,9 +44,9 @@ class TrustedDevices extends Template
     /**
      * TrustedDevices constructor.
      *
-     * @param Context        $context
-     * @param HelperData     $helperData
-     * @param array          $data
+     * @param Context $context
+     * @param HelperData $helperData
+     * @param array $data
      */
     public function __construct(
         Context $context,
@@ -65,5 +65,28 @@ class TrustedDevices extends Template
     public function getTrustedCollection()
     {
         return $this->_helperData->getTrustedCollection($this->getUserObject()->getUserId());
+    }
+
+    /**
+     * @param $date
+     *
+     * @return string
+     * @throws \Exception
+     */
+    public function getFormattedDate($date)
+    {
+        $convertedDate = $this->_helperData->convertTimeZone($date);
+
+        return $convertedDate->format('Y-m-d H:i:s');
+    }
+
+    /**
+     * @param $trustedId
+     *
+     * @return string
+     */
+    public function getDeleteUrl($trustedId)
+    {
+        return $this->getUrl('mptwofactorauth/google/deletetrusted', ['trusted_id' => $trustedId]);
     }
 }

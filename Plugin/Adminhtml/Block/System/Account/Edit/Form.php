@@ -19,19 +19,21 @@
  * @license     https://www.mageplaza.com/LICENSE.txt
  */
 
-namespace Mageplaza\TwoFactorAuth\Plugin\Block\Adminhtml\User\Edit\Tab;
+namespace Mageplaza\TwoFactorAuth\Plugin\Adminhtml\Block\System\Account\Edit;
 
+use Magento\Backend\Model\Auth\Session;
 use Magento\Config\Model\Config\Source\Enabledisable;
 use Magento\Framework\Registry;
 use Magento\Framework\View\LayoutInterface;
-use Magento\User\Block\User\Edit\Tab\Main as MainPlugin;
+use Magento\User\Model\UserFactory;
+use Mageplaza\TwoFactorAuth\Helper\Data as HelperData;
 use PHPGangsta\GoogleAuthenticator;
 
 /**
- * Class Main
- * @package Mageplaza\TwoFactorAuth\Plugin\Block\Adminhtml\User\Edit\Tab
+ * Class Form
+ * @package Mageplaza\TwoFactorAuth\Plugin\Block\Adminhtml\System\Account\Edit
  */
-class Main
+class Form
 {
     /**
      * @var Enabledisable
@@ -49,49 +51,75 @@ class Main
     protected $_layout;
 
     /**
+     * @var Session
+     */
+    protected $_authSession;
+
+    /**
+     * @var UserFactory
+     */
+    protected $_userFactory;
+
+    /**
      * @var \PHPGangsta\GoogleAuthenticator
      */
     protected $_googleAuthenticator;
 
     /**
-     * Main constructor.
+     * @var HelperData
+     */
+    protected $_helperData;
+
+    /**
+     * Form constructor.
      *
      * @param Enabledisable $enableDisable
      * @param Registry $coreRegistry
      * @param LayoutInterface $layout
+     * @param Session $authSession
+     * @param UserFactory $userFactory
      * @param GoogleAuthenticator $googleAuthenticator
+     * @param HelperData $helperData
      */
     public function __construct(
         Enabledisable $enableDisable,
         Registry $coreRegistry,
         LayoutInterface $layout,
-        GoogleAuthenticator $googleAuthenticator
+        Session $authSession,
+        UserFactory $userFactory,
+        GoogleAuthenticator $googleAuthenticator,
+        HelperData $helperData
     )
     {
         $this->_enableDisable       = $enableDisable;
         $this->_coreRegistry        = $coreRegistry;
         $this->_layout              = $layout;
+        $this->_authSession         = $authSession;
+        $this->_userFactory         = $userFactory;
         $this->_googleAuthenticator = $googleAuthenticator;
+        $this->_helperData          = $helperData;
     }
 
     /**
-     * @param MainPlugin $subject
+     * @param \Magento\Backend\Block\System\Account\Edit\Form $subject
      * @param \Closure $proceed
      *
      * @return mixed
      */
     public function aroundGetFormHtml(
-        MainPlugin $subject,
+        \Magento\Backend\Block\System\Account\Edit\Form $subject,
         \Closure $proceed
     )
     {
         $form = $subject->getForm();
         /** @var $model \Magento\User\Model\User */
-        $model       = $this->_coreRegistry->registry('permissions_user');
-        $isNewObject = $model->isObjectNew();
-        $secret      = ($model->getMpTfaSecret()) ?: $this->_googleAuthenticator->createSecret();
+        $userId = $this->_authSession->getUser()->getId();
+        $user   = $this->_userFactory->create()->load($userId);
+        $user->unsetData('password');
+        $this->_coreRegistry->register('mp_permissions_user', $user);
 
-        if (is_object($form) && !$isNewObject) {
+        $secret = ($user->getMpTfaSecret()) ?: $this->_googleAuthenticator->createSecret();
+        if (is_object($form) && $this->_helperData->isEnabled()) {
             $mpTfaFieldset = $form->addFieldset('mp_tfa_security', ['legend' => __('Security')]);
             $mpTfaFieldset->addField(
                 'mp_tfa_enable',
@@ -101,11 +129,11 @@ class Main
                     'label'  => __('Enable 2FA'),
                     'title'  => __('Enable 2FA'),
                     'values' => $this->_enableDisable->toOptionArray(),
-                    'note'   => 'Please use your authentication app (such as Authy, Duo or Google Authenticator) to scan this QR code.'
+                    'note'   => 'Please download the authentication app (such as Authy, Google Authentication) to scan this QR code.'
                 ]
             );
-            if (!$model->hasData('mp_tfa_enable')) {
-                $model->setMpTfaEnable(1);
+            if (!$user->hasData('mp_tfa_enable')) {
+                $user->setMpTfaEnable(1);
             }
 
             $mpTfaFieldset->addField('mp_tfa_secret_temp', '\Mageplaza\TwoFactorAuth\Block\Adminhtml\User\Edit\Tab\Renderer\QrCode', [
@@ -117,7 +145,8 @@ class Main
             $mpTfaFieldset->addField('mp_tfa_one_code', 'text', [
                 'name'  => 'mp_tfa_one_code',
                 'label' => __('Confirmation Code'),
-                'title' => __('Confirmation Code')
+                'title' => __('Confirmation Code'),
+                'note'  => 'Use the code provided by your authentication app.'
             ]);
             $mpTfaFieldset->addField('mp_tfa_register', '\Mageplaza\TwoFactorAuth\Block\Adminhtml\User\Edit\Tab\Renderer\RegisterButton', [
                 'name' => 'mp_tfa_register'
@@ -125,15 +154,15 @@ class Main
 
 
             $mpTfaFieldset->addField('mp_tfa_disable', '\Mageplaza\TwoFactorAuth\Block\Adminhtml\User\Edit\Tab\Renderer\DisableButton', [
-                'name' => 'mp_tfa_disable',
+                'name' => 'mp_tfa_disable'
             ]);
             $mpTfaChildFieldset = $mpTfaFieldset->addFieldset('mp_tfa_trust_device', ['legend' => __('Trusted Devices')]);
             $mpTfaChildFieldset->addField('mp_tfa_trusted_device', 'label', [
                 'name' => 'mp_tfa_trusted_device',
-            ])->setAfterElementHtml($this->getTrustedDeviceHtml($model));
-            $data                       = $model->getData();
+            ])->setAfterElementHtml($this->getTrustedDeviceHtml($user));
+            $data                       = $user->getData();
             $data['mp_tfa_secret_temp'] = $data['mp_tfa_secret_temp_hidden'] = $secret;
-            $data['mp_tfa_status']      = $model->getMpTfaStatus();
+            $data['mp_tfa_status']      = $user->getMpTfaStatus();
 
             $form->setValues($data);
             $subject->setForm($form);

@@ -21,10 +21,10 @@
 
 namespace Mageplaza\TwoFactorAuth\Controller\Adminhtml\Google;
 
-use PHPGangsta\GoogleAuthenticator;
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
 use Mageplaza\TwoFactorAuth\Helper\Data as HelperData;
+use PHPGangsta\GoogleAuthenticator;
 
 /**
  * Class Register
@@ -61,6 +61,7 @@ class Register extends Action
         $data         = $this->getRequest()->getParams();
         $inputOneCode = $data['confirm_code'];
         $secretCode   = $data['secret_code'];
+
         try {
             $checkResult = $this->_googleAuthenticator->verifyCode($secretCode, $inputOneCode, 1);
             if ($checkResult) {

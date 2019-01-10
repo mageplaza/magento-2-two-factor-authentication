@@ -21,6 +21,7 @@
 
 namespace Mageplaza\TwoFactorAuth\Setup;
 
+use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\DB\Ddl\Table;
 use Magento\Framework\Setup\InstallSchemaInterface;
 use Magento\Framework\Setup\ModuleContextInterface;
@@ -33,7 +34,7 @@ use Magento\Framework\Setup\SchemaSetupInterface;
 class InstallSchema implements InstallSchemaInterface
 {
     /**
-     * @param SchemaSetupInterface   $setup
+     * @param SchemaSetupInterface $setup
      * @param ModuleContextInterface $context
      *
      * @throws \Zend_Db_Exception
@@ -50,7 +51,7 @@ class InstallSchema implements InstallSchemaInterface
                     'type'    => Table::TYPE_INTEGER,
                     'length'  => 1,
                     'comment' => 'Mageplaza TFA Enable',
-                    'default'  => '1'
+                    'default' => '1'
                 ],
                 'mp_tfa_secret' => [
                     'type'    => Table::TYPE_TEXT,
@@ -61,7 +62,7 @@ class InstallSchema implements InstallSchemaInterface
                     'type'    => Table::TYPE_INTEGER,
                     'length'  => 1,
                     'comment' => 'Mageplaza TFA Status',
-                    'default'  => '0'
+                    'default' => '0'
                 ]
             ];
 
@@ -82,11 +83,20 @@ class InstallSchema implements InstallSchemaInterface
                 ], 'Trusted ID')
                 ->addColumn('user_id', Table::TYPE_INTEGER, null, ['unsigned' => true, 'nullable' => false], 'User ID')
                 ->addColumn('name', Table::TYPE_TEXT, 255, ['nullable => false'], 'Device Name')
-                ->addColumn('device_ip', Table::TYPE_TEXT, '64k', [], 'Device IP')
+                ->addColumn('device_ip', Table::TYPE_TEXT, 255, [], 'Device IP')
                 ->addColumn('last_login', Table::TYPE_TIMESTAMP, null, [], 'Device Last Login')
                 ->addColumn('created_at', Table::TYPE_TIMESTAMP, null, [], 'Trusted Created At')
                 ->addIndex($installer->getIdxName('mageplaza_twofactorauth_trusted', ['trusted_id']), ['trusted_id'])
                 ->addIndex($installer->getIdxName('mageplaza_twofactorauth_trusted', ['user_id']), ['user_id'])
+                ->addIndex(
+                    $installer->getIdxName(
+                        'mageplaza_twofactorauth_trusted',
+                        ['user_id', 'name', 'device_ip'],
+                        AdapterInterface::INDEX_TYPE_UNIQUE
+                    ),
+                    ['user_id', 'name', 'device_ip'],
+                    ['type' => AdapterInterface::INDEX_TYPE_UNIQUE]
+                )
                 ->addForeignKey(
                     $installer->getFkName('mageplaza_twofactorauth_trusted', 'user_id', 'admin_user', 'user_id'),
                     'user_id',

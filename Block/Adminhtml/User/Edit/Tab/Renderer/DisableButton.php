@@ -21,11 +21,12 @@
 
 namespace Mageplaza\TwoFactorAuth\Block\Adminhtml\User\Edit\Tab\Renderer;
 
-use Magento\Framework\Registry;
 use Magento\Framework\Data\Form\Element\AbstractElement;
 use Magento\Framework\Data\Form\Element\CollectionFactory;
 use Magento\Framework\Data\Form\Element\Factory;
 use Magento\Framework\Escaper;
+use Magento\Framework\Registry;
+use Mageplaza\TwoFactorAuth\Helper\Data as HelperData;
 
 /**
  * Class DisableButton
@@ -39,23 +40,31 @@ class DisableButton extends AbstractElement
     protected $_coreRegistry;
 
     /**
+     * @var HelperData
+     */
+    protected $_helperData;
+
+    /**
      * DisableButton constructor.
      *
-     * @param Factory           $factoryElement
+     * @param Factory $factoryElement
      * @param CollectionFactory $factoryCollection
-     * @param Escaper           $escaper
-     * @param Registry          $coreRegistry
-     * @param array             $data
+     * @param Escaper $escaper
+     * @param Registry $coreRegistry
+     * @param HelperData $helperData
+     * @param array $data
      */
     public function __construct(
         Factory $factoryElement,
         CollectionFactory $factoryCollection,
         Escaper $escaper,
         Registry $coreRegistry,
+        HelperData $helperData,
         $data = []
     )
     {
         $this->_coreRegistry = $coreRegistry;
+        $this->_helperData   = $helperData;
 
         parent::__construct($factoryElement, $factoryCollection, $escaper, $data);
 
@@ -71,12 +80,13 @@ class DisableButton extends AbstractElement
     public function getElementHtml()
     {
         /** @var $model \Magento\User\Model\User */
-        $model        = $this->_coreRegistry->registry('permissions_user');
+        $model        = $this->_coreRegistry->registry('mp_permissions_user');
         $isHidden     = ($model->getMpTfaStatus()) ? '' : 'hidden';
-        $isRegistered = ($model->getMpTfaStatus()) ? 'This user is registered' : '';
+        $isDisabled   = ($this->_helperData->getConfigGeneral('force_2fa')) ? 'disabled' : '';
+        $isRegistered = ($model->getMpTfaStatus()) ? 'This admin account has already been registered.' : '';
         $html         = '';
-        $html         .= '<button id="' . $this->getHtmlId() . '" type="button" class="' . $isHidden . '">';
-        $html         .= '<span>' . __('Disable two-factor authentication') . '</span>';
+        $html         .= '<button id="' . $this->getHtmlId() . '" type="button" ' . $isDisabled . ' class="' . $isHidden . '">';
+        $html         .= '<span>' . __('Disable Two-Factor Authentication') . '</span>';
         $html         .= '</button>';
         $html         .= '<div class="mp-success-messages mp-success">' . $isRegistered . '</div>';
         $html         .= '<div class="mp-error-messages mp-danger"></div>';

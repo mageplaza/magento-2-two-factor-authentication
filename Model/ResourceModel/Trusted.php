@@ -22,6 +22,8 @@
 namespace Mageplaza\TwoFactorAuth\Model\ResourceModel;
 
 use Magento\Framework\Model\ResourceModel\Db\AbstractDb;
+use Magento\Framework\Model\ResourceModel\Db\Context;
+use Magento\Framework\Stdlib\DateTime\DateTime;
 
 /**
  * Class Trusted
@@ -30,6 +32,29 @@ use Magento\Framework\Model\ResourceModel\Db\AbstractDb;
 class Trusted extends AbstractDb
 {
     /**
+     * @var DateTime
+     */
+    protected $_dateTime;
+
+    /**
+     * Trusted constructor.
+     *
+     * @param Context $context
+     * @param DateTime $dateTime
+     * @param null $connectionName
+     */
+    public function __construct(
+        Context $context,
+        DateTime $dateTime,
+        $connectionName = null
+    )
+    {
+        $this->_dateTime = $dateTime;
+
+        parent::__construct($context, $connectionName);
+    }
+
+    /**
      * Initialize resource model
      *
      * @return void
@@ -37,5 +62,40 @@ class Trusted extends AbstractDb
     protected function _construct()
     {
         $this->_init('mageplaza_twofactorauth_trusted', 'trusted_id');
+    }
+
+    /**
+     * @param \Magento\Framework\Model\AbstractModel $object
+     *
+     * @return $this
+     */
+    protected function _beforeSave(\Magento\Framework\Model\AbstractModel $object)
+    {
+        if (!$object->getCreatedAt()) {
+            $object->setCreatedAt($this->_dateTime->date());
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param $userId
+     * @param $deviceName
+     * @param $deviceIp
+     *
+     * @return string
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
+    public function getExistTrusted($userId, $deviceName, $deviceIp)
+    {
+        $adapter = $this->getConnection();
+        $select  = $adapter->select()
+            ->from($this->getMainTable(), 'trusted_id')
+            ->where('user_id = :user_id')
+            ->where('name = :name')
+            ->where('device_ip = :device_ip');
+        $binds   = ['user_id' => (int) $userId, 'name' => $deviceName, 'device_ip' => $deviceIp];
+
+        return $adapter->fetchOne($select, $binds);
     }
 }

@@ -46,10 +46,11 @@ if ($_trustedDevices && count($_trustedDevices)):
                         <?php echo $_trustedDevice->getDeviceIp() ?>
                     </td>
                     <td data-th="<?= $block->escapeHtml(__('Last Logged In')) ?>" class="col mp-device-last-login">
-                        <?php echo $_trustedDevice->getLastLogin() ?>
+                        <?php echo $block->getFormattedDate($_trustedDevice->getLastLogin()) ?>
                     </td>
                     <td data-th="<?= $block->escapeHtml(__('Actions')) ?>" class="col mp-device-action">
-                        <button type="button" id="mp-device-detele-<?php echo $_trustedDevice->getId() ?>">
+                        <button type="button" id="mp-device-detele-<?php echo $_trustedDevice->getId() ?>"
+                                onclick="setLocation('<?php echo $block->getDeleteUrl($_trustedDevice->getId()) ?>')">
                             <span><?php echo __('Remove') ?></span>
                         </button>
                     </td>
@@ -59,7 +60,7 @@ if ($_trustedDevices && count($_trustedDevices)):
         </table>
     </div>
 <?php else: ?>
-    <div class="message info empty"><span><?=
-            __('You have no trusted device.') ?></span></div>
+    <div class="message info empty"><span><?= /* @escapeNotVerified */
+            __('There is no trusted device.') ?></span></div>
 <?php endif ?>
 

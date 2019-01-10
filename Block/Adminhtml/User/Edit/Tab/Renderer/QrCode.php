@@ -21,13 +21,13 @@
 
 namespace Mageplaza\TwoFactorAuth\Block\Adminhtml\User\Edit\Tab\Renderer;
 
-use PHPGangsta\GoogleAuthenticator;
 use Magento\Framework\Data\Form\Element\AbstractElement;
 use Magento\Framework\Data\Form\Element\CollectionFactory;
 use Magento\Framework\Data\Form\Element\Factory;
 use Magento\Framework\Escaper;
 use Magento\Framework\Registry;
 use Magento\Store\Model\StoreManagerInterface;
+use PHPGangsta\GoogleAuthenticator;
 
 /**
  * Class QrCode
@@ -88,7 +88,7 @@ class QrCode extends AbstractElement
     public function getElementHtml()
     {
         /** @var $model \Magento\User\Model\User */
-        $model       = $this->_coreRegistry->registry('permissions_user');
+        $model       = $this->_coreRegistry->registry('mp_permissions_user');
         $secret      = $this->getValue();
         $userEmail   = $model->getEmail();
         $storeUrl    = $this->_storeManager->getStore()->getBaseUrl();
@@ -98,8 +98,8 @@ class QrCode extends AbstractElement
         $html        .= '<div class="mp-tfa-qrcode-img">';
         $html        .= '<img src="' . $qrCodeUrl . '" alt="' . __('Qr Code Image') . '" />';
         $html        .= '</div><div class="mp-tfa-qrcode-description mp-bg-light">';
-        $html        .= '<p>' . __("Can't scan the code?") . '<br>'
-            . __("To add the entry manually, provide the following details to the application on your phone.") . '<br>';
+        $html        .= '<p>' . __("Can not scan the code?") . '<br>'
+            . __("You can add the entry manually, please provide the following details to the application on your phone.") . '<br>';
         if ($userEmail) {
             $html .= __("Account: ") . $accountName . '<br>';
         }
