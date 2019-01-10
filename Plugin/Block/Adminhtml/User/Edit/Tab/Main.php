@@ -97,11 +97,11 @@ class Main
                 'mp_tfa_enable',
                 'select',
                 [
-                    'name' => 'mp_tfa_enable',
-                    'label' => __('Enable 2FA'),
-                    'title' => __('Enable 2FA'),
+                    'name'   => 'mp_tfa_enable',
+                    'label'  => __('Enable 2FA'),
+                    'title'  => __('Enable 2FA'),
                     'values' => $this->_enableDisable->toOptionArray(),
-                    'note' => 'Please use your authentication app (such as Authy, Duo or Google Authenticator) to scan this QR code.'
+                    'note'   => 'Please use your authentication app (such as Authy, Duo or Google Authenticator) to scan this QR code.'
                 ]
             );
             if (!$model->hasData('mp_tfa_enable')) {
@@ -115,7 +115,7 @@ class Main
             $mpTfaFieldset->addField('mp_tfa_secret', 'hidden', ['name' => 'mp_tfa_secret']);
             $mpTfaFieldset->addField('mp_tfa_status', 'hidden', ['name' => 'mp_tfa_status']);
             $mpTfaFieldset->addField('mp_tfa_one_code', 'text', [
-                'name' => 'mp_tfa_one_code',
+                'name'  => 'mp_tfa_one_code',
                 'label' => __('Confirmation Code'),
                 'title' => __('Confirmation Code')
             ]);

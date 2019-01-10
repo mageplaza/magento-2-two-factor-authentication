@@ -63,13 +63,16 @@
     padding: 7px 20px;
     font-weight: 700;
 }
-.field-auth-code{
+
+.field-auth-code {
     margin-bottom: 1rem !important;
 }
-.field-trust-device{
+
+.field-trust-device {
     margin-bottom: 15px;
 }
-#trust-device{
+
+#trust-device {
     float: left;
     margin: 5px 5px 0;
 }

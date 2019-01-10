@@ -21,13 +21,13 @@
 
 namespace Mageplaza\TwoFactorAuth\Observer\Backend;
 
-use Magento\Framework\Event\Observer as EventObserver;
-use Magento\Framework\Event\ObserverInterface;
+use Magento\Backend\Model\Auth\Session as AuthSession;
+use Magento\Backend\Model\UrlInterface;
 use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\ActionFlag;
+use Magento\Framework\Event\Observer as EventObserver;
+use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Message\ManagerInterface;
-use Magento\Backend\Model\UrlInterface;
-use Magento\Backend\Model\Auth\Session as AuthSession;
 use Magento\Framework\Session\SessionManager;
 use Mageplaza\TwoFactorAuth\Helper\Data as HelperData;
 
@@ -113,6 +113,7 @@ class AuthObserver implements ObserverInterface
      * Force admin to change password
      *
      * @param EventObserver $observer
+     *
      * @return void
      */
     public function execute(EventObserver $observer)
@@ -140,7 +141,8 @@ class AuthObserver implements ObserverInterface
         if ($user
             && $this->_helperData->getConfigGeneral('force_2fa')
             && !$user->getMpTfaStatus()
-            && !in_array($request->getFullActionName(), $force2faActionList)) {
+            && !in_array($request->getFullActionName(), $force2faActionList)
+        ) {
             $this->actionFlag->set('', Action::FLAG_NO_DISPATCH, true);
             $url = $this->url->getUrl('adminhtml/user/edit', ['user_id' => $user->getId()]);
             $this->_messageManager->addError(__('Force 2FA is enabled, please must register the 2FA authentication.'));
@@ -149,7 +151,8 @@ class AuthObserver implements ObserverInterface
         if ($user
             && !in_array($request->getFullActionName(), $actionList)
             && $user->getMpTfaStatus()
-            && !$this->_storageSession->getData(HelperData::MP_GOOGLE_AUTH)) {
+            && !$this->_storageSession->getData(HelperData::MP_GOOGLE_AUTH)
+        ) {
             $this->actionFlag->set('', Action::FLAG_NO_DISPATCH, true);
             $url = $this->url->getUrl('mptwofactorauth/google/index');
             $controller->getResponse()->setRedirect($url);
