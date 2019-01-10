@@ -24,6 +24,7 @@ namespace Mageplaza\TwoFactorAuth\Test\Unit\Observer\Google;
 use Magento\Backend\Model\Auth\Session;
 use Magento\Backend\Model\UrlInterface;
 use Magento\Framework\App\ActionFlag;
+use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Message\ManagerInterface;
 use Magento\Framework\Session\SessionManager;
 use Mageplaza\TwoFactorAuth\Helper\Data as HelperData;
@@ -122,16 +123,25 @@ class ControllerActionPredispatchTest extends \PHPUnit\Framework\TestCase
             ->disableOriginalConstructor()
             ->setMethods(['getMpTfaStatus'])
             ->getMock();
+
+        $responseObjMock = $this->getMockBuilder(ResponseInterface::class)
+            ->setMethods(['setRedirect'])
+            ->getMockForAbstractClass();
+
         $userObjMock->expects($this->any())->method('getMpTfaStatus')->willReturn($userMpTfaStatus);
         $this->helperDataMock->expects($this->once())->method('isEnabled')->willReturn(true);
         $this->helperDataMock->expects($this->once())->method('getForceTfaConfig')->willReturn(true);
         $this->authSessionMock->expects($this->once())->method('getUser')->willReturn($userObjMock);
+
         $eventObserverMock->expects($this->atLeastOnce())->method('getEvent')->willReturn($eventMock);
-        /** @var \Magento\Framework\App\Action\Action $controllerMock */
+        /** @var \Magento\Framework\App\Action\Action|\PHPUnit_Framework_MockObject_MockObject $controllerMock */
         $controllerMock = $this->getMockBuilder(\Magento\Framework\App\Action\AbstractAction::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getRedirect', 'getRequest'])
+            ->setMethods(['getRedirect', 'getRequest','getResponse'])
             ->getMockForAbstractClass();
+
+        $controllerMock->expects($this->any())->method('getResponse')->willReturn($responseObjMock);
+
         /** @var \Magento\Framework\App\RequestInterface|\PHPUnit_Framework_MockObject_MockObject $requestMock */
         $requestMock = $this->getMockBuilder(\Magento\Framework\App\RequestInterface::class)
             ->disableOriginalConstructor()
