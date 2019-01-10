@@ -133,16 +133,15 @@ class ControllerActionPredispatch implements ObserverInterface
         $controller = $observer->getEvent()->getControllerAction();
         /** @var \Magento\Framework\App\RequestInterface $request */
         $request = $observer->getEvent()->getRequest();
-//        \Zend_Debug::dump($request->getFullActionName());die;
+
         if ($user
-            && $this->_helperData->getConfigGeneral('force_2fa')
+            && $this->_helperData->getForceTfaConfig()
             && !$user->getMpTfaStatus()
             && !in_array($request->getFullActionName(), $allowForce2faActionList)) {
-
             $this->_messageManager->addError(__('Force 2FA is enabled, please must register the 2FA authentication.'));
             $controller->getResponse()->setRedirect($this->url->getUrl('adminhtml/system_account/'));
-            $this->actionFlag->set('', \Magento\Framework\App\Action\Action::FLAG_NO_DISPATCH, true);
-            $this->actionFlag->set('', \Magento\Framework\App\Action\Action::FLAG_NO_POST_DISPATCH, true);
+            $this->actionFlag->set('', Action::FLAG_NO_DISPATCH, true);
+            $this->actionFlag->set('', Action::FLAG_NO_POST_DISPATCH, true);
         }
     }
 }

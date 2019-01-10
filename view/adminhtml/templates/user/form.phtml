@@ -73,7 +73,6 @@
                     user_id: userId
                 },
                 success: function (result) {
-                    console.log(result.status);
                     if (result.status === 'invalid') {
                         $('.field-mp_tfa_register .mp-error-messages').html($t('Invalid Code'));
                     } else if (result.status === 'valid') {
