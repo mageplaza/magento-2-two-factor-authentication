@@ -21,13 +21,13 @@
 
 namespace Mageplaza\TwoFactorAuth\Block\Adminhtml\User\Edit\Tab\Renderer;
 
-use PHPGangsta\GoogleAuthenticator;
 use Magento\Framework\Data\Form\Element\AbstractElement;
 use Magento\Framework\Data\Form\Element\CollectionFactory;
 use Magento\Framework\Data\Form\Element\Factory;
 use Magento\Framework\Escaper;
 use Magento\Framework\Registry;
 use Magento\Store\Model\StoreManagerInterface;
+use PHPGangsta\GoogleAuthenticator;
 
 /**
  * Class QrCode

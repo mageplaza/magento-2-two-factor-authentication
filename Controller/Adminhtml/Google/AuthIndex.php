@@ -23,8 +23,8 @@ namespace Mageplaza\TwoFactorAuth\Controller\Adminhtml\Google;
 
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
-use Magento\Framework\View\Result\PageFactory;
 use Magento\Framework\Session\SessionManager;
+use Magento\Framework\View\Result\PageFactory;
 use Mageplaza\TwoFactorAuth\Helper\Data as HelperData;
 
 /**

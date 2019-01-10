@@ -21,22 +21,22 @@
 
 namespace Mageplaza\TwoFactorAuth\Model;
 
-use Source\UserAgentParser;
-use Magento\Framework\HTTP\PhpEnvironment\RemoteAddress;
-use Magento\Framework\Exception\Plugin\AuthenticationException as PluginAuthenticationException;
-use Magento\Framework\Event\ManagerInterface;
 use Magento\Backend\Helper\Data;
-use Magento\Backend\Model\Auth\StorageInterface;
 use Magento\Backend\Model\Auth\Credential\StorageInterface as CredentialStorageInterface;
+use Magento\Backend\Model\Auth\StorageInterface;
+use Magento\Framework\App\Action\Action;
+use Magento\Framework\App\ActionFlag;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\ResponseInterface;
-use Magento\Framework\App\ActionFlag;
-use Magento\Framework\Session\SessionManager;
-use Magento\Framework\App\Action\Action;
 use Magento\Framework\Data\Collection\ModelFactory;
+use Magento\Framework\Event\ManagerInterface;
+use Magento\Framework\Exception\Plugin\AuthenticationException as PluginAuthenticationException;
+use Magento\Framework\HTTP\PhpEnvironment\RemoteAddress;
+use Magento\Framework\Session\SessionManager;
 use Magento\Framework\Stdlib\DateTime\DateTime;
 use Magento\Framework\UrlInterface;
 use Mageplaza\TwoFactorAuth\Helper\Data as HelperData;
+use Source\UserAgentParser;
 
 /**
  * Backend Auth model
@@ -133,14 +133,14 @@ class Auth extends \Magento\Backend\Model\Auth
     )
     {
         $this->_userAgentParser = $userAgentParser;
-        $this->_remoteAddress = $remoteAddress;
-        $this->_dateTime = $dateTime;
-        $this->_url = $url;
-        $this->_response = $response;
-        $this->_storageSession = $storageSession;
-        $this->actionFlag = $actionFlag;
-        $this->_helperData = $helperData;
-        $this->_trustedFactory = $trustedFactory;
+        $this->_remoteAddress   = $remoteAddress;
+        $this->_dateTime        = $dateTime;
+        $this->_url             = $url;
+        $this->_response        = $response;
+        $this->_storageSession  = $storageSession;
+        $this->actionFlag       = $actionFlag;
+        $this->_helperData      = $helperData;
+        $this->_trustedFactory  = $trustedFactory;
 
         parent::__construct($eventManager, $backendData, $authStorage, $credentialStorage, $coreConfig, $modelFactory);
     }
@@ -150,6 +150,7 @@ class Auth extends \Magento\Backend\Model\Auth
      *
      * @param string $username
      * @param string $password
+     *
      * @throws PluginAuthenticationException
      * @throws \Exception
      * @throws \Magento\Framework\Exception\AuthenticationException
@@ -165,21 +166,21 @@ class Auth extends \Magento\Backend\Model\Auth
             $this->getCredentialStorage()->login($username, $password);
             if ($this->getCredentialStorage()->getId()) {
                 /** @var \Mageplaza\TwoFactorAuth\Model\Trusted $trusted */
-                $trusted = $this->_trustedFactory->create();
-                $userAgent = $this->_userAgentParser->parse_user_agent();
-                $deviceName = $userAgent['platform'] . '-' . $userAgent['browser'] . '-' . $userAgent['version'];
+                $trusted      = $this->_trustedFactory->create();
+                $userAgent    = $this->_userAgentParser->parse_user_agent();
+                $deviceName   = $userAgent['platform'] . '-' . $userAgent['browser'] . '-' . $userAgent['version'];
                 $existTrusted = $trusted->getResource()->getExistTrusted(
                     $this->getCredentialStorage()->getId(),
                     $deviceName,
                     $this->_remoteAddress->getRemoteAddress());
                 if ($existTrusted
                     && $this->_helperData->getConfigGeneral('trust_device')) {
-                    $currentDevice = $trusted->load($existTrusted);
+                    $currentDevice         = $trusted->load($existTrusted);
                     $currentDeviceCreateAt = new \DateTime($currentDevice->getCreatedAt(), new \DateTimeZone('UTC'));
-                    $currentDateObj = new \DateTime($this->_dateTime->date(), new \DateTimeZone('UTC'));
-                    $dateDiff = date_diff($currentDateObj, $currentDeviceCreateAt);
-                    $dateDiff = (int)$dateDiff->days;
-                    if ($dateDiff > (int)$this->_helperData->getConfigGeneral('trust_time')) {
+                    $currentDateObj        = new \DateTime($this->_dateTime->date(), new \DateTimeZone('UTC'));
+                    $dateDiff              = date_diff($currentDateObj, $currentDeviceCreateAt);
+                    $dateDiff              = (int) $dateDiff->days;
+                    if ($dateDiff > (int) $this->_helperData->getConfigGeneral('trust_time')) {
                         $currentDevice->delete();
                     } else {
                         $currentDevice->setLastLogin($this->_dateTime->date())->save();

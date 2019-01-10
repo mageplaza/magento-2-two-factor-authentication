@@ -49,7 +49,7 @@ class AuthLogin extends Template
         array $data = []
     )
     {
-        $this->_helperData     = $helperData;
+        $this->_helperData = $helperData;
 
         parent::__construct($context, $data);
     }

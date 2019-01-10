@@ -21,10 +21,10 @@
 
 namespace Mageplaza\TwoFactorAuth\Controller\Adminhtml\Google;
 
-use PHPGangsta\GoogleAuthenticator;
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
 use Mageplaza\TwoFactorAuth\Helper\Data as HelperData;
+use PHPGangsta\GoogleAuthenticator;
 
 /**
  * Class Register

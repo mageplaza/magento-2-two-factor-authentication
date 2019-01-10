@@ -21,13 +21,13 @@
 
 namespace Mageplaza\TwoFactorAuth\Plugin\Adminhtml\Block\System\Account\Edit;
 
+use Magento\Backend\Model\Auth\Session;
+use Magento\Config\Model\Config\Source\Enabledisable;
 use Magento\Framework\Registry;
 use Magento\Framework\View\LayoutInterface;
-use Magento\Backend\Model\Auth\Session;
 use Magento\User\Model\UserFactory;
-use Magento\Config\Model\Config\Source\Enabledisable;
-use PHPGangsta\GoogleAuthenticator;
 use Mageplaza\TwoFactorAuth\Helper\Data as HelperData;
+use PHPGangsta\GoogleAuthenticator;
 
 /**
  * Class Form
@@ -103,6 +103,7 @@ class Form
     /**
      * @param \Magento\Backend\Block\System\Account\Edit\Form $subject
      * @param \Closure $proceed
+     *
      * @return mixed
      */
     public function aroundGetFormHtml(
@@ -145,7 +146,7 @@ class Form
                 'name'  => 'mp_tfa_one_code',
                 'label' => __('Confirmation Code'),
                 'title' => __('Confirmation Code'),
-                'note'   => 'Use the code provided by your authentication app.'
+                'note'  => 'Use the code provided by your authentication app.'
             ]);
             $mpTfaFieldset->addField('mp_tfa_register', '\Mageplaza\TwoFactorAuth\Block\Adminhtml\User\Edit\Tab\Renderer\RegisterButton', [
                 'name' => 'mp_tfa_register'

@@ -35,10 +35,10 @@ class RegisterButton extends AbstractElement
     /**
      * RegisterButton constructor.
      *
-     * @param Factory           $factoryElement
+     * @param Factory $factoryElement
      * @param CollectionFactory $factoryCollection
-     * @param Escaper           $escaper
-     * @param array             $data
+     * @param Escaper $escaper
+     * @param array $data
      */
     public function __construct(
         Factory $factoryElement,

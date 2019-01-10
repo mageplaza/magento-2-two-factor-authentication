@@ -21,14 +21,14 @@
 
 namespace Mageplaza\TwoFactorAuth\Controller\Adminhtml\Google;
 
-use PHPGangsta\GoogleAuthenticator;
-use Magento\Framework\HTTP\PhpEnvironment\RemoteAddress;
-use Magento\Framework\Session\SessionManager;
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
+use Magento\Framework\HTTP\PhpEnvironment\RemoteAddress;
+use Magento\Framework\Session\SessionManager;
 use Magento\Security\Model\AdminSessionsManager;
 use Mageplaza\TwoFactorAuth\Helper\Data as HelperData;
 use Mageplaza\TwoFactorAuth\Model\TrustedFactory;
+use PHPGangsta\GoogleAuthenticator;
 
 /**
  * Class AuthPost
@@ -141,6 +141,7 @@ class AuthPost extends Action
      * Get redirect response
      *
      * @param string $path
+     *
      * @return \Magento\Backend\Model\View\Result\Redirect
      */
     private function _getRedirect($path)

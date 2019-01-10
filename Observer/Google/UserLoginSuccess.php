@@ -21,13 +21,13 @@
 
 namespace Mageplaza\TwoFactorAuth\Observer\Google;
 
-use Source\UserAgentParser;
-use Magento\Framework\HTTP\PhpEnvironment\RemoteAddress;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
-use Magento\Framework\Stdlib\DateTime\DateTime;
+use Magento\Framework\HTTP\PhpEnvironment\RemoteAddress;
 use Magento\Framework\Message\ManagerInterface;
+use Magento\Framework\Stdlib\DateTime\DateTime;
 use Mageplaza\TwoFactorAuth\Model\TrustedFactory;
+use Source\UserAgentParser;
 
 /**
  * Class UserLoginSuccess

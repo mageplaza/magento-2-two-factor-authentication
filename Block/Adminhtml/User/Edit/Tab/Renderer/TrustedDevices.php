@@ -69,6 +69,7 @@ class TrustedDevices extends Template
 
     /**
      * @param $date
+     *
      * @return string
      * @throws \Exception
      */
@@ -81,6 +82,7 @@ class TrustedDevices extends Template
 
     /**
      * @param $trustedId
+     *
      * @return string
      */
     public function getDeleteUrl($trustedId)

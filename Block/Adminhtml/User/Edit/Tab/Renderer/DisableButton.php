@@ -21,11 +21,11 @@
 
 namespace Mageplaza\TwoFactorAuth\Block\Adminhtml\User\Edit\Tab\Renderer;
 
-use Magento\Framework\Registry;
 use Magento\Framework\Data\Form\Element\AbstractElement;
 use Magento\Framework\Data\Form\Element\CollectionFactory;
 use Magento\Framework\Data\Form\Element\Factory;
 use Magento\Framework\Escaper;
+use Magento\Framework\Registry;
 use Mageplaza\TwoFactorAuth\Helper\Data as HelperData;
 
 /**

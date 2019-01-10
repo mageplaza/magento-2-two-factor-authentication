@@ -93,12 +93,12 @@ class ControllerActionPredispatchTest extends \PHPUnit\Framework\TestCase
         $this->model = $helper->getObject(
             ControllerActionPredispatch::class,
             [
-                'url' => $this->urlInterfaceMock,
-                'authSession' => $this->authSessionMock,
-                'actionFlag' => $this->actionFlagMock,
+                'url'             => $this->urlInterfaceMock,
+                'authSession'     => $this->authSessionMock,
+                'actionFlag'      => $this->actionFlagMock,
                 '_storageSession' => $this->storageSessionMock,
                 '_messageManager' => $this->managerInterfaceMock,
-                '_helperData' => $this->helperDataMock,
+                '_helperData'     => $this->helperDataMock,
             ]
         );
     }

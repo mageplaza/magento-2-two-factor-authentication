@@ -21,8 +21,8 @@
 
 namespace Mageplaza\TwoFactorAuth\Model\ResourceModel;
 
-use Magento\Framework\Model\ResourceModel\Db\Context;
 use Magento\Framework\Model\ResourceModel\Db\AbstractDb;
+use Magento\Framework\Model\ResourceModel\Db\Context;
 use Magento\Framework\Stdlib\DateTime\DateTime;
 
 /**
@@ -66,6 +66,7 @@ class Trusted extends AbstractDb
 
     /**
      * @param \Magento\Framework\Model\AbstractModel $object
+     *
      * @return $this
      */
     protected function _beforeSave(\Magento\Framework\Model\AbstractModel $object)
@@ -81,6 +82,7 @@ class Trusted extends AbstractDb
      * @param $userId
      * @param $deviceName
      * @param $deviceIp
+     *
      * @return string
      * @throws \Magento\Framework\Exception\LocalizedException
      */

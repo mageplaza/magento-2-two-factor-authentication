@@ -22,10 +22,10 @@
 namespace Mageplaza\TwoFactorAuth\Controller\Adminhtml\System\Account;
 
 use Magento\Backend\App\Action;
-use Magento\Framework\Validator\Exception as ValidatorException;
-use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Controller\ResultFactory;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\State\UserLockedException;
+use Magento\Framework\Validator\Exception as ValidatorException;
 use Magento\Security\Model\SecurityCookie;
 use Mageplaza\TwoFactorAuth\Helper\Data as HelperData;
 
@@ -85,9 +85,9 @@ class Save extends \Magento\Backend\Controller\Adminhtml\System\Account\Save
     public function execute()
     {
         $userId               = $this->_objectManager->get('Magento\Backend\Model\Auth\Session')->getUser()->getId();
-        $password             = (string)$this->getRequest()->getParam('password');
-        $passwordConfirmation = (string)$this->getRequest()->getParam('password_confirmation');
-        $interfaceLocale      = (string)$this->getRequest()->getParam('interface_locale', false);
+        $password             = (string) $this->getRequest()->getParam('password');
+        $passwordConfirmation = (string) $this->getRequest()->getParam('password_confirmation');
+        $interfaceLocale      = (string) $this->getRequest()->getParam('interface_locale', false);
 
         /** @var $user \Magento\User\Model\User */
         $user = $this->_objectManager->create('Magento\User\Model\User')->load($userId);

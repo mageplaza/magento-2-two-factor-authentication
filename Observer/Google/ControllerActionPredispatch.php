@@ -21,14 +21,14 @@
 
 namespace Mageplaza\TwoFactorAuth\Observer\Google;
 
-use Magento\Framework\Event\Observer as EventObserver;
-use Magento\Framework\Event\ObserverInterface;
+use Magento\Backend\Model\Auth\Session as AuthSession;
+use Magento\Backend\Model\UrlInterface;
 use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\ActionFlag;
+use Magento\Framework\Event\Observer as EventObserver;
+use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Message\ManagerInterface;
 use Magento\Framework\Session\SessionManager;
-use Magento\Backend\Model\UrlInterface;
-use Magento\Backend\Model\Auth\Session as AuthSession;
 use Mageplaza\TwoFactorAuth\Helper\Data as HelperData;
 
 /**
@@ -113,6 +113,7 @@ class ControllerActionPredispatch implements ObserverInterface
      * Force admin to change password
      *
      * @param EventObserver $observer
+     *
      * @return void
      */
     public function execute(EventObserver $observer)

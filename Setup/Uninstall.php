@@ -32,7 +32,7 @@ use Magento\Framework\Setup\UninstallInterface;
 class Uninstall implements UninstallInterface
 {
     /**
-     * @param SchemaSetupInterface   $setup
+     * @param SchemaSetupInterface $setup
      * @param ModuleContextInterface $context
      */
     public function uninstall(SchemaSetupInterface $setup, ModuleContextInterface $context)

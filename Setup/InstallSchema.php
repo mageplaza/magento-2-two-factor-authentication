@@ -21,11 +21,11 @@
 
 namespace Mageplaza\TwoFactorAuth\Setup;
 
+use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\DB\Ddl\Table;
 use Magento\Framework\Setup\InstallSchemaInterface;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\SchemaSetupInterface;
-use Magento\Framework\DB\Adapter\AdapterInterface;
 
 /**
  * Class InstallSchema
@@ -34,7 +34,7 @@ use Magento\Framework\DB\Adapter\AdapterInterface;
 class InstallSchema implements InstallSchemaInterface
 {
     /**
-     * @param SchemaSetupInterface   $setup
+     * @param SchemaSetupInterface $setup
      * @param ModuleContextInterface $context
      *
      * @throws \Zend_Db_Exception
@@ -51,7 +51,7 @@ class InstallSchema implements InstallSchemaInterface
                     'type'    => Table::TYPE_INTEGER,
                     'length'  => 1,
                     'comment' => 'Mageplaza TFA Enable',
-                    'default'  => '1'
+                    'default' => '1'
                 ],
                 'mp_tfa_secret' => [
                     'type'    => Table::TYPE_TEXT,
@@ -62,7 +62,7 @@ class InstallSchema implements InstallSchemaInterface
                     'type'    => Table::TYPE_INTEGER,
                     'length'  => 1,
                     'comment' => 'Mageplaza TFA Status',
-                    'default'  => '0'
+                    'default' => '0'
                 ]
             ];
 

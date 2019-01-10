@@ -35,7 +35,7 @@ use Mageplaza\TwoFactorAuth\Model\TrustedFactory;
 class Data extends AbstractData
 {
     const CONFIG_MODULE_PATH = 'mptwofactorauth';
-    const MP_GOOGLE_AUTH = 'mp_google_auth';
+    const MP_GOOGLE_AUTH     = 'mp_google_auth';
 
     /**
      * @var TimezoneInterface
@@ -64,7 +64,7 @@ class Data extends AbstractData
         TrustedFactory $trustedFactory
     )
     {
-        $this->_localeDate = $timezone;
+        $this->_localeDate     = $timezone;
         $this->_trustedFactory = $trustedFactory;
 
         parent::__construct($context, $objectManager, $storeManager);
@@ -100,6 +100,7 @@ class Data extends AbstractData
 
     /**
      * @param null $scopeId
+     *
      * @return mixed
      */
     public function getForceTfaConfig($scopeId = null)
