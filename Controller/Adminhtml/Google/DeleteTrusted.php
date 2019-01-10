@@ -58,10 +58,10 @@ class DeleteTrusted extends Action
     public function execute()
     {
         $resultRedirect = $this->resultRedirectFactory->create();
-        if ($id = $this->getRequest()->getParam('trusted_id')) {
+        if ($trustedId = $this->getRequest()->getParam('trusted_id')) {
             try {
                 $this->_trustedFactory->create()
-                    ->load($id)
+                    ->load($trustedId)
                     ->delete();
 
                 $this->messageManager->addSuccess(__('The selected Trusted Device has been deleted.'));

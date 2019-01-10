@@ -38,6 +38,7 @@ class InstallSchema implements InstallSchemaInterface
      * @param ModuleContextInterface $context
      *
      * @throws \Zend_Db_Exception
+     * @SuppressWarnings(Unused)
      */
     public function install(SchemaSetupInterface $setup, ModuleContextInterface $context)
     {

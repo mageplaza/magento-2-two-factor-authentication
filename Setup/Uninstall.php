@@ -34,6 +34,7 @@ class Uninstall implements UninstallInterface
     /**
      * @param SchemaSetupInterface $setup
      * @param ModuleContextInterface $context
+     * @SuppressWarnings(Unused)
      */
     public function uninstall(SchemaSetupInterface $setup, ModuleContextInterface $context)
     {
