@@ -27,7 +27,7 @@ use Magento\Framework\Data\Form\Element\Factory;
 use Magento\Framework\Escaper;
 use Magento\Framework\Registry;
 use Magento\Store\Model\StoreManagerInterface;
-use PHPGangsta\GoogleAuthenticator;
+use Mageplaza\TwoFactorAuth\Helper\Data as HelperData;
 
 /**
  * Class QrCode
@@ -35,78 +35,89 @@ use PHPGangsta\GoogleAuthenticator;
  */
 class QrCode extends AbstractElement
 {
-    /**
-     * @var Registry
-     */
-    protected $_coreRegistry;
+	/**
+	 * @var Registry
+	 */
+	protected $_coreRegistry;
 
-    /**
-     * @var \PHPGangsta\GoogleAuthenticator
-     */
-    protected $_googleAuthenticator;
+	/**
+	 * @var StoreManagerInterface
+	 */
+	protected $_storeManager;
 
-    /**
-     * @var StoreManagerInterface
-     */
-    protected $_storeManager;
+	/**
+	 * @var \Mageplaza\TwoFactorAuth\Helper\Data
+	 */
+	protected $_helperData;
 
-    /**
-     * QrCode constructor.
-     *
-     * @param Factory $factoryElement
-     * @param CollectionFactory $factoryCollection
-     * @param Escaper $escaper
-     * @param Registry $coreRegistry
-     * @param GoogleAuthenticator $googleAuthenticator
-     * @param StoreManagerInterface $storeManager
-     * @param array $data
-     */
-    public function __construct(
-        Factory $factoryElement,
-        CollectionFactory $factoryCollection,
-        Escaper $escaper,
-        Registry $coreRegistry,
-        GoogleAuthenticator $googleAuthenticator,
-        StoreManagerInterface $storeManager,
-        $data = []
-    )
-    {
-        $this->_coreRegistry        = $coreRegistry;
-        $this->_googleAuthenticator = $googleAuthenticator;
-        $this->_storeManager        = $storeManager;
+	/**
+	 * QrCode constructor.
+	 *
+	 * @param \Magento\Framework\Data\Form\Element\Factory $factoryElement
+	 * @param \Magento\Framework\Data\Form\Element\CollectionFactory $factoryCollection
+	 * @param \Magento\Framework\Escaper $escaper
+	 * @param \Magento\Framework\Registry $coreRegistry
+	 * @param \Magento\Store\Model\StoreManagerInterface $storeManager
+	 * @param \Mageplaza\TwoFactorAuth\Helper\Data $helperData
+	 * @param array $data
+	 */
+	public function __construct(
+		Factory $factoryElement,
+		CollectionFactory $factoryCollection,
+		Escaper $escaper,
+		Registry $coreRegistry,
+		StoreManagerInterface $storeManager,
+		HelperData $helperData,
+		$data = []
+	)
+	{
+		$this->_coreRegistry            = $coreRegistry;
+		$this->_storeManager            = $storeManager;
+		$this->_helperData              = $helperData;
 
-        parent::__construct($factoryElement, $factoryCollection, $escaper, $data);
+		parent::__construct($factoryElement, $factoryCollection, $escaper, $data);
 
-        $this->setType('mp_tfa_secret_temp');
-    }
+		$this->setType('mp_tfa_secret_temp');
+	}
 
-    /**
-     * @return string
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
-     * @SuppressWarnings(PHPMD.NPathComplexity)
-     */
-    public function getElementHtml()
-    {
-        /** @var $model \Magento\User\Model\User */
-        $model       = $this->_coreRegistry->registry('mp_permissions_user');
-        $secret      = $this->getValue();
-        $userEmail   = $model->getEmail();
-        $storeUrl    = $this->_storeManager->getStore()->getBaseUrl();
-        $accountName = $storeUrl . ':' . $userEmail;
-        $qrCodeUrl   = $this->_googleAuthenticator->getQRCodeGoogleUrl($accountName, $secret);
-        $html        = '';
-        $html        .= '<div class="mp-tfa-qrcode-img">';
-        $html        .= '<img src="' . $qrCodeUrl . '" alt="' . __('Qr Code Image') . '" />';
-        $html        .= '</div><div class="mp-tfa-qrcode-description mp-bg-light">';
-        $html        .= '<p>' . __("Can not scan the code?") . '<br>'
-            . __("You can add the entry manually, please provide the following details to the application on your phone.") . '<br>';
-        if ($userEmail) {
-            $html .= __("Account: ") . $accountName . '<br>';
-        }
-        $html .= __("Key: ") . $secret . '<br>'
-            . __("Time based: Yes") . '</p>';
-        $html .= '</div>';
+	/**
+	 * @return string
+	 * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+	 * @SuppressWarnings(PHPMD.NPathComplexity)
+	 */
+	public function getElementHtml()
+	{
+		/** @var $model \Magento\User\Model\User */
+		$model       = $this->_coreRegistry->registry('mp_permissions_user');
+		$secret      = $this->getValue();
+		$userEmail   = $model->getEmail();
+		$storeUrl    = $this->_storeManager->getStore()->getBaseUrl();
+		$accountName = $storeUrl . ':' . $userEmail;
+		$qrCodeUrl   = $this->_helperData->generateUri($this->getUri($accountName, $secret, $userEmail));
+		$html        = '';
+		$html        .= '<div class="mp-tfa-qrcode-img">';
+		$html        .= '<img src="' . $qrCodeUrl . '" alt="' . __('Qr Code Image') . '" />';
+		$html        .= '</div><div class="mp-tfa-qrcode-description mp-bg-light">';
+		$html        .= '<p>' . __("Can not scan the code?") . '<br>'
+			. __("You can add the entry manually, please provide the following details to the application on your phone.") . '<br>';
+		if ($userEmail) {
+			$html .= __("Account: ") . $accountName . '<br>';
+		}
+		$html .= __("Key: ") . $secret . '<br>'
+			. __("Time based: Yes") . '</p>';
+		$html .= '</div>';
 
-        return $html;
-    }
+		return $html;
+	}
+
+	/**
+	 * @param $label
+	 * @param $secretKey
+	 * @param $issuer
+	 * @return string
+	 */
+	public function getUri($label, $secretKey, $issuer)
+	{
+		return "otpauth://totp/" . rawurlencode($label) . "?secret=" . $secretKey . "&issuer=" . rawurlencode($issuer);
+	}
 }

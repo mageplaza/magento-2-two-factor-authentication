@@ -4,7 +4,8 @@
   "require": {
     "mageplaza/module-core": "^1.4.0",
     "donatj/phpuseragentparser": "*",
-    "phpgangsta/googleauthenticator": "*"
+    "dolondro/google-authenticator" : "*",
+    "endroid/qr-code" : "2.5"
   },
   "type": "magento2-module",
   "version": "1.0.0",

@@ -28,7 +28,7 @@ use Magento\Framework\Session\SessionManager;
 use Magento\Security\Model\AdminSessionsManager;
 use Mageplaza\TwoFactorAuth\Helper\Data as HelperData;
 use Mageplaza\TwoFactorAuth\Model\TrustedFactory;
-use PHPGangsta\GoogleAuthenticator;
+use Dolondro\GoogleAuthenticator\GoogleAuthenticator;
 
 /**
  * Class AuthPost
@@ -36,9 +36,9 @@ use PHPGangsta\GoogleAuthenticator;
  */
 class AuthPost extends Action
 {
-    /**
-     * @var \PHPGangsta\GoogleAuthenticator
-     */
+	/**
+	 * @var \Dolondro\GoogleAuthenticator\GoogleAuthenticator
+	 */
     protected $_googleAuthenticator;
 
     /**
@@ -101,7 +101,7 @@ class AuthPost extends Action
         if ($user = $this->_storageSession->getData('user')) {
             $secretCode = $user->getMpTfaSecret();
             try {
-                $checkResult = $this->_googleAuthenticator->verifyCode($secretCode, $authCode, 1);
+                $checkResult = $this->_googleAuthenticator->authenticate($secretCode, $authCode);
                 if ($checkResult) {
                     $this->_storageSession->setData(HelperData::MP_GOOGLE_AUTH, true);
 

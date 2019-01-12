@@ -27,6 +27,7 @@ use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Mageplaza\Core\Helper\AbstractData;
 use Mageplaza\TwoFactorAuth\Model\TrustedFactory;
+use Endroid\QrCode\QrCode as EndroidQrCode;
 
 /**
  * Class Data
@@ -47,15 +48,15 @@ class Data extends AbstractData
      */
     protected $_trustedFactory;
 
-    /**
-     * Data constructor.
-     *
-     * @param Context $context
-     * @param ObjectManagerInterface $objectManager
-     * @param StoreManagerInterface $storeManager
-     * @param TimezoneInterface $timezone
-     * @param TrustedFactory $trustedFactory
-     */
+	/**
+	 * Data constructor.
+	 *
+	 * @param \Magento\Framework\App\Helper\Context $context
+	 * @param \Magento\Framework\ObjectManagerInterface $objectManager
+	 * @param \Magento\Store\Model\StoreManagerInterface $storeManager
+	 * @param \Magento\Framework\Stdlib\DateTime\TimezoneInterface $timezone
+	 * @param \Mageplaza\TwoFactorAuth\Model\TrustedFactory $trustedFactory
+	 */
     public function __construct(
         Context $context,
         ObjectManagerInterface $objectManager,
@@ -107,4 +108,18 @@ class Data extends AbstractData
     {
         return $this->getConfigGeneral('force_2fa', $scopeId);
     }
+
+	/**
+	 * @param $secret
+	 * @return string
+	 */
+	public function generateUri($secret)
+	{
+		$qrCode = new EndroidQrCode($secret);
+		$qrCode->setSize(400);
+
+		$qrCode->setWriterByName('png');
+
+		return $qrCode->writeDataUri();
+	}
 }
