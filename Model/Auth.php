@@ -36,18 +36,12 @@ use Magento\Framework\Session\SessionManager;
 use Magento\Framework\Stdlib\DateTime\DateTime;
 use Magento\Framework\UrlInterface;
 use Mageplaza\TwoFactorAuth\Helper\Data as HelperData;
-use Source\UserAgentParser;
 
 /**
  * Backend Auth model
  */
 class Auth extends \Magento\Backend\Model\Auth
 {
-    /**
-     * @var UserAgentParser
-     */
-    protected $_userAgentParser;
-
     /**
      * @var RemoteAddress
      */
@@ -105,7 +99,6 @@ class Auth extends \Magento\Backend\Model\Auth
      * @param ScopeConfigInterface $coreConfig
      * @param ModelFactory $modelFactory
      * @param RemoteAddress $remoteAddress
-     * @param UserAgentParser $userAgentParser
      * @param DateTime $dateTime
      * @param UrlInterface $url
      * @param ResponseInterface $response
@@ -122,7 +115,6 @@ class Auth extends \Magento\Backend\Model\Auth
         ScopeConfigInterface $coreConfig,
         ModelFactory $modelFactory,
         RemoteAddress $remoteAddress,
-        UserAgentParser $userAgentParser,
         DateTime $dateTime,
         UrlInterface $url,
         ResponseInterface $response,
@@ -132,7 +124,6 @@ class Auth extends \Magento\Backend\Model\Auth
         TrustedFactory $trustedFactory
     )
     {
-        $this->_userAgentParser = $userAgentParser;
         $this->_remoteAddress   = $remoteAddress;
         $this->_dateTime        = $dateTime;
         $this->_url             = $url;
@@ -167,12 +158,13 @@ class Auth extends \Magento\Backend\Model\Auth
             if ($this->getCredentialStorage()->getId()) {
                 /** @var \Mageplaza\TwoFactorAuth\Model\Trusted $trusted */
                 $trusted      = $this->_trustedFactory->create();
-                $userAgent    = $this->_userAgentParser->parse_user_agent();
+                $userAgent    = parse_user_agent();
                 $deviceName   = $userAgent['platform'] . '-' . $userAgent['browser'] . '-' . $userAgent['version'];
+                $ipAddress = $this->_remoteAddress->getRemoteAddress();
                 $existTrusted = $trusted->getResource()->getExistTrusted(
                     $this->getCredentialStorage()->getId(),
                     $deviceName,
-                    $this->_remoteAddress->getRemoteAddress());
+					$ipAddress);
                 if ($existTrusted
                     && $this->_helperData->getConfigGeneral('trust_device')) {
                     $currentDevice         = $trusted->load($existTrusted);
@@ -187,10 +179,13 @@ class Auth extends \Magento\Backend\Model\Auth
                         $this->_isTrusted = true;
                     }
                 }
+                if (in_array($ipAddress,$this->_helperData->getWhitelistIpsConfig())){
+					$this->_isTrusted = true;
+				}
                 /** verify auth code */
                 if ($this->_helperData->isEnabled()
                     && $this->getCredentialStorage()->getMpTfaStatus()
-                    && !$this->_isTrusted) {
+                    && !$this->_isTrusted ) {
                     $user = $this->getCredentialStorage();
                     $this->actionFlag->set('', Action::FLAG_NO_DISPATCH, true);
                     $this->_storageSession->setData('user', $user);

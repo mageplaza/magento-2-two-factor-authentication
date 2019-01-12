@@ -27,7 +27,6 @@ use Magento\Framework\HTTP\PhpEnvironment\RemoteAddress;
 use Magento\Framework\Message\ManagerInterface;
 use Magento\Framework\Stdlib\DateTime\DateTime;
 use Mageplaza\TwoFactorAuth\Model\TrustedFactory;
-use Source\UserAgentParser;
 
 /**
  * Class UserLoginSuccess
@@ -51,11 +50,6 @@ class UserLoginSuccess implements ObserverInterface
     protected $_messageManager;
 
     /**
-     * @var UserAgentParser
-     */
-    protected $_userAgentParser;
-
-    /**
      * @var TrustedFactory
      */
     protected $_trustedFactory;
@@ -66,21 +60,18 @@ class UserLoginSuccess implements ObserverInterface
      * @param RemoteAddress $remoteAddress
      * @param DateTime $dateTime
      * @param ManagerInterface $messageManager
-     * @param UserAgentParser $userAgentParser
      * @param TrustedFactory $trustedFactory
      */
     public function __construct(
         RemoteAddress $remoteAddress,
         DateTime $dateTime,
         ManagerInterface $messageManager,
-        UserAgentParser $userAgentParser,
         TrustedFactory $trustedFactory
     )
     {
         $this->_remoteAddress   = $remoteAddress;
         $this->_dateTime        = $dateTime;
         $this->_messageManager  = $messageManager;
-        $this->_userAgentParser = $userAgentParser;
         $this->_trustedFactory  = $trustedFactory;
     }
 
@@ -89,7 +80,7 @@ class UserLoginSuccess implements ObserverInterface
      */
     public function execute(Observer $observer)
     {
-        $userAgent  = $this->_userAgentParser->parse_user_agent();
+        $userAgent  = parse_user_agent();
         $user       = $observer->getEvent()->getUser();
         $isTrusted  = $observer->getEvent()->getMpIsTrusted();
         $deviceName = $userAgent['platform'] . '-' . $userAgent['browser'] . '-' . $userAgent['version'];

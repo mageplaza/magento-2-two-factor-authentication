@@ -51,6 +51,10 @@
                         <field id="trust_device">1</field>
                     </depends>
                 </field>
+                <field id="whitelist_ip" translate="label comment" type="textarea" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Whitelist(s)</label>
+                    <comment><![CDATA[Enter IP(s) which is allowed to sign in without 2FA. Separated with commas. Eg: 123.123.0.*,10.22.*.*]]></comment>
+                </field>
             </group>
         </section>
     </system>

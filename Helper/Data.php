@@ -35,18 +35,18 @@ use Endroid\QrCode\QrCode as EndroidQrCode;
  */
 class Data extends AbstractData
 {
-    const CONFIG_MODULE_PATH = 'mptwofactorauth';
-    const MP_GOOGLE_AUTH     = 'mp_google_auth';
+	const CONFIG_MODULE_PATH = 'mptwofactorauth';
+	const MP_GOOGLE_AUTH = 'mp_google_auth';
 
-    /**
-     * @var TimezoneInterface
-     */
-    protected $_localeDate;
+	/**
+	 * @var TimezoneInterface
+	 */
+	protected $_localeDate;
 
-    /**
-     * @var TrustedFactory
-     */
-    protected $_trustedFactory;
+	/**
+	 * @var TrustedFactory
+	 */
+	protected $_trustedFactory;
 
 	/**
 	 * Data constructor.
@@ -57,57 +57,70 @@ class Data extends AbstractData
 	 * @param \Magento\Framework\Stdlib\DateTime\TimezoneInterface $timezone
 	 * @param \Mageplaza\TwoFactorAuth\Model\TrustedFactory $trustedFactory
 	 */
-    public function __construct(
-        Context $context,
-        ObjectManagerInterface $objectManager,
-        StoreManagerInterface $storeManager,
-        TimezoneInterface $timezone,
-        TrustedFactory $trustedFactory
-    )
-    {
-        $this->_localeDate     = $timezone;
-        $this->_trustedFactory = $trustedFactory;
+	public function __construct(
+		Context $context,
+		ObjectManagerInterface $objectManager,
+		StoreManagerInterface $storeManager,
+		TimezoneInterface $timezone,
+		TrustedFactory $trustedFactory
+	)
+	{
+		$this->_localeDate     = $timezone;
+		$this->_trustedFactory = $trustedFactory;
 
-        parent::__construct($context, $objectManager, $storeManager);
-    }
+		parent::__construct($context, $objectManager, $storeManager);
+	}
 
-    /**
-     * @param $userId
-     *
-     * @return \Mageplaza\TwoFactorAuth\Model\ResourceModel\Trusted\Collection
-     */
-    public function getTrustedCollection($userId)
-    {
-        /** @var \Mageplaza\TwoFactorAuth\Model\ResourceModel\Trusted\Collection $trustedCollection */
-        $trustedCollection = $this->_trustedFactory->create()->getCollection();
-        $trustedCollection->addFieldToFilter('user_id', $userId);
+	/**
+	 * @param $userId
+	 *
+	 * @return \Mageplaza\TwoFactorAuth\Model\ResourceModel\Trusted\Collection
+	 */
+	public function getTrustedCollection($userId)
+	{
+		/** @var \Mageplaza\TwoFactorAuth\Model\ResourceModel\Trusted\Collection $trustedCollection */
+		$trustedCollection = $this->_trustedFactory->create()->getCollection();
+		$trustedCollection->addFieldToFilter('user_id', $userId);
 
-        return $trustedCollection;
-    }
+		return $trustedCollection;
+	}
 
-    /**
-     * @param $date
-     *
-     * @return \DateTime
-     * @throws \Exception
-     */
-    public function convertTimeZone($date)
-    {
-        $dateTime = new \DateTime($date, new \DateTimeZone('UTC'));
-        $dateTime->setTimezone(new \DateTimeZone($this->_localeDate->getConfigTimezone()));
+	/**
+	 * @param $date
+	 *
+	 * @return \DateTime
+	 * @throws \Exception
+	 */
+	public function convertTimeZone($date)
+	{
+		$dateTime = new \DateTime($date, new \DateTimeZone('UTC'));
+		$dateTime->setTimezone(new \DateTimeZone($this->_localeDate->getConfigTimezone()));
 
-        return $dateTime;
-    }
+		return $dateTime;
+	}
 
-    /**
-     * @param null $scopeId
-     *
-     * @return mixed
-     */
-    public function getForceTfaConfig($scopeId = null)
-    {
-        return $this->getConfigGeneral('force_2fa', $scopeId);
-    }
+	/**
+	 * @param null $scopeId
+	 *
+	 * @return mixed
+	 */
+	public function getForceTfaConfig($scopeId = null)
+	{
+		return $this->getConfigGeneral('force_2fa', $scopeId);
+	}
+
+	/**
+	 * @param null $scopeId
+	 *
+	 * @return mixed
+	 */
+	public function getWhitelistIpsConfig($scopeId = null)
+	{
+		$whitelistIp  = $this->getConfigGeneral('whitelist_ip', $scopeId);
+		$whitelistIps = explode(',',$whitelistIp);
+
+		return $whitelistIps;
+	}
 
 	/**
 	 * @param $secret
