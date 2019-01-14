@@ -36,6 +36,8 @@ use Endroid\QrCode\QrCode as EndroidQrCode;
 class Data extends AbstractData
 {
 	const CONFIG_MODULE_PATH = 'mptwofactorauth';
+    const XML_PATH_FORCE_2FA      = 'force_2fa';
+    const XML_PATH_WHITELIST_IP = 'whitelist_ip';
 	const MP_GOOGLE_AUTH = 'mp_google_auth';
 
 	/**
@@ -106,7 +108,7 @@ class Data extends AbstractData
 	 */
 	public function getForceTfaConfig($scopeId = null)
 	{
-		return $this->getConfigGeneral('force_2fa', $scopeId);
+		return $this->getConfigGeneral(self::XML_PATH_FORCE_2FA, $scopeId);
 	}
 
 	/**
@@ -116,16 +118,17 @@ class Data extends AbstractData
 	 */
 	public function getWhitelistIpsConfig($scopeId = null)
 	{
-		$whitelistIp  = $this->getConfigGeneral('whitelist_ip', $scopeId);
+		$whitelistIp  = $this->getConfigGeneral(self::XML_PATH_WHITELIST_IP, $scopeId);
 		$whitelistIps = explode(',',$whitelistIp);
 
 		return $whitelistIps;
 	}
 
-	/**
-	 * @param $secret
-	 * @return string
-	 */
+    /**
+     * @param $secret
+     * @return string
+     * @throws \Endroid\QrCode\Exception\InvalidWriterException
+     */
 	public function generateUri($secret)
 	{
 		$qrCode = new EndroidQrCode($secret);

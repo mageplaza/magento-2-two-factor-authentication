@@ -52,6 +52,7 @@ class Register extends Action
 
     /**
      * @return \Magento\Framework\App\ResponseInterface|\Magento\Framework\Controller\ResultInterface
+     * @throws \Psr\Cache\InvalidArgumentException
      */
     public function execute()
     {

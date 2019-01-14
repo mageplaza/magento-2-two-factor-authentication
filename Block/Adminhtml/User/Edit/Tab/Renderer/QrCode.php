@@ -45,22 +45,22 @@ class QrCode extends AbstractElement
 	 */
 	protected $_storeManager;
 
-	/**
-	 * @var \Mageplaza\TwoFactorAuth\Helper\Data
-	 */
+    /**
+     * @var HelperData
+     */
 	protected $_helperData;
 
-	/**
-	 * QrCode constructor.
-	 *
-	 * @param \Magento\Framework\Data\Form\Element\Factory $factoryElement
-	 * @param \Magento\Framework\Data\Form\Element\CollectionFactory $factoryCollection
-	 * @param \Magento\Framework\Escaper $escaper
-	 * @param \Magento\Framework\Registry $coreRegistry
-	 * @param \Magento\Store\Model\StoreManagerInterface $storeManager
-	 * @param \Mageplaza\TwoFactorAuth\Helper\Data $helperData
-	 * @param array $data
-	 */
+    /**
+     * QrCode constructor.
+     *
+     * @param Factory $factoryElement
+     * @param CollectionFactory $factoryCollection
+     * @param Escaper $escaper
+     * @param Registry $coreRegistry
+     * @param StoreManagerInterface $storeManager
+     * @param HelperData $helperData
+     * @param array $data
+     */
 	public function __construct(
 		Factory $factoryElement,
 		CollectionFactory $factoryCollection,
@@ -80,11 +80,10 @@ class QrCode extends AbstractElement
 		$this->setType('mp_tfa_secret_temp');
 	}
 
-	/**
-	 * @return string
-	 * @SuppressWarnings(PHPMD.CyclomaticComplexity)
-	 * @SuppressWarnings(PHPMD.NPathComplexity)
-	 */
+    /**
+     * @return string
+     * @throws \Endroid\QrCode\Exception\InvalidWriterException
+     */
 	public function getElementHtml()
 	{
 		/** @var $model \Magento\User\Model\User */

@@ -91,6 +91,7 @@ class AuthPost extends Action
 
     /**
      * @return \Magento\Backend\Model\View\Result\Redirect|\Magento\Framework\App\ResponseInterface|\Magento\Framework\Controller\ResultInterface
+     * @throws \Psr\Cache\InvalidArgumentException
      */
     public function execute()
     {
