@@ -4,7 +4,6 @@
   "require": {
     "mageplaza/module-core": "^1.4.0",
     "donatj/phpuseragentparser": "*",
-    "dolondro/google-authenticator" : "*",
     "endroid/qr-code" : "2.5",
     "sonata-project/google-authenticator" : "2.0.0"
   },
