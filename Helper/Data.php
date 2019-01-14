@@ -21,13 +21,13 @@
 
 namespace Mageplaza\TwoFactorAuth\Helper;
 
+use Endroid\QrCode\QrCode as EndroidQrCode;
 use Magento\Framework\App\Helper\Context;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Mageplaza\Core\Helper\AbstractData;
 use Mageplaza\TwoFactorAuth\Model\TrustedFactory;
-use Endroid\QrCode\QrCode as EndroidQrCode;
 
 /**
  * Class Data
@@ -35,116 +35,119 @@ use Endroid\QrCode\QrCode as EndroidQrCode;
  */
 class Data extends AbstractData
 {
-	const CONFIG_MODULE_PATH = 'mptwofactorauth';
-    const XML_PATH_FORCE_2FA      = 'force_2fa';
+    const CONFIG_MODULE_PATH    = 'mptwofactorauth';
+    const XML_PATH_FORCE_2FA    = 'force_2fa';
     const XML_PATH_WHITELIST_IP = 'whitelist_ip';
-	const MP_GOOGLE_AUTH = 'mp_google_auth';
+    const MP_GOOGLE_AUTH        = 'mp_google_auth';
 
-	/**
-	 * @var TimezoneInterface
-	 */
-	protected $_localeDate;
+    /**
+     * @var TimezoneInterface
+     */
+    protected $_localeDate;
 
-	/**
-	 * @var TrustedFactory
-	 */
-	protected $_trustedFactory;
+    /**
+     * @var TrustedFactory
+     */
+    protected $_trustedFactory;
 
-	/**
-	 * Data constructor.
-	 *
-	 * @param \Magento\Framework\App\Helper\Context $context
-	 * @param \Magento\Framework\ObjectManagerInterface $objectManager
-	 * @param \Magento\Store\Model\StoreManagerInterface $storeManager
-	 * @param \Magento\Framework\Stdlib\DateTime\TimezoneInterface $timezone
-	 * @param \Mageplaza\TwoFactorAuth\Model\TrustedFactory $trustedFactory
-	 */
-	public function __construct(
-		Context $context,
-		ObjectManagerInterface $objectManager,
-		StoreManagerInterface $storeManager,
-		TimezoneInterface $timezone,
-		TrustedFactory $trustedFactory
-	)
-	{
-		$this->_localeDate     = $timezone;
-		$this->_trustedFactory = $trustedFactory;
+    /**
+     * Data constructor.
+     *
+     * @param \Magento\Framework\App\Helper\Context $context
+     * @param \Magento\Framework\ObjectManagerInterface $objectManager
+     * @param \Magento\Store\Model\StoreManagerInterface $storeManager
+     * @param \Magento\Framework\Stdlib\DateTime\TimezoneInterface $timezone
+     * @param \Mageplaza\TwoFactorAuth\Model\TrustedFactory $trustedFactory
+     */
+    public function __construct(
+        Context $context,
+        ObjectManagerInterface $objectManager,
+        StoreManagerInterface $storeManager,
+        TimezoneInterface $timezone,
+        TrustedFactory $trustedFactory
+    )
+    {
+        $this->_localeDate     = $timezone;
+        $this->_trustedFactory = $trustedFactory;
 
-		parent::__construct($context, $objectManager, $storeManager);
-	}
+        parent::__construct($context, $objectManager, $storeManager);
+    }
 
-	/**
-	 * @param $userId
-	 *
-	 * @return \Mageplaza\TwoFactorAuth\Model\ResourceModel\Trusted\Collection
-	 */
-	public function getTrustedCollection($userId)
-	{
-		/** @var \Mageplaza\TwoFactorAuth\Model\ResourceModel\Trusted\Collection $trustedCollection */
-		$trustedCollection = $this->_trustedFactory->create()->getCollection();
-		$trustedCollection->addFieldToFilter('user_id', $userId);
+    /**
+     * @param $userId
+     *
+     * @return \Mageplaza\TwoFactorAuth\Model\ResourceModel\Trusted\Collection
+     */
+    public function getTrustedCollection($userId)
+    {
+        /** @var \Mageplaza\TwoFactorAuth\Model\ResourceModel\Trusted\Collection $trustedCollection */
+        $trustedCollection = $this->_trustedFactory->create()->getCollection();
+        $trustedCollection->addFieldToFilter('user_id', $userId);
 
-		return $trustedCollection;
-	}
+        return $trustedCollection;
+    }
 
-	/**
-	 * @param $date
-	 *
-	 * @return \DateTime
-	 * @throws \Exception
-	 */
-	public function convertTimeZone($date)
-	{
-		$dateTime = new \DateTime($date, new \DateTimeZone('UTC'));
-		$dateTime->setTimezone(new \DateTimeZone($this->_localeDate->getConfigTimezone()));
+    /**
+     * @param $date
+     *
+     * @return \DateTime
+     * @throws \Exception
+     */
+    public function convertTimeZone($date)
+    {
+        $dateTime = new \DateTime($date, new \DateTimeZone('UTC'));
+        $dateTime->setTimezone(new \DateTimeZone($this->_localeDate->getConfigTimezone()));
 
-		return $dateTime;
-	}
+        return $dateTime;
+    }
 
-	/**
-	 * @param null $scopeId
-	 *
-	 * @return mixed
-	 */
-	public function getForceTfaConfig($scopeId = null)
-	{
-		return $this->getConfigGeneral(self::XML_PATH_FORCE_2FA, $scopeId);
-	}
+    /**
+     * @param null $scopeId
+     *
+     * @return mixed
+     */
+    public function getForceTfaConfig($scopeId = null)
+    {
+        return $this->getConfigGeneral(self::XML_PATH_FORCE_2FA, $scopeId);
+    }
 
-	/**
-	 * @param null $scopeId
-	 *
-	 * @return mixed
-	 */
-	public function getWhitelistIpsConfig($scopeId = null)
-	{
-		$whitelistIp  = $this->getConfigGeneral(self::XML_PATH_WHITELIST_IP, $scopeId);
-		$whitelistIps = explode(',',$whitelistIp);
+    /**
+     * @param null $scopeId
+     *
+     * @return mixed
+     */
+    public function getWhitelistIpsConfig($scopeId = null)
+    {
+        $whitelistIp  = $this->getConfigGeneral(self::XML_PATH_WHITELIST_IP, $scopeId);
+        $whitelistIps = explode(',', $whitelistIp);
 
-		return $whitelistIps;
-	}
+        return $whitelistIps;
+    }
 
     /**
      * @param $secret
+     *
      * @return string
      * @throws \Endroid\QrCode\Exception\InvalidWriterException
      */
-	public function generateUri($secret)
-	{
-		$qrCode = new EndroidQrCode($secret);
-		$qrCode->setSize(400);
+    public function generateUri($secret)
+    {
+        $qrCode = new EndroidQrCode($secret);
+        $qrCode->setSize(400);
 
-		$qrCode->setWriterByName('png');
+        $qrCode->setWriterByName('png');
 
-		return $qrCode->writeDataUri();
-	}
+        return $qrCode->writeDataUri();
+    }
 
-     /**
+    /**
      * Check Ip
      *
      * @param $ip
      * @param $range
+     *
      * @return bool
+     * @SuppressWarnings(PHPMD.ShortVariable)
      */
     public function checkIp($ip, $range)
     {
@@ -170,7 +173,9 @@ class Data extends AbstractData
      * @param $ip1
      * @param $ip2
      * @param int $op
+     *
      * @return bool
+     * @SuppressWarnings(PHPMD.ShortVariable)
      */
     private function ipCompare($ip1, $ip2, $op = 0)
     {

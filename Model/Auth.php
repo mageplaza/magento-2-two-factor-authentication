@@ -124,14 +124,14 @@ class Auth extends \Magento\Backend\Model\Auth
         TrustedFactory $trustedFactory
     )
     {
-        $this->_remoteAddress   = $remoteAddress;
-        $this->_dateTime        = $dateTime;
-        $this->_url             = $url;
-        $this->_response        = $response;
-        $this->_storageSession  = $storageSession;
-        $this->actionFlag       = $actionFlag;
-        $this->_helperData      = $helperData;
-        $this->_trustedFactory  = $trustedFactory;
+        $this->_remoteAddress  = $remoteAddress;
+        $this->_dateTime       = $dateTime;
+        $this->_url            = $url;
+        $this->_response       = $response;
+        $this->_storageSession = $storageSession;
+        $this->actionFlag      = $actionFlag;
+        $this->_helperData     = $helperData;
+        $this->_trustedFactory = $trustedFactory;
 
         parent::__construct($eventManager, $backendData, $authStorage, $credentialStorage, $coreConfig, $modelFactory);
     }
@@ -160,11 +160,11 @@ class Auth extends \Magento\Backend\Model\Auth
                 $trusted      = $this->_trustedFactory->create();
                 $userAgent    = parse_user_agent();
                 $deviceName   = $userAgent['platform'] . '-' . $userAgent['browser'] . '-' . $userAgent['version'];
-                $ipAddress = $this->_remoteAddress->getRemoteAddress();
+                $ipAddress    = $this->_remoteAddress->getRemoteAddress();
                 $existTrusted = $trusted->getResource()->getExistTrusted(
                     $this->getCredentialStorage()->getId(),
                     $deviceName,
-					$ipAddress);
+                    $ipAddress);
                 if ($existTrusted
                     && $this->_helperData->getConfigGeneral('trust_device')) {
                     $currentDevice         = $trusted->load($existTrusted);
@@ -180,8 +180,8 @@ class Auth extends \Magento\Backend\Model\Auth
                     }
                 }
                 $ipsAddress = $this->_helperData->getWhitelistIpsConfig();
-                foreach ($ipsAddress as $item){
-                    if ($this->_helperData->checkIp($ipAddress,$item)){
+                foreach ($ipsAddress as $item) {
+                    if ($this->_helperData->checkIp($ipAddress, $item)) {
                         $this->_isTrusted = true;
                         break;
                     }
@@ -189,7 +189,7 @@ class Auth extends \Magento\Backend\Model\Auth
                 /** verify auth code */
                 if ($this->_helperData->isEnabled()
                     && $this->getCredentialStorage()->getMpTfaStatus()
-                    && !$this->_isTrusted ) {
+                    && !$this->_isTrusted) {
                     $user = $this->getCredentialStorage();
                     $this->actionFlag->set('', Action::FLAG_NO_DISPATCH, true);
                     $this->_storageSession->setData('user', $user);

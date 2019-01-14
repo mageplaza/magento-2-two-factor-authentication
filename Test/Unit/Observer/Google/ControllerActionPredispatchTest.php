@@ -137,7 +137,7 @@ class ControllerActionPredispatchTest extends \PHPUnit\Framework\TestCase
         /** @var \Magento\Framework\App\Action\Action|\PHPUnit_Framework_MockObject_MockObject $controllerMock */
         $controllerMock = $this->getMockBuilder(\Magento\Framework\App\Action\AbstractAction::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getRedirect', 'getRequest','getResponse'])
+            ->setMethods(['getRedirect', 'getRequest', 'getResponse'])
             ->getMockForAbstractClass();
 
         $controllerMock->expects($this->any())->method('getResponse')->willReturn($responseObjMock);

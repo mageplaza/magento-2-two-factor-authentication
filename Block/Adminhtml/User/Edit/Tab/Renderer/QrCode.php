@@ -35,20 +35,20 @@ use Mageplaza\TwoFactorAuth\Helper\Data as HelperData;
  */
 class QrCode extends AbstractElement
 {
-	/**
-	 * @var Registry
-	 */
-	protected $_coreRegistry;
+    /**
+     * @var Registry
+     */
+    protected $_coreRegistry;
 
-	/**
-	 * @var StoreManagerInterface
-	 */
-	protected $_storeManager;
+    /**
+     * @var StoreManagerInterface
+     */
+    protected $_storeManager;
 
     /**
      * @var HelperData
      */
-	protected $_helperData;
+    protected $_helperData;
 
     /**
      * QrCode constructor.
@@ -61,62 +61,63 @@ class QrCode extends AbstractElement
      * @param HelperData $helperData
      * @param array $data
      */
-	public function __construct(
-		Factory $factoryElement,
-		CollectionFactory $factoryCollection,
-		Escaper $escaper,
-		Registry $coreRegistry,
-		StoreManagerInterface $storeManager,
-		HelperData $helperData,
-		$data = []
-	)
-	{
-		$this->_coreRegistry            = $coreRegistry;
-		$this->_storeManager            = $storeManager;
-		$this->_helperData              = $helperData;
+    public function __construct(
+        Factory $factoryElement,
+        CollectionFactory $factoryCollection,
+        Escaper $escaper,
+        Registry $coreRegistry,
+        StoreManagerInterface $storeManager,
+        HelperData $helperData,
+        $data = []
+    )
+    {
+        $this->_coreRegistry = $coreRegistry;
+        $this->_storeManager = $storeManager;
+        $this->_helperData   = $helperData;
 
-		parent::__construct($factoryElement, $factoryCollection, $escaper, $data);
+        parent::__construct($factoryElement, $factoryCollection, $escaper, $data);
 
-		$this->setType('mp_tfa_secret_temp');
-	}
+        $this->setType('mp_tfa_secret_temp');
+    }
 
     /**
      * @return string
      * @throws \Endroid\QrCode\Exception\InvalidWriterException
      */
-	public function getElementHtml()
-	{
-		/** @var $model \Magento\User\Model\User */
-		$model       = $this->_coreRegistry->registry('mp_permissions_user');
-		$secret      = $this->getValue();
-		$userEmail   = $model->getEmail();
-		$storeUrl    = $this->_storeManager->getStore()->getBaseUrl();
-		$accountName = $storeUrl . ':' . $userEmail;
-		$qrCodeUrl   = $this->_helperData->generateUri($this->getUri($accountName, $secret, $userEmail));
-		$html        = '';
-		$html        .= '<div class="mp-tfa-qrcode-img">';
-		$html        .= '<img src="' . $qrCodeUrl . '" alt="' . __('Qr Code Image') . '" />';
-		$html        .= '</div><div class="mp-tfa-qrcode-description mp-bg-light">';
-		$html        .= '<p>' . __("Can not scan the code?") . '<br>'
-			. __("You can add the entry manually, please provide the following details to the application on your phone.") . '<br>';
-		if ($userEmail) {
-			$html .= __("Account: ") . $accountName . '<br>';
-		}
-		$html .= __("Key: ") . $secret . '<br>'
-			. __("Time based: Yes") . '</p>';
-		$html .= '</div>';
+    public function getElementHtml()
+    {
+        /** @var $model \Magento\User\Model\User */
+        $model       = $this->_coreRegistry->registry('mp_permissions_user');
+        $secret      = $this->getValue();
+        $userEmail   = $model->getEmail();
+        $storeUrl    = $this->_storeManager->getStore()->getBaseUrl();
+        $accountName = $storeUrl . ':' . $userEmail;
+        $qrCodeUrl   = $this->_helperData->generateUri($this->getUri($accountName, $secret, $userEmail));
+        $html        = '';
+        $html        .= '<div class="mp-tfa-qrcode-img">';
+        $html        .= '<img src="' . $qrCodeUrl . '" alt="' . __('Qr Code Image') . '" />';
+        $html        .= '</div><div class="mp-tfa-qrcode-description mp-bg-light">';
+        $html        .= '<p>' . __("Can not scan the code?") . '<br>'
+            . __("You can add the entry manually, please provide the following details to the application on your phone.") . '<br>';
+        if ($userEmail) {
+            $html .= __("Account: ") . $accountName . '<br>';
+        }
+        $html .= __("Key: ") . $secret . '<br>'
+            . __("Time based: Yes") . '</p>';
+        $html .= '</div>';
 
-		return $html;
-	}
+        return $html;
+    }
 
-	/**
-	 * @param $label
-	 * @param $secretKey
-	 * @param $issuer
-	 * @return string
-	 */
-	public function getUri($label, $secretKey, $issuer)
-	{
-		return "otpauth://totp/" . rawurlencode($label) . "?secret=" . $secretKey . "&issuer=" . rawurlencode($issuer);
-	}
+    /**
+     * @param $label
+     * @param $secretKey
+     * @param $issuer
+     *
+     * @return string
+     */
+    public function getUri($label, $secretKey, $issuer)
+    {
+        return "otpauth://totp/" . rawurlencode($label) . "?secret=" . $secretKey . "&issuer=" . rawurlencode($issuer);
+    }
 }

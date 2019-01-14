@@ -69,10 +69,10 @@ class UserLoginSuccess implements ObserverInterface
         TrustedFactory $trustedFactory
     )
     {
-        $this->_remoteAddress   = $remoteAddress;
-        $this->_dateTime        = $dateTime;
-        $this->_messageManager  = $messageManager;
-        $this->_trustedFactory  = $trustedFactory;
+        $this->_remoteAddress  = $remoteAddress;
+        $this->_dateTime       = $dateTime;
+        $this->_messageManager = $messageManager;
+        $this->_trustedFactory = $trustedFactory;
     }
 
     /**
