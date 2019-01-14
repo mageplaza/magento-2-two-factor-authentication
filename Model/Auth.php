@@ -179,9 +179,13 @@ class Auth extends \Magento\Backend\Model\Auth
                         $this->_isTrusted = true;
                     }
                 }
-                if (in_array($ipAddress,$this->_helperData->getWhitelistIpsConfig())){
-					$this->_isTrusted = true;
-				}
+                $ipsAddress = $this->_helperData->getWhitelistIpsConfig();
+                foreach ($ipsAddress as $item){
+                    if ($this->_helperData->checkIp($ipAddress,$item)){
+                        $this->_isTrusted = true;
+                        break;
+                    }
+                }
                 /** verify auth code */
                 if ($this->_helperData->isEnabled()
                     && $this->getCredentialStorage()->getMpTfaStatus()
