@@ -5,7 +5,8 @@
     "mageplaza/module-core": "^1.4.0",
     "donatj/phpuseragentparser": "*",
     "dolondro/google-authenticator" : "*",
-    "endroid/qr-code" : "2.5"
+    "endroid/qr-code" : "2.5",
+    "sonata-project/google-authenticator" : "2.0.0"
   },
   "type": "magento2-module",
   "version": "1.0.0",

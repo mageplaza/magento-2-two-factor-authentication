@@ -21,7 +21,7 @@
 
 namespace Mageplaza\TwoFactorAuth\Plugin\Adminhtml\Block\System\Account\Edit;
 
-use Dolondro\GoogleAuthenticator\SecretFactory;
+use Google\Authenticator\GoogleAuthenticator;
 use Magento\Backend\Model\Auth\Session;
 use Magento\Config\Model\Config\Source\Enabledisable;
 use Magento\Framework\Registry;
@@ -109,8 +109,8 @@ class Form
 		$user   = $this->_userFactory->create()->load($userId);
 		$user->unsetData('password');
 		$this->_coreRegistry->register('mp_permissions_user', $user);
-        $dolondroSecretFactory = new SecretFactory();
-		$secret = ($user->getMpTfaSecret()) ?: $dolondroSecretFactory->generateSecretKey();
+        $secretFactory = new GoogleAuthenticator();
+		$secret = ($user->getMpTfaSecret()) ?: $secretFactory->generateSecret();
 		if (is_object($form) && $this->_helperData->isEnabled()) {
 			$mpTfaFieldset = $form->addFieldset('mp_tfa_security', ['legend' => __('Security')]);
 			$mpTfaFieldset->addField(
