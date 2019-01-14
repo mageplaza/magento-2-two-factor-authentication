@@ -21,13 +21,13 @@
 
 namespace Mageplaza\TwoFactorAuth\Plugin\Adminhtml\Block\System\Account\Edit;
 
+use Dolondro\GoogleAuthenticator\SecretFactory;
 use Magento\Backend\Model\Auth\Session;
 use Magento\Config\Model\Config\Source\Enabledisable;
 use Magento\Framework\Registry;
 use Magento\Framework\View\LayoutInterface;
 use Magento\User\Model\UserFactory;
 use Mageplaza\TwoFactorAuth\Helper\Data as HelperData;
-use Dolondro\GoogleAuthenticator\SecretFactory as DolondroSecretFactory;
 
 /**
  * Class Form
@@ -61,11 +61,6 @@ class Form
 	protected $_userFactory;
 
 	/**
-	 * @var \Dolondro\GoogleAuthenticator\SecretFactory
-	 */
-	protected $_dolondroSecretFactory;
-
-	/**
 	 * @var HelperData
 	 */
 	protected $_helperData;
@@ -78,7 +73,6 @@ class Form
 	 * @param \Magento\Framework\View\LayoutInterface $layout
 	 * @param \Magento\Backend\Model\Auth\Session $authSession
 	 * @param \Magento\User\Model\UserFactory $userFactory
-	 * @param \Dolondro\GoogleAuthenticator\SecretFactory $dolondroSecretFactory
 	 * @param \Mageplaza\TwoFactorAuth\Helper\Data $helperData
 	 */
 	public function __construct(
@@ -87,7 +81,6 @@ class Form
 		LayoutInterface $layout,
 		Session $authSession,
 		UserFactory $userFactory,
-		DolondroSecretFactory $dolondroSecretFactory,
 		HelperData $helperData
 	)
 	{
@@ -96,7 +89,6 @@ class Form
 		$this->_layout                = $layout;
 		$this->_authSession           = $authSession;
 		$this->_userFactory           = $userFactory;
-		$this->_dolondroSecretFactory = $dolondroSecretFactory;
 		$this->_helperData            = $helperData;
 	}
 
@@ -117,8 +109,8 @@ class Form
 		$user   = $this->_userFactory->create()->load($userId);
 		$user->unsetData('password');
 		$this->_coreRegistry->register('mp_permissions_user', $user);
-
-		$secret = ($user->getMpTfaSecret()) ?: $this->_dolondroSecretFactory->generateSecretKey();
+        $dolondroSecretFactory = new SecretFactory();
+		$secret = ($user->getMpTfaSecret()) ?: $dolondroSecretFactory->generateSecretKey();
 		if (is_object($form) && $this->_helperData->isEnabled()) {
 			$mpTfaFieldset = $form->addFieldset('mp_tfa_security', ['legend' => __('Security')]);
 			$mpTfaFieldset->addField(
