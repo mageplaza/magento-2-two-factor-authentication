@@ -66,8 +66,8 @@ class AuthIndex extends Action
     )
     {
         $this->resultPageFactory = $resultPageFactory;
-        $this->_storageSession   = $storageSession;
-        $this->_helperData       = $helperData;
+        $this->_storageSession = $storageSession;
+        $this->_helperData = $helperData;
 
         parent::__construct($context);
     }

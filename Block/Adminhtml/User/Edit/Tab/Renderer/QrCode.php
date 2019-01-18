@@ -21,6 +21,7 @@
 
 namespace Mageplaza\TwoFactorAuth\Block\Adminhtml\User\Edit\Tab\Renderer;
 
+use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Data\Form\Element\AbstractElement;
 use Magento\Framework\Data\Form\Element\CollectionFactory;
 use Magento\Framework\Data\Form\Element\Factory;
@@ -51,6 +52,11 @@ class QrCode extends AbstractElement
     protected $_helperData;
 
     /**
+     * @var RequestInterface
+     */
+    protected $request;
+
+    /**
      * QrCode constructor.
      *
      * @param Factory $factoryElement
@@ -59,6 +65,7 @@ class QrCode extends AbstractElement
      * @param Registry $coreRegistry
      * @param StoreManagerInterface $storeManager
      * @param HelperData $helperData
+     * @param RequestInterface $request
      * @param array $data
      */
     public function __construct(
@@ -68,12 +75,14 @@ class QrCode extends AbstractElement
         Registry $coreRegistry,
         StoreManagerInterface $storeManager,
         HelperData $helperData,
+        RequestInterface $request,
         $data = []
     )
     {
         $this->_coreRegistry = $coreRegistry;
         $this->_storeManager = $storeManager;
-        $this->_helperData   = $helperData;
+        $this->_helperData = $helperData;
+        $this->request = $request;
 
         parent::__construct($factoryElement, $factoryCollection, $escaper, $data);
 
@@ -82,29 +91,64 @@ class QrCode extends AbstractElement
 
     /**
      * @return string
-     * @throws \Endroid\QrCode\Exception\InvalidWriterException
      */
     public function getElementHtml()
     {
         /** @var $model \Magento\User\Model\User */
-        $model       = $this->_coreRegistry->registry('mp_permissions_user');
-        $secret      = $this->getValue();
-        $userEmail   = $model->getEmail();
-        $storeUrl    = $this->_storeManager->getStore()->getBaseUrl();
-        $accountName = $storeUrl . ':' . $userEmail;
-        $qrCodeUrl   = $this->_helperData->generateUri($this->getUri($accountName, $secret, $userEmail));
-        $html        = '';
-        $html        .= '<div class="mp-tfa-qrcode-img">';
-        $html        .= '<img src="' . $qrCodeUrl . '" alt="' . __('Qr Code Image') . '" />';
-        $html        .= '</div><div class="mp-tfa-qrcode-description mp-bg-light">';
-        $html        .= '<p>' . __("Can not scan the code?") . '<br>'
-            . __("You can add the entry manually, please provide the following details to the application on your phone.") . '<br>';
-        if ($userEmail) {
-            $html .= __("Account: ") . $accountName . '<br>';
-        }
-        $html .= __("Key: ") . $secret . '<br>'
-            . __("Time based: Yes") . '</p>';
-        $html .= '</div>';
+        $user = $this->_coreRegistry->registry('mp_permissions_user');
+
+        $secret = $this->getValue();
+        $userEmail = $user->getEmail();
+        $accountName = $this->request->getHttpHost() . ':' . $userEmail;
+
+        $description = __('Please download the authentication app (such as Authy, Google Authentication) to scan this QR code.') . '</p>';
+        $img = $this->_helperData->generateUri($this->getUri($accountName, $secret, $userEmail));
+        $info1 = __("Cannot scan the code?");
+        $info2 = __("You can add the entry manually, please provide the following details to the application on your phone.");
+        $info3 = __("Account: %1", $accountName);
+        $info4 = __("Key: %1", implode(' ', str_split($secret, 4)));
+        $info5 = __("Time based: Yes");
+        $confirmLabel = __('Confirmation Code');
+        $confirmNote = __('Use the code provided by your authentication app.');
+        $buttonLabel = __('Register');
+
+        $html = <<<HTML
+<div class="mp-tfa">
+    <p>{$description}</p>
+    <div class="mp-tfa-qrcode">
+        <div class="mp-tfa-qrcode-img">{$img}</div>
+        <div class="mp-tfa-qrcode-description mp-bg-light">
+            <p>
+                {$info1}<br>
+                {$info2}<br>
+                {$info3}<br>
+                {$info4}<br>
+                {$info5}
+            </p>
+        </div>
+        <div style="clear: both"></div>
+    </div>
+    <div class="mp-tfa-validate">
+        <label for="mp_tfa_one_code" class="mp-tfa-validate-label">{$confirmLabel}</label>
+        <div class="mp-tfa-validate-code">
+            <input id="mp_tfa_one_code" name="mp_tfa_one_code" title="Confirmation Code" type="text" class="mp-tfa-validate-input input-text admin__control-text">
+            <button type="button" id="mp_tfa_register" class="mp_tfa_register primary"><span class="mp-white">{$buttonLabel}</span></button>
+            <div style="clear: both"></div>
+        </div>
+        <div class="note admin__field-note" id="mp_tfa_one_code-note">{$confirmNote}</div>
+    </div>
+</div>
+HTML;
+
+//        $html .= '<div class="mp-tfa-qrcode-img">';
+//        $html .= $this->_helperData->generateUri($this->getUri($accountName, $secret, $userEmail));
+//        $html .= '</div><div class="mp-tfa-qrcode-description mp-bg-light"><p>';
+//        $html .= __("Cannot scan the code?") . '<br>';
+//        $html .= __("You can add the entry manually, please provide the following details to the application on your phone.") . '<br>';
+//        $html .= __("Account: %1", $accountName) . '<br>';
+//        $html .= __("Key: %1", implode(' ', str_split($secret, 4))) . '<br>';
+//        $html .= __("Time based: Yes") . '</p>';
+//        $html .= '</div>';
 
         return $html;
     }

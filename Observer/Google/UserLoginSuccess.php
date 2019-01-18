@@ -26,6 +26,7 @@ use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\HTTP\PhpEnvironment\RemoteAddress;
 use Magento\Framework\Message\ManagerInterface;
 use Magento\Framework\Stdlib\DateTime\DateTime;
+use Mageplaza\TwoFactorAuth\Helper\Data;
 use Mageplaza\TwoFactorAuth\Model\TrustedFactory;
 
 /**
@@ -55,24 +56,32 @@ class UserLoginSuccess implements ObserverInterface
     protected $_trustedFactory;
 
     /**
+     * @var Data
+     */
+    protected $helper;
+
+    /**
      * UserLoginSuccess constructor.
      *
      * @param RemoteAddress $remoteAddress
      * @param DateTime $dateTime
      * @param ManagerInterface $messageManager
      * @param TrustedFactory $trustedFactory
+     * @param Data $helper
      */
     public function __construct(
         RemoteAddress $remoteAddress,
         DateTime $dateTime,
         ManagerInterface $messageManager,
-        TrustedFactory $trustedFactory
+        TrustedFactory $trustedFactory,
+        Data $helper
     )
     {
-        $this->_remoteAddress  = $remoteAddress;
-        $this->_dateTime       = $dateTime;
+        $this->_remoteAddress = $remoteAddress;
+        $this->_dateTime = $dateTime;
         $this->_messageManager = $messageManager;
         $this->_trustedFactory = $trustedFactory;
+        $this->helper = $helper;
     }
 
     /**
@@ -80,17 +89,16 @@ class UserLoginSuccess implements ObserverInterface
      */
     public function execute(Observer $observer)
     {
-        $userAgent  = parse_user_agent();
-        $user       = $observer->getEvent()->getUser();
-        $isTrusted  = $observer->getEvent()->getMpIsTrusted();
-        $deviceName = $userAgent['platform'] . '-' . $userAgent['browser'] . '-' . $userAgent['version'];
+        $user = $observer->getEvent()->getUser();
+        $isTrusted = $observer->getEvent()->getMpIsTrusted();
         if ($user && $isTrusted) {
             $trusted = $this->_trustedFactory->create();
             try {
                 $trusted->setDeviceIp($this->_remoteAddress->getRemoteAddress())
                     ->setLastLogin($this->_dateTime->date())
-                    ->setName($deviceName)
-                    ->setUserId($user->getId())->save();
+                    ->setName($this->helper->getDeviceName())
+                    ->setUserId($user->getId())
+                    ->save();
             } catch (\Exception $e) {
                 $this->_messageManager->addError($e->getMessage());
             }

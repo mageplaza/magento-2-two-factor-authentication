@@ -84,10 +84,10 @@ class Save extends \Magento\Backend\Controller\Adminhtml\System\Account\Save
      */
     public function execute()
     {
-        $userId               = $this->_objectManager->get('Magento\Backend\Model\Auth\Session')->getUser()->getId();
-        $password             = (string) $this->getRequest()->getParam('password');
-        $passwordConfirmation = (string) $this->getRequest()->getParam('password_confirmation');
-        $interfaceLocale      = (string) $this->getRequest()->getParam('interface_locale', false);
+        $userId = $this->_objectManager->get('Magento\Backend\Model\Auth\Session')->getUser()->getId();
+        $password = (string)$this->getRequest()->getParam('password');
+        $passwordConfirmation = (string)$this->getRequest()->getParam('password_confirmation');
+        $interfaceLocale = (string)$this->getRequest()->getParam('interface_locale', false);
 
         /** @var $user \Magento\User\Model\User */
         $user = $this->_objectManager->create('Magento\User\Model\User')->load($userId);
@@ -106,7 +106,7 @@ class Save extends \Magento\Backend\Controller\Adminhtml\System\Account\Save
         }
         /** Before updating admin user data, ensure that password of current admin user is entered and is correct */
         $currentUserPasswordField = \Magento\User\Block\User\Edit\Tab\Main::CURRENT_USER_PASSWORD_FIELD;
-        $currentUserPassword      = $this->getRequest()->getParam($currentUserPasswordField);
+        $currentUserPassword = $this->getRequest()->getParam($currentUserPasswordField);
         try {
             $user->performIdentityCheck($currentUserPassword);
             if ($password !== '') {
@@ -118,9 +118,9 @@ class Save extends \Magento\Backend\Controller\Adminhtml\System\Account\Save
                 foreach ($errors as $error) {
                     $this->messageManager->addError($error);
                 }
-            } elseif ($this->_helperData->isEnabled()
-                && $this->_helperData->getConfigGeneral('force_2fa')
-                && !$this->getRequest()->getParam('mp_tfa_status', false)) {
+            } else if ($this->_helperData->isEnabled()
+                       && $this->_helperData->getConfigGeneral('force_2fa')
+                       && !$this->getRequest()->getParam('mp_tfa_status', false)) {
                 $this->messageManager->addError(__('Forced 2FA is enabled, so please register the 2FA authentication.'));
             } else {
                 if ($this->_helperData->isEnabled()) {

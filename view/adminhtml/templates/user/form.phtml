@@ -64,7 +64,6 @@
                 secretCodeTemp = $('#mp_tfa_secret_temp_hidden').val(),
                 userId = $('#user_id').val();
 
-            $('body').loader('show');
             $.ajax({
                 url: '<?php echo $block->getUrl('mptwofactorauth/google/register', ['form_key' => $block->getFormKey()]);?>',
                 data: {
@@ -72,6 +71,7 @@
                     confirm_code: confirmCode,
                     user_id: userId
                 },
+                showLoader: true,
                 success: function (result) {
                     if (result.status === 'invalid') {
                         $('.field-mp_tfa_register .mp-error-messages').html($t('Invalid Code'));
@@ -87,9 +87,6 @@
                     } else if (result.status === 'error' && result.hasOwnProperty(error)) {
                         $('.field-mp_tfa_register .mp-error-messages').html(result.error);
                     }
-                },
-                complete: function () {
-                    $('body').loader('hide');
                 }
             });
         });

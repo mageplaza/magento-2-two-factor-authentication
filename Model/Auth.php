@@ -124,13 +124,13 @@ class Auth extends \Magento\Backend\Model\Auth
         TrustedFactory $trustedFactory
     )
     {
-        $this->_remoteAddress  = $remoteAddress;
-        $this->_dateTime       = $dateTime;
-        $this->_url            = $url;
-        $this->_response       = $response;
+        $this->_remoteAddress = $remoteAddress;
+        $this->_dateTime = $dateTime;
+        $this->_url = $url;
+        $this->_response = $response;
         $this->_storageSession = $storageSession;
-        $this->actionFlag      = $actionFlag;
-        $this->_helperData     = $helperData;
+        $this->actionFlag = $actionFlag;
+        $this->_helperData = $helperData;
         $this->_trustedFactory = $trustedFactory;
 
         parent::__construct($eventManager, $backendData, $authStorage, $credentialStorage, $coreConfig, $modelFactory);
@@ -157,22 +157,18 @@ class Auth extends \Magento\Backend\Model\Auth
             $this->getCredentialStorage()->login($username, $password);
             if ($this->getCredentialStorage()->getId()) {
                 /** @var \Mageplaza\TwoFactorAuth\Model\Trusted $trusted */
-                $trusted      = $this->_trustedFactory->create();
-                $userAgent    = parse_user_agent();
-                $deviceName   = $userAgent['platform'] . '-' . $userAgent['browser'] . '-' . $userAgent['version'];
-                $ipAddress    = $this->_remoteAddress->getRemoteAddress();
-                $existTrusted = $trusted->getResource()->getExistTrusted(
-                    $this->getCredentialStorage()->getId(),
-                    $deviceName,
-                    $ipAddress);
+                $trusted = $this->_trustedFactory->create();
+                $ipAddress = $this->_remoteAddress->getRemoteAddress();
+                $existTrusted = $trusted->getResource()
+                    ->getExistTrusted($this->getCredentialStorage()->getId(), $this->_helperData->getDeviceName(), $ipAddress);
                 if ($existTrusted
                     && $this->_helperData->getConfigGeneral('trust_device')) {
-                    $currentDevice         = $trusted->load($existTrusted);
+                    $currentDevice = $trusted->load($existTrusted);
                     $currentDeviceCreateAt = new \DateTime($currentDevice->getCreatedAt(), new \DateTimeZone('UTC'));
-                    $currentDateObj        = new \DateTime($this->_dateTime->date(), new \DateTimeZone('UTC'));
-                    $dateDiff              = date_diff($currentDateObj, $currentDeviceCreateAt);
-                    $dateDiff              = (int) $dateDiff->days;
-                    if ($dateDiff > (int) $this->_helperData->getConfigGeneral('trust_time')) {
+                    $currentDateObj = new \DateTime($this->_dateTime->date(), new \DateTimeZone('UTC'));
+                    $dateDiff = date_diff($currentDateObj, $currentDeviceCreateAt);
+                    $dateDiff = (int)$dateDiff->days;
+                    if ($dateDiff > (int)$this->_helperData->getConfigGeneral('trust_time')) {
                         $currentDevice->delete();
                     } else {
                         $currentDevice->setLastLogin($this->_dateTime->date())->save();
@@ -222,7 +218,7 @@ class Auth extends \Magento\Backend\Model\Auth
                 ['user_name' => $username, 'exception' => $e]
             );
             self::throwException(
-                __($e->getMessage() ?: 'You did not sign in correctly or your account is temporarily disabled.')
+                $e->getMessage() ?: __('You did not sign in correctly or your account is temporarily disabled.')
             );
         }
     }

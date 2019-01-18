@@ -29,6 +29,9 @@ use Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection;
  */
 class Collection extends AbstractCollection
 {
+    /**
+     * @var string
+     */
     protected $_idFieldName = 'trusted_id';
 
     /**
@@ -38,6 +41,4 @@ class Collection extends AbstractCollection
     {
         $this->_init('Mageplaza\TwoFactorAuth\Model\Trusted', 'Mageplaza\TwoFactorAuth\Model\ResourceModel\Trusted');
     }
-
-
 }

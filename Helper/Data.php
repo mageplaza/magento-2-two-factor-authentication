@@ -21,8 +21,8 @@
 
 namespace Mageplaza\TwoFactorAuth\Helper;
 
-use Endroid\QrCode\QrCode as EndroidQrCode;
 use Magento\Framework\App\Helper\Context;
+use Magento\Framework\HTTP\Header;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
 use Magento\Store\Model\StoreManagerInterface;
@@ -36,14 +36,22 @@ use Mageplaza\TwoFactorAuth\Model\TrustedFactory;
 class Data extends AbstractData
 {
     const CONFIG_MODULE_PATH    = 'mptwofactorauth';
+
     const XML_PATH_FORCE_2FA    = 'force_2fa';
+
     const XML_PATH_WHITELIST_IP = 'whitelist_ip';
+
     const MP_GOOGLE_AUTH        = 'mp_google_auth';
 
     /**
      * @var TimezoneInterface
      */
     protected $_localeDate;
+
+    /**
+     * @var Header
+     */
+    protected $header;
 
     /**
      * @var TrustedFactory
@@ -53,11 +61,12 @@ class Data extends AbstractData
     /**
      * Data constructor.
      *
-     * @param \Magento\Framework\App\Helper\Context $context
-     * @param \Magento\Framework\ObjectManagerInterface $objectManager
-     * @param \Magento\Store\Model\StoreManagerInterface $storeManager
-     * @param \Magento\Framework\Stdlib\DateTime\TimezoneInterface $timezone
-     * @param \Mageplaza\TwoFactorAuth\Model\TrustedFactory $trustedFactory
+     * @param Context $context
+     * @param ObjectManagerInterface $objectManager
+     * @param StoreManagerInterface $storeManager
+     * @param TimezoneInterface $timezone
+     * @param Header $header
+     * @param TrustedFactory $trustedFactory
      */
     public function __construct(
         Context $context,
@@ -67,7 +76,7 @@ class Data extends AbstractData
         TrustedFactory $trustedFactory
     )
     {
-        $this->_localeDate     = $timezone;
+        $this->_localeDate = $timezone;
         $this->_trustedFactory = $trustedFactory;
 
         parent::__construct($context, $objectManager, $storeManager);
@@ -118,7 +127,7 @@ class Data extends AbstractData
      */
     public function getWhitelistIpsConfig($scopeId = null)
     {
-        $whitelistIp  = $this->getConfigGeneral(self::XML_PATH_WHITELIST_IP, $scopeId);
+        $whitelistIp = $this->getConfigGeneral(self::XML_PATH_WHITELIST_IP, $scopeId);
         $whitelistIps = explode(',', $whitelistIp);
 
         return $whitelistIps;
@@ -128,16 +137,16 @@ class Data extends AbstractData
      * @param $secret
      *
      * @return string
-     * @throws \Endroid\QrCode\Exception\InvalidWriterException
      */
     public function generateUri($secret)
     {
-        $qrCode = new EndroidQrCode($secret);
-        $qrCode->setSize(400);
+        $renderer = new \BaconQrCode\Renderer\Image\svg();
+        $renderer->setHeight(171);
+        $renderer->setWidth(171);
+        $renderer->setMargin(0);
+        $writer = new \BaconQrCode\Writer($renderer);
 
-        $qrCode->setWriterByName('png');
-
-        return $qrCode->writeDataUri();
+        return $writer->writeString($secret);
     }
 
     /**
@@ -156,8 +165,8 @@ class Data extends AbstractData
             if (strpos($range, '-') !== false) {
                 list($low, $high) = explode('-', $range, 2);
             }
-            $low   = str_replace('*', '0', $low);
-            $high  = str_replace('*', '255', $high);
+            $low = str_replace('*', '0', $low);
+            $high = str_replace('*', '255', $high);
             $range = $low . '-' . $high;
         }
         if (strpos($range, '-') !== false) {
@@ -192,5 +201,19 @@ class Data extends AbstractData
         }
 
         return ($op == 0);
+    }
+
+    /**
+     * @return string
+     */
+    public function getDeviceName()
+    {
+        $userAgent = new \Sinergi\BrowserDetector\UserAgent(
+            $this->getObject(Header::class)->getHttpUserAgent()
+        );
+        $os = new \Sinergi\BrowserDetector\Os($userAgent);
+        $browser = new \Sinergi\BrowserDetector\Browser($userAgent);
+
+        return implode('-', [$os->getName(), $browser->getName(), $browser->getVersion()]);
     }
 }

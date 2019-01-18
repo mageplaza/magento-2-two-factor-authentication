@@ -18,23 +18,48 @@
  * @license     https://www.mageplaza.com/LICENSE.txt
  */
 
-#mp_tfa_register, #mp_tfa_disable {
-    width: 36%;
-    float: left;
-}
+/*#mp_tfa_register, #mp_tfa_disable {*/
+    /*width: 36%;*/
+    /*float: left;*/
+/*}*/
 
 .mp-tfa-qrcode-img {
     float: left;
-    width: 28%;
-    margin-right: 40px;
+    width: 171px;
+    margin-right: 25px;
 }
 
 .mp-tfa-qrcode-description {
     float: left;
-    width: 60%;
-    padding: 30px 20px 45px;
+    width: calc(100% - 196px);
+    padding: 10px;
     border: solid 1px #dfdfdf;
-    height: auto;
+    min-height: 171px;
+    font-size: 1.3rem;
+    line-height: 2rem;
+}
+
+.mp-tfa-validate{
+    margin-top: 30px;
+}
+
+.mp-tfa-validate-label{
+    font-weight: bold;
+}
+
+.mp-tfa-validate-code{
+    margin-top: 10px;
+}
+
+.mp-tfa-validate-input{
+    width: 200px !important;
+    margin-right: 10px;
+    float: left;
+}
+
+.mp_tfa_register{
+    width: 150px;
+    float: left;
 }
 
 #mp_tfa_trust_device {

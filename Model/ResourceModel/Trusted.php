@@ -89,12 +89,12 @@ class Trusted extends AbstractDb
     public function getExistTrusted($userId, $deviceName, $deviceIp)
     {
         $adapter = $this->getConnection();
-        $select  = $adapter->select()
+        $select = $adapter->select()
             ->from($this->getMainTable(), 'trusted_id')
             ->where('user_id = :user_id')
             ->where('name = :name')
             ->where('device_ip = :device_ip');
-        $binds   = ['user_id' => (int) $userId, 'name' => $deviceName, 'device_ip' => $deviceIp];
+        $binds = ['user_id' => (int)$userId, 'name' => $deviceName, 'device_ip' => $deviceIp];
 
         return $adapter->fetchOne($select, $binds);
     }

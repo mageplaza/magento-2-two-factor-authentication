@@ -20,14 +20,11 @@
  * @license     https://www.mageplaza.com/LICENSE.txt
  */
 -->
-<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
     <event name="controller_action_predispatch">
-        <observer name="mp_twofactorauth_admin_action_predispatch"
-                  instance="Mageplaza\TwoFactorAuth\Observer\Google\ControllerActionPredispatch"/>
+        <observer name="mp_twofactorauth_admin_action_predispatch" instance="Mageplaza\TwoFactorAuth\Observer\Google\ControllerActionPredispatch"/>
     </event>
     <event name="mageplaza_tfa_backend_auth_user_login_success">
-        <observer name="mp_twofactorauth_login_success"
-                  instance="Mageplaza\TwoFactorAuth\Observer\Google\UserLoginSuccess"/>
+        <observer name="mp_twofactorauth_login_success" instance="Mageplaza\TwoFactorAuth\Observer\Google\UserLoginSuccess"/>
     </event>
 </config>

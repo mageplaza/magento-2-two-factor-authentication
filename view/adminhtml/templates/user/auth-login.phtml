@@ -21,23 +21,28 @@
 
 /** @var \Mageplaza\TwoFactorAuth\Block\Adminhtml\User\AuthLogin $block */
 ?>
-<form method="post" action="<?php echo $block->getUrl('mptwofactorauth/google/authpost', ['form_key' => $block->getFormKey()]) ?>" id="auth-login-form" data-mage-init='{"form": {}, "validation": {}}'>
+<form method="post"
+      action="<?php echo $block->getUrl('mptwofactorauth/google/authpost', ['form_key' => $block->getFormKey()]) ?>"
+      id="auth-login-form" data-mage-init='{"form": {}, "validation": {}}'>
     <fieldset class="admin__fieldset">
-        <legend class="admin__legend"><span><?php /* @escapeNotVerified */ echo __('Two-Factor Authentication'); ?></span></legend><br/>
-        <input name="form_key" type="hidden" value="<?php /* @escapeNotVerified */ echo $block->getFormKey(); ?>" />
+        <legend class="admin__legend"><span><?php /* @escapeNotVerified */ echo __('Two-Factor Authentication'); ?></span></legend>
+        <br/>
+        <input name="form_key" type="hidden" value="<?php /* @escapeNotVerified */ echo $block->getFormKey(); ?>"/>
 
         <div class="admin__field _required field-auth-code">
             <label for="auth-code" class="admin__field-label"><span><?php /* @escapeNotVerified */ echo __('Authentication code'); ?></span></label>
             <div class="admin__field-control">
-                <input type="text" id="auth-code" name="auth-code" value="" data-validate="{required:true}" class="admin__control-text" autofocus />
+                <input type="text" id="auth-code" name="auth-code" value="" data-validate="{required:true}"
+                       class="admin__control-text" autofocus/>
             </div>
         </div>
         <p class="admin__field-info"><?php /* @escapeNotVerified */ echo __('Enter the code from the authentication app on your mobile phone.'); ?></p>
         <?php if ($block->enableTrustedDevice()): ?>
-        <div class="field-trust-device">
-            <input type="checkbox" id="trust-device" name="trust-device" value="1" />
-            <label for="trust-device"><span><?php /* @escapeNotVerified */ echo __('Trust this device within %1 day(s).',$block->getTrustedLifetime()); ?></span></label>
-        </div>
+            <div class="field-trust-device">
+                <input type="checkbox" id="trust-device" name="trust-device" value="1"/>
+                <label for="trust-device"><span><?php /* @escapeNotVerified */
+                        echo __('Trust this device within %1 day(s).', $block->getTrustedLifetime()); ?></span></label>
+            </div>
         <?php endif; ?>
         <div class="form-actions">
             <div class="actions">

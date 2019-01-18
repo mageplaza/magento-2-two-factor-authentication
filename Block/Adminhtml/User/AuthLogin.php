@@ -71,7 +71,6 @@ class AuthLogin extends Template
             ? ($this->_helperData->getConfigGeneral('trust_time')) ?: 30
             : 0;
 
-
         return $lifetime;
     }
 }
