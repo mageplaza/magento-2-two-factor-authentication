@@ -22,10 +22,16 @@
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
     <default>
-        <twofactorauth>
+        <mptwofactorauth>
+            <module>
+                <type>1</type>
+            </module>
             <general>
                 <enabled>1</enabled>
+                <force_2fa>0</force_2fa>
+                <trust_device>0</trust_device>
+                <trust_time>30</trust_time>
             </general>
-        </twofactorauth>
+        </mptwofactorauth>
     </default>
 </config>

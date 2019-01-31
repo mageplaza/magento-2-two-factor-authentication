@@ -22,7 +22,7 @@
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:App/etc/routes.xsd">
     <router id="admin">
-        <route id="mptwofactorauth" frontName="2fa">
+        <route id="mptwofactorauth" frontName="mptwofactorauth">
             <module name="Mageplaza_TwoFactorAuth"/>
         </route>
     </router>

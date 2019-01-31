@@ -1,0 +1,106 @@
+<?php
+/**
+ * Mageplaza
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Mageplaza.com license that is
+ * available through the world-wide-web at this URL:
+ * https://www.mageplaza.com/LICENSE.txt
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this extension to newer
+ * version in the future.
+ *
+ * @category    Mageplaza
+ * @package     Mageplaza_TwoFactorAuth
+ * @copyright   Copyright (c) Mageplaza (https://www.mageplaza.com/)
+ * @license     https://www.mageplaza.com/LICENSE.txt
+ */
+?>
+<script>
+    require(['jquery', 'mage/translate'], function ($, $t) {
+        var tfa_enable = $('#mp_tfa_enable'),
+            registerBtn = $('#mp_tfa_register'),
+            disableBtn = $('#mp_tfa_disable'),
+            tfaEnableField = $('.field-mp_tfa_enable'),
+            oneCodeField = $('.field-mp_tfa_one_code'),
+            secretField = $('#mp_tfa_secret'),
+            tfaStatusField = $('#mp_tfa_status'),
+            secretFieldTemp = $('.field-mp_tfa_secret_temp'),
+            registerField = $('.field-mp_tfa_register'),
+            trustFieldset = $('#mp_tfa_trust_device');
+
+        /** tfa field depend on enable/disable field */
+        fieldDependence(tfa_enable);
+        tfa_enable.on('change', function () {
+            fieldDependence(this);
+        });
+
+        function fieldDependence(tfa_enable) {
+            if ($(tfa_enable).val() === '1' && tfaStatusField.val() === '0') {
+                oneCodeField.show();
+                secretFieldTemp.show();
+                registerField.show();
+                trustFieldset.show();
+            } else {
+                oneCodeField.hide();
+                secretFieldTemp.hide();
+                registerField.hide();
+            }
+            if ($(tfa_enable).val() !== '1') {
+                trustFieldset.hide();
+            }
+        }
+
+        if (tfaStatusField.val() === '1') {
+            tfaEnableField.hide();
+        }
+
+        /** ajax register secret key */
+        registerBtn.on('click', function () {
+            var confirmCode = $('#mp_tfa_one_code').val(),
+                secretCodeTemp = $('#mp_tfa_secret_temp_hidden').val(),
+                userId = $('#user_id').val();
+
+            $.ajax({
+                url: '<?php echo $block->getUrl('mptwofactorauth/google/register', ['form_key' => $block->getFormKey()]);?>',
+                data: {
+                    secret_code: secretCodeTemp,
+                    confirm_code: confirmCode,
+                    user_id: userId
+                },
+                showLoader: true,
+                success: function (result) {
+                    if (result.status === 'invalid') {
+                        $('.field-mp_tfa_register .mp-error-messages').html($t('Invalid Code'));
+                    } else if (result.status === 'valid') {
+                        tfaStatusField.val(1);
+                        secretField.val(result.secret_code);
+                        oneCodeField.hide();
+                        secretFieldTemp.hide();
+                        registerField.hide();
+                        tfaEnableField.hide();
+                        disableBtn.removeClass('hidden');
+                        $('.field-mp_tfa_disable .mp-success-messages').html($t('Two-factor authentication has been registered for this admin account successfully. Please save to finish this configuration.'));
+                    } else if (result.status === 'error' && result.hasOwnProperty(error)) {
+                        $('.field-mp_tfa_register .mp-error-messages').html(result.error);
+                    }
+                }
+            });
+        });
+
+        /** ajax disable tfa */
+        disableBtn.on('click', function () {
+            $(this).addClass('hidden');
+            oneCodeField.show();
+            secretFieldTemp.show();
+            registerField.show();
+            tfaEnableField.show();
+            tfaStatusField.val(0);
+            secretField.val('');
+            $('.field-mp_tfa_disable .mp-success-messages').html('');
+        });
+    });
+</script>

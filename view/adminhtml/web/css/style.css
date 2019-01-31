@@ -1,0 +1,107 @@
+/**
+ * Mageplaza
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Mageplaza.com license that is
+ * available through the world-wide-web at this URL:
+ * https://www.mageplaza.com/LICENSE.txt
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this extension to newer
+ * version in the future.
+ *
+ * @category    Mageplaza
+ * @package     Mageplaza_TwoFactorAuth
+ * @copyright   Copyright (c) Mageplaza (https://www.mageplaza.com/)
+ * @license     https://www.mageplaza.com/LICENSE.txt
+ */
+
+/*#mp_tfa_register, #mp_tfa_disable {*/
+    /*width: 36%;*/
+    /*float: left;*/
+/*}*/
+
+.mp-tfa-qrcode-img {
+    float: left;
+    width: 171px;
+    margin-right: 25px;
+}
+
+.mp-tfa-qrcode-description {
+    float: left;
+    width: calc(100% - 196px);
+    padding: 10px;
+    border: solid 1px #dfdfdf;
+    min-height: 171px;
+    font-size: 1.3rem;
+    line-height: 2rem;
+}
+
+.mp-tfa-validate{
+    margin-top: 30px;
+}
+
+.mp-tfa-validate-label{
+    font-weight: bold;
+}
+
+.mp-tfa-validate-code{
+    margin-top: 10px;
+}
+
+.mp-tfa-validate-input{
+    width: 200px !important;
+    margin-right: 10px;
+    float: left;
+}
+
+.mp_tfa_register{
+    width: 150px;
+    float: left;
+}
+
+#mp_tfa_trust_device {
+    margin-left: 16%;
+}
+
+.mp-tfa-trusted-devices table {
+    width: 100%;
+}
+
+.mp-tfa-trusted-devices td, .mp-tfa-trusted-devices th {
+    text-align: left;
+    padding: 8px;
+}
+
+.mp-tfa-trusted-devices thead tr {
+    border-bottom: 1px solid #dddddd;
+}
+
+.mp-tfa-trusted-devices tbody .mp-device-action {
+    width: 15%;
+}
+
+.mp-error-messages, .mp-success-messages {
+    float: left;
+    padding: 7px 20px;
+    font-weight: 700;
+}
+
+.field-auth-code {
+    margin-bottom: 1rem !important;
+}
+
+.field-trust-device {
+    margin-bottom: 15px;
+}
+
+.field-mp_tfa_disable .admin__field-control, .field-mp_tfa_secret_temp .admin__field-control, .field-mp_tfa_register .admin__field-control {
+    margin-left: calc((100%) * .25 + 30px) !important;
+}
+
+#trust-device {
+    float: left;
+    margin: 5px 5px 0 0;
+}
