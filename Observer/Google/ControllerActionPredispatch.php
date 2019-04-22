@@ -128,6 +128,7 @@ class ControllerActionPredispatch implements ObserverInterface
             'adminhtml_system_account_save',
             'adminhtml_auth_logout',
             'mptwofactorauth_google_register',
+            'mptwofactorauth_auto_save',
             'mui_index_render'
         ];
         /** @var \Magento\Framework\App\Action\Action $controller */
