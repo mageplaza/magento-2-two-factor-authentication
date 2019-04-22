@@ -140,7 +140,7 @@ class Data extends AbstractData
      */
     public function generateUri($secret)
     {
-        $renderer = new \BaconQrCode\Renderer\Image\svg();
+        $renderer = new \BaconQrCode\Renderer\Image\Svg();
         $renderer->setHeight(171);
         $renderer->setWidth(171);
         $renderer->setMargin(0);

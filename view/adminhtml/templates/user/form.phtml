@@ -74,7 +74,7 @@
                 showLoader: true,
                 success: function (result) {
                     if (result.status === 'invalid') {
-                        $('.field-mp_tfa_register .mp-error-messages').html($t('Invalid Code'));
+                        $('.field-mp_tfa_disable .mp-error-messages').html($t('Invalid Code'));
                     } else if (result.status === 'valid') {
                         tfaStatusField.val(1);
                         secretField.val(result.secret_code);
@@ -83,7 +83,20 @@
                         registerField.hide();
                         tfaEnableField.hide();
                         disableBtn.removeClass('hidden');
-                        $('.field-mp_tfa_disable .mp-success-messages').html($t('Two-factor authentication has been registered for this admin account successfully. Please save to finish this configuration.'));
+                        $.ajax({
+                            url: '<?php echo $block->getUrl('mptwofactorauth/auto/save', ['form_key' => $block->getFormKey()]);?>',
+                            data: {
+                                secret_code: secretCodeTemp,
+                                user_id: userId
+                            },
+                            showLoader: true,
+                            success: function (results) {
+                                $('.field-mp_tfa_disable .mp-success-messages').html($t('Two-factor authentication has been registered for this admin account successfully.'));
+                            },
+                            error: function (results) {
+                                $('.field-mp_tfa_register .mp-error-messages').html(results.error);
+                            }
+                        });
                     } else if (result.status === 'error' && result.hasOwnProperty(error)) {
                         $('.field-mp_tfa_register .mp-error-messages').html(result.error);
                     }
