@@ -21,14 +21,19 @@
 
 namespace Mageplaza\TwoFactorAuth\Controller\Adminhtml\Google;
 
+use Exception;
 use Google\Authenticator\GoogleAuthenticator;
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
+use Magento\Backend\Model\View\Result\Redirect;
+use Magento\Framework\App\ResponseInterface;
+use Magento\Framework\Controller\ResultInterface;
 use Magento\Framework\HTTP\PhpEnvironment\RemoteAddress;
 use Magento\Framework\Session\SessionManager;
 use Magento\Security\Model\AdminSessionsManager;
 use Mageplaza\TwoFactorAuth\Helper\Data as HelperData;
 use Mageplaza\TwoFactorAuth\Model\TrustedFactory;
+use Psr\Cache\InvalidArgumentException;
 
 /**
  * Class AuthPost
@@ -78,8 +83,7 @@ class AuthPost extends Action
         AdminSessionsManager $sessionsManager,
         RemoteAddress $remoteAddress,
         TrustedFactory $trustedFactory
-    )
-    {
+    ) {
         $this->_googleAuthenticator = $googleAuthenticator;
         $this->_storageSession = $storageSession;
         $this->_sessionsManager = $sessionsManager;
@@ -90,8 +94,8 @@ class AuthPost extends Action
     }
 
     /**
-     * @return \Magento\Backend\Model\View\Result\Redirect|\Magento\Framework\App\ResponseInterface|\Magento\Framework\Controller\ResultInterface
-     * @throws \Psr\Cache\InvalidArgumentException
+     * @return Redirect|ResponseInterface|ResultInterface
+     * @throws InvalidArgumentException
      */
     public function execute()
     {
@@ -128,7 +132,7 @@ class AuthPost extends Action
 
                     return $this->_getRedirect('mptwofactorauth/google/authindex');
                 }
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $this->messageManager->addError($e->getMessage());
 
                 return $this->_getRedirect('mptwofactorauth/google/authindex');
@@ -143,11 +147,11 @@ class AuthPost extends Action
      *
      * @param string $path
      *
-     * @return \Magento\Backend\Model\View\Result\Redirect
+     * @return Redirect
      */
     private function _getRedirect($path)
     {
-        /** @var \Magento\Backend\Model\View\Result\Redirect $resultRedirect */
+        /** @var Redirect $resultRedirect */
         $resultRedirect = $this->resultRedirectFactory->create();
         $resultRedirect->setPath($path);
 

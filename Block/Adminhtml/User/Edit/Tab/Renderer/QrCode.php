@@ -28,6 +28,7 @@ use Magento\Framework\Data\Form\Element\Factory;
 use Magento\Framework\Escaper;
 use Magento\Framework\Registry;
 use Magento\Store\Model\StoreManagerInterface;
+use Magento\User\Model\User;
 use Mageplaza\TwoFactorAuth\Helper\Data as HelperData;
 
 /**
@@ -77,8 +78,7 @@ class QrCode extends AbstractElement
         HelperData $helperData,
         RequestInterface $request,
         $data = []
-    )
-    {
+    ) {
         $this->_coreRegistry = $coreRegistry;
         $this->_storeManager = $storeManager;
         $this->_helperData = $helperData;
@@ -94,7 +94,7 @@ class QrCode extends AbstractElement
      */
     public function getElementHtml()
     {
-        /** @var $model \Magento\User\Model\User */
+        /** @var $model User */
         $user = $this->_coreRegistry->registry('mp_permissions_user');
 
         $secret = $this->getValue();

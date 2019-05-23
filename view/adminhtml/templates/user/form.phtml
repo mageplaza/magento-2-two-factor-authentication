@@ -65,7 +65,7 @@
                 userId = $('#user_id').val();
 
             $.ajax({
-                url: '<?php echo $block->getUrl('mptwofactorauth/google/register', ['form_key' => $block->getFormKey()]);?>',
+                url: '<?= $block->getUrl('mptwofactorauth/google/register', ['form_key' => $block->getFormKey()]);?>',
                 data: {
                     secret_code: secretCodeTemp,
                     confirm_code: confirmCode,
@@ -84,7 +84,7 @@
                         tfaEnableField.hide();
                         disableBtn.removeClass('hidden');
                         $.ajax({
-                            url: '<?php echo $block->getUrl('mptwofactorauth/auto/save', ['form_key' => $block->getFormKey()]);?>',
+                            url: '<?= $block->getUrl('mptwofactorauth/auto/save', ['form_key' => $block->getFormKey()]);?>',
                             data: {
                                 secret_code: secretCodeTemp,
                                 user_id: userId

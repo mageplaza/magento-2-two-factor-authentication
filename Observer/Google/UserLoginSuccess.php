@@ -21,6 +21,7 @@
 
 namespace Mageplaza\TwoFactorAuth\Observer\Google;
 
+use Exception;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\HTTP\PhpEnvironment\RemoteAddress;
@@ -75,8 +76,7 @@ class UserLoginSuccess implements ObserverInterface
         ManagerInterface $messageManager,
         TrustedFactory $trustedFactory,
         Data $helper
-    )
-    {
+    ) {
         $this->_remoteAddress = $remoteAddress;
         $this->_dateTime = $dateTime;
         $this->_messageManager = $messageManager;
@@ -99,7 +99,7 @@ class UserLoginSuccess implements ObserverInterface
                     ->setName($this->helper->getDeviceName())
                     ->setUserId($user->getId())
                     ->save();
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $this->_messageManager->addError($e->getMessage());
             }
         }

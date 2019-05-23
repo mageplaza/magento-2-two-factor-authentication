@@ -21,6 +21,8 @@
 
 namespace Mageplaza\TwoFactorAuth\Model;
 
+use DateTimeZone;
+use Exception;
 use Magento\Backend\Helper\Data;
 use Magento\Backend\Model\Auth\Credential\StorageInterface as CredentialStorageInterface;
 use Magento\Backend\Model\Auth\StorageInterface;
@@ -30,6 +32,8 @@ use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Data\Collection\ModelFactory;
 use Magento\Framework\Event\ManagerInterface;
+use Magento\Framework\Exception\AuthenticationException;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\Plugin\AuthenticationException as PluginAuthenticationException;
 use Magento\Framework\HTTP\PhpEnvironment\RemoteAddress;
 use Magento\Framework\Session\SessionManager;
@@ -70,7 +74,7 @@ class Auth extends \Magento\Backend\Model\Auth
     /**
      * Action flag
      *
-     * @var \Magento\Framework\App\ActionFlag
+     * @var ActionFlag
      */
     protected $actionFlag;
 
@@ -80,7 +84,7 @@ class Auth extends \Magento\Backend\Model\Auth
     protected $_helperData;
 
     /**
-     * @var \Mageplaza\TwoFactorAuth\Model\TrustedFactory
+     * @var TrustedFactory
      */
     protected $_trustedFactory;
 
@@ -122,8 +126,7 @@ class Auth extends \Magento\Backend\Model\Auth
         ActionFlag $actionFlag,
         HelperData $helperData,
         TrustedFactory $trustedFactory
-    )
-    {
+    ) {
         $this->_remoteAddress = $remoteAddress;
         $this->_dateTime = $dateTime;
         $this->_url = $url;
@@ -143,8 +146,8 @@ class Auth extends \Magento\Backend\Model\Auth
      * @param string $password
      *
      * @throws PluginAuthenticationException
-     * @throws \Exception
-     * @throws \Magento\Framework\Exception\AuthenticationException
+     * @throws Exception
+     * @throws AuthenticationException
      */
     public function login($username, $password)
     {
@@ -156,7 +159,7 @@ class Auth extends \Magento\Backend\Model\Auth
             $this->_initCredentialStorage();
             $this->getCredentialStorage()->login($username, $password);
             if ($this->getCredentialStorage()->getId()) {
-                /** @var \Mageplaza\TwoFactorAuth\Model\Trusted $trusted */
+                /** @var Trusted $trusted */
                 $trusted = $this->_trustedFactory->create();
                 $ipAddress = $this->_remoteAddress->getRemoteAddress();
                 $existTrusted = $trusted->getResource()
@@ -164,8 +167,8 @@ class Auth extends \Magento\Backend\Model\Auth
                 if ($existTrusted
                     && $this->_helperData->getConfigGeneral('trust_device')) {
                     $currentDevice = $trusted->load($existTrusted);
-                    $currentDeviceCreateAt = new \DateTime($currentDevice->getCreatedAt(), new \DateTimeZone('UTC'));
-                    $currentDateObj = new \DateTime($this->_dateTime->date(), new \DateTimeZone('UTC'));
+                    $currentDeviceCreateAt = new \DateTime($currentDevice->getCreatedAt(), new DateTimeZone('UTC'));
+                    $currentDateObj = new \DateTime($this->_dateTime->date(), new DateTimeZone('UTC'));
                     $dateDiff = date_diff($currentDateObj, $currentDeviceCreateAt);
                     $dateDiff = (int)$dateDiff->days;
                     if ($dateDiff > (int)$this->_helperData->getConfigGeneral('trust_time')) {
@@ -212,7 +215,7 @@ class Auth extends \Magento\Backend\Model\Auth
                 ['user_name' => $username, 'exception' => $e]
             );
             throw $e;
-        } catch (\Magento\Framework\Exception\LocalizedException $e) {
+        } catch (LocalizedException $e) {
             $this->_eventManager->dispatch(
                 'backend_auth_user_login_failed',
                 ['user_name' => $username, 'exception' => $e]

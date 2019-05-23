@@ -19,8 +19,8 @@
  */
 
 /*#mp_tfa_register, #mp_tfa_disable {*/
-    /*width: 36%;*/
-    /*float: left;*/
+/*width: 36%;*/
+/*float: left;*/
 /*}*/
 
 .mp-tfa-qrcode-img {
@@ -39,25 +39,25 @@
     line-height: 2rem;
 }
 
-.mp-tfa-validate{
+.mp-tfa-validate {
     margin-top: 30px;
 }
 
-.mp-tfa-validate-label{
+.mp-tfa-validate-label {
     font-weight: bold;
 }
 
-.mp-tfa-validate-code{
+.mp-tfa-validate-code {
     margin-top: 10px;
 }
 
-.mp-tfa-validate-input{
+.mp-tfa-validate-input {
     width: 200px !important;
     margin-right: 10px;
     float: left;
 }
 
-.mp_tfa_register{
+.mp_tfa_register {
     width: 150px;
     float: left;
 }

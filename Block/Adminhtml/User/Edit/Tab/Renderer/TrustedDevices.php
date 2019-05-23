@@ -21,9 +21,11 @@
 
 namespace Mageplaza\TwoFactorAuth\Block\Adminhtml\User\Edit\Tab\Renderer;
 
+use Exception;
 use Magento\Backend\Block\Template;
 use Magento\Backend\Block\Template\Context;
 use Mageplaza\TwoFactorAuth\Helper\Data as HelperData;
+use Mageplaza\TwoFactorAuth\Model\ResourceModel\Trusted\Collection;
 
 /**
  * Class TrustedDevices
@@ -52,15 +54,14 @@ class TrustedDevices extends Template
         Context $context,
         HelperData $helperData,
         array $data = []
-    )
-    {
+    ) {
         $this->_helperData = $helperData;
 
         parent::__construct($context, $data);
     }
 
     /**
-     * @return \Mageplaza\TwoFactorAuth\Model\ResourceModel\Trusted\Collection
+     * @return Collection
      */
     public function getTrustedCollection()
     {
@@ -71,7 +72,7 @@ class TrustedDevices extends Template
      * @param $date
      *
      * @return string
-     * @throws \Exception
+     * @throws Exception
      */
     public function getFormattedDate($date)
     {

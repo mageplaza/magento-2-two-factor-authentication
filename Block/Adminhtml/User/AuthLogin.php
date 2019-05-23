@@ -47,8 +47,7 @@ class AuthLogin extends Template
         Context $context,
         HelperData $helperData,
         array $data = []
-    )
-    {
+    ) {
         $this->_helperData = $helperData;
 
         parent::__construct($context, $data);

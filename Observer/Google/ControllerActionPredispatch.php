@@ -25,10 +25,12 @@ use Magento\Backend\Model\Auth\Session as AuthSession;
 use Magento\Backend\Model\UrlInterface;
 use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\ActionFlag;
+use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Event\Observer as EventObserver;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Message\ManagerInterface;
 use Magento\Framework\Session\SessionManager;
+use Magento\User\Model\User;
 use Mageplaza\TwoFactorAuth\Helper\Data as HelperData;
 
 /**
@@ -40,21 +42,21 @@ class ControllerActionPredispatch implements ObserverInterface
     /**
      * Backend url interface
      *
-     * @var \Magento\Backend\Model\UrlInterface
+     * @var UrlInterface
      */
     protected $url;
 
     /**
      * Backend authorization session
      *
-     * @var \Magento\Backend\Model\Auth\Session
+     * @var AuthSession
      */
     protected $authSession;
 
     /**
      * Action flag
      *
-     * @var \Magento\Framework\App\ActionFlag
+     * @var ActionFlag
      */
     protected $actionFlag;
 
@@ -90,8 +92,7 @@ class ControllerActionPredispatch implements ObserverInterface
         SessionManager $storageSession,
         ManagerInterface $messageManager,
         HelperData $helperData
-    )
-    {
+    ) {
         $this->url = $url;
         $this->authSession = $authSession;
         $this->actionFlag = $actionFlag;
@@ -102,7 +103,7 @@ class ControllerActionPredispatch implements ObserverInterface
 
     /**
      * Get current user
-     * @return \Magento\User\Model\User|null
+     * @return User|null
      */
     private function getUser()
     {
@@ -131,9 +132,9 @@ class ControllerActionPredispatch implements ObserverInterface
             'mptwofactorauth_auto_save',
             'mui_index_render'
         ];
-        /** @var \Magento\Framework\App\Action\Action $controller */
+        /** @var Action $controller */
         $controller = $observer->getEvent()->getControllerAction();
-        /** @var \Magento\Framework\App\RequestInterface $request */
+        /** @var RequestInterface $request */
         $request = $observer->getEvent()->getRequest();
 
         if ($user

@@ -21,11 +21,13 @@
 
 namespace Mageplaza\TwoFactorAuth\Plugin\Adminhtml\Block\System\Account\Edit;
 
+use Closure;
 use Google\Authenticator\GoogleAuthenticator;
 use Magento\Backend\Model\Auth\Session;
 use Magento\Config\Model\Config\Source\Enabledisable;
 use Magento\Framework\Registry;
 use Magento\Framework\View\LayoutInterface;
+use Magento\User\Model\User;
 use Magento\User\Model\UserFactory;
 use Mageplaza\TwoFactorAuth\Helper\Data as HelperData;
 
@@ -68,12 +70,12 @@ class Form
     /**
      * Form constructor.
      *
-     * @param \Magento\Config\Model\Config\Source\Enabledisable $enableDisable
-     * @param \Magento\Framework\Registry $coreRegistry
-     * @param \Magento\Framework\View\LayoutInterface $layout
-     * @param \Magento\Backend\Model\Auth\Session $authSession
-     * @param \Magento\User\Model\UserFactory $userFactory
-     * @param \Mageplaza\TwoFactorAuth\Helper\Data $helperData
+     * @param Enabledisable $enableDisable
+     * @param Registry $coreRegistry
+     * @param LayoutInterface $layout
+     * @param Session $authSession
+     * @param UserFactory $userFactory
+     * @param HelperData $helperData
      */
     public function __construct(
         Enabledisable $enableDisable,
@@ -82,8 +84,7 @@ class Form
         Session $authSession,
         UserFactory $userFactory,
         HelperData $helperData
-    )
-    {
+    ) {
         $this->_enableDisable = $enableDisable;
         $this->_coreRegistry = $coreRegistry;
         $this->_layout = $layout;
@@ -94,17 +95,16 @@ class Form
 
     /**
      * @param \Magento\Backend\Block\System\Account\Edit\Form $subject
-     * @param \Closure $proceed
+     * @param Closure $proceed
      *
      * @return mixed
      */
     public function aroundGetFormHtml(
         \Magento\Backend\Block\System\Account\Edit\Form $subject,
-        \Closure $proceed
-    )
-    {
+        Closure $proceed
+    ) {
         $form = $subject->getForm();
-        /** @var $model \Magento\User\Model\User */
+        /** @var $model User */
         $userId = $this->_authSession->getUser()->getId();
         $user = $this->_userFactory->create()->load($userId);
         $user->unsetData('password');
@@ -114,10 +114,10 @@ class Form
         if (is_object($form) && $this->_helperData->isEnabled()) {
             $mpTfaFieldset = $form->addFieldset('mp_tfa_security', ['legend' => __('Security')]);
             $mpTfaFieldset->addField('mp_tfa_enable', 'select', [
-                'name'   => 'mp_tfa_enable',
-                'label'  => __('Two-Factor Authentication'),
-                'title'  => __('Two-Factor Authentication'),
-                'values' => $this->_enableDisable->toOptionArray(),
+                'name'       => 'mp_tfa_enable',
+                'label'      => __('Two-Factor Authentication'),
+                'title'      => __('Two-Factor Authentication'),
+                'values'     => $this->_enableDisable->toOptionArray(),
                 'after_html' => 'Brian tran'
             ]);
 

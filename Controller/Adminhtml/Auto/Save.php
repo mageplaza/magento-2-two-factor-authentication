@@ -21,11 +21,14 @@
 
 namespace Mageplaza\TwoFactorAuth\Controller\Adminhtml\Auto;
 
+use Exception;
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
 use Magento\Framework\App\ResponseInterface;
-use Mageplaza\TwoFactorAuth\Helper\Data as HelperData;
+use Magento\Framework\Controller\ResultInterface;
+use Magento\Framework\Exception\NotFoundException;
 use Magento\User\Model\User;
+use Mageplaza\TwoFactorAuth\Helper\Data as HelperData;
 
 /**
  * Class Save
@@ -33,18 +36,15 @@ use Magento\User\Model\User;
  */
 class Save extends Action
 {
-
     public $helperData;
 
     protected $_user;
-
 
     public function __construct(
         Context $context,
         HelperData $helper,
         User $user
-    )
-    {
+    ) {
         $this->helperData = $helper;
         $this->_user = $user;
         parent::__construct($context);
@@ -55,14 +55,13 @@ class Save extends Action
      *
      * Note: Request will be added as operation argument in future
      *
-     * @return \Magento\Framework\Controller\ResultInterface|ResponseInterface
-     * @throws \Magento\Framework\Exception\NotFoundException
+     * @return ResultInterface|ResponseInterface
+     * @throws NotFoundException
      */
     public function execute()
     {
         // TODO: Implement execute() method.
-        if ($this->getRequest()->isAjax())
-        {
+        if ($this->getRequest()->isAjax()) {
             $data = $this->getRequest()->getParams();
             if ($this->helperData->isEnabled()) {
                 try {
@@ -72,9 +71,10 @@ class Save extends Action
                     $this->_user->setMpTfaStatus('1');
                     $this->_user->save();
                     $result = ['notify' => 'success'];
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     $result = ['notify' => $e->getMessage()];
                 }
+
                 return $this->getResponse()->representJson($this->helperData->jsonEncode($result));
             }
         }

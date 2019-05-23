@@ -19,34 +19,35 @@
  * @license     https://www.mageplaza.com/LICENSE.txt
  */
 
-/** @var \Mageplaza\TwoFactorAuth\Block\Adminhtml\User\AuthLogin $block */
+use Mageplaza\TwoFactorAuth\Block\Adminhtml\User\AuthLogin;
+
+/** @var AuthLogin $block */
 ?>
 <form method="post"
-      action="<?php echo $block->getUrl('mptwofactorauth/google/authpost', ['form_key' => $block->getFormKey()]) ?>"
+      action="<?= /* @noEscape */ $block->getUrl('mptwofactorauth/google/authpost', ['form_key' => $block->getFormKey()]) ?>"
       id="auth-login-form" data-mage-init='{"form": {}, "validation": {}}'>
     <fieldset class="admin__fieldset">
-        <legend class="admin__legend"><span><?php /* @escapeNotVerified */ echo __('Two-Factor Authentication'); ?></span></legend>
+        <legend class="admin__legend"><span><?= /* @noEscape */ __('Two-Factor Authentication') ?></span></legend>
         <br/>
-        <input name="form_key" type="hidden" value="<?php /* @escapeNotVerified */ echo $block->getFormKey(); ?>"/>
+        <input name="form_key" type="hidden" value="<?= /* @noEscape */ $block->getFormKey() ?>"/>
 
         <div class="admin__field _required field-auth-code">
-            <label for="auth-code" class="admin__field-label"><span><?php /* @escapeNotVerified */ echo __('Authentication code'); ?></span></label>
+            <label for="auth-code" class="admin__field-label"><span><?= /* @noEscape */ __('Authentication code') ?></span></label>
             <div class="admin__field-control">
                 <input type="text" id="auth-code" name="auth-code" value="" data-validate="{required:true}"
                        class="admin__control-text" autofocus/>
             </div>
         </div>
-        <p class="admin__field-info"><?php /* @escapeNotVerified */ echo __('Enter the code from the authentication app on your mobile phone.'); ?></p>
-        <?php if ($block->enableTrustedDevice()): ?>
+        <p class="admin__field-info"><?= /* @noEscape */ __('Enter the code from the authentication app on your mobile phone.') ?></p>
+        <?php if ($block->enableTrustedDevice()) : ?>
             <div class="field-trust-device">
                 <input type="checkbox" id="trust-device" name="trust-device" value="1"/>
-                <label for="trust-device"><span><?php /* @escapeNotVerified */
-                        echo __('Trust this device within %1 day(s).', $block->getTrustedLifetime()); ?></span></label>
+                <label for="trust-device"><span><?= /* @noEscape */ __('Trust this device within %1 day(s).', $block->getTrustedLifetime()) ?></span></label>
             </div>
         <?php endif; ?>
         <div class="form-actions">
             <div class="actions">
-                <button class="action-retrieve action-primary" type="submit"><span><?php /* @escapeNotVerified */ echo __('Verify code'); ?></span></button>
+                <button class="action-retrieve action-primary" type="submit"><span><?= /* @noEscape */ __('Verify code') ?></span></button>
             </div>
         </div>
     </fieldset>
