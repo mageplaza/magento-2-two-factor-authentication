@@ -25,6 +25,8 @@
         <mptwofactorauth>
             <module>
                 <type>1</type>
+                <user_guide>two-factors-authentication</user_guide>
+                
             </module>
             <general>
                 <enabled>1</enabled>
