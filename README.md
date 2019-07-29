@@ -1,1 +1,1 @@
-- User guide: https://docs.mageplaza.com/two-factor-authentication/index.html
+- User guide: https://docs.mageplaza.com/two-factors-authentication/index.html
