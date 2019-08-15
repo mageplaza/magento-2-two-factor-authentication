@@ -45,8 +45,7 @@ class RegisterButton extends AbstractElement
         CollectionFactory $factoryCollection,
         Escaper $escaper,
         $data = []
-    )
-    {
+    ) {
         parent::__construct($factoryElement, $factoryCollection, $escaper, $data);
 
         $this->setType('mp_tfa_register');

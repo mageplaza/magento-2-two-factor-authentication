@@ -21,13 +21,22 @@
 
 namespace Mageplaza\TwoFactorAuth\Helper;
 
+use BaconQrCode\Renderer\Image\Svg;
+use BaconQrCode\Writer;
+use DateTime;
+use DateTimeZone;
+use Exception;
 use Magento\Framework\App\Helper\Context;
 use Magento\Framework\HTTP\Header;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Mageplaza\Core\Helper\AbstractData;
+use Mageplaza\TwoFactorAuth\Model\ResourceModel\Trusted\Collection;
 use Mageplaza\TwoFactorAuth\Model\TrustedFactory;
+use Sinergi\BrowserDetector\Browser;
+use Sinergi\BrowserDetector\Os;
+use Sinergi\BrowserDetector\UserAgent;
 
 /**
  * Class Data
@@ -36,11 +45,8 @@ use Mageplaza\TwoFactorAuth\Model\TrustedFactory;
 class Data extends AbstractData
 {
     const CONFIG_MODULE_PATH    = 'mptwofactorauth';
-
     const XML_PATH_FORCE_2FA    = 'force_2fa';
-
     const XML_PATH_WHITELIST_IP = 'whitelist_ip';
-
     const MP_GOOGLE_AUTH        = 'mp_google_auth';
 
     /**
@@ -74,8 +80,7 @@ class Data extends AbstractData
         StoreManagerInterface $storeManager,
         TimezoneInterface $timezone,
         TrustedFactory $trustedFactory
-    )
-    {
+    ) {
         $this->_localeDate = $timezone;
         $this->_trustedFactory = $trustedFactory;
 
@@ -85,11 +90,11 @@ class Data extends AbstractData
     /**
      * @param $userId
      *
-     * @return \Mageplaza\TwoFactorAuth\Model\ResourceModel\Trusted\Collection
+     * @return Collection
      */
     public function getTrustedCollection($userId)
     {
-        /** @var \Mageplaza\TwoFactorAuth\Model\ResourceModel\Trusted\Collection $trustedCollection */
+        /** @var Collection $trustedCollection */
         $trustedCollection = $this->_trustedFactory->create()->getCollection();
         $trustedCollection->addFieldToFilter('user_id', $userId);
 
@@ -99,13 +104,13 @@ class Data extends AbstractData
     /**
      * @param $date
      *
-     * @return \DateTime
-     * @throws \Exception
+     * @return DateTime
+     * @throws Exception
      */
     public function convertTimeZone($date)
     {
-        $dateTime = new \DateTime($date, new \DateTimeZone('UTC'));
-        $dateTime->setTimezone(new \DateTimeZone($this->_localeDate->getConfigTimezone()));
+        $dateTime = new DateTime($date, new DateTimeZone('UTC'));
+        $dateTime->setTimezone(new DateTimeZone($this->_localeDate->getConfigTimezone()));
 
         return $dateTime;
     }
@@ -128,9 +133,8 @@ class Data extends AbstractData
     public function getWhitelistIpsConfig($scopeId = null)
     {
         $whitelistIp = $this->getConfigGeneral(self::XML_PATH_WHITELIST_IP, $scopeId);
-        $whitelistIps = explode(',', $whitelistIp);
 
-        return $whitelistIps;
+        return explode(',', $whitelistIp);
     }
 
     /**
@@ -140,11 +144,11 @@ class Data extends AbstractData
      */
     public function generateUri($secret)
     {
-        $renderer = new \BaconQrCode\Renderer\Image\svg();
+        $renderer = new Svg();
         $renderer->setHeight(171);
         $renderer->setWidth(171);
         $renderer->setMargin(0);
-        $writer = new \BaconQrCode\Writer($renderer);
+        $writer = new Writer($renderer);
 
         return $writer->writeString($secret);
     }
@@ -163,14 +167,14 @@ class Data extends AbstractData
         if (strpos($range, '*') !== false) {
             $low = $high = $range;
             if (strpos($range, '-') !== false) {
-                list($low, $high) = explode('-', $range, 2);
+                [$low, $high] = explode('-', $range, 2);
             }
             $low = str_replace('*', '0', $low);
             $high = str_replace('*', '255', $high);
             $range = $low . '-' . $high;
         }
         if (strpos($range, '-') !== false) {
-            list($low, $high) = explode('-', $range, 2);
+            [$low, $high] = explode('-', $range, 2);
 
             return $this->ipCompare($ip, $low, 1) && $this->ipcompare($ip, $high, -1);
         }
@@ -193,14 +197,14 @@ class Data extends AbstractData
 
         for ($i = 0; $i < 4; $i++) {
             if ($ip1Arr[$i] < $ip2Arr[$i]) {
-                return ($op == -1);
+                return ($op === -1);
             }
             if ($ip1Arr[$i] > $ip2Arr[$i]) {
-                return ($op == 1);
+                return ($op === 1);
             }
         }
 
-        return ($op == 0);
+        return ($op === 0);
     }
 
     /**
@@ -208,11 +212,11 @@ class Data extends AbstractData
      */
     public function getDeviceName()
     {
-        $userAgent = new \Sinergi\BrowserDetector\UserAgent(
+        $userAgent = new UserAgent(
             $this->getObject(Header::class)->getHttpUserAgent()
         );
-        $os = new \Sinergi\BrowserDetector\Os($userAgent);
-        $browser = new \Sinergi\BrowserDetector\Browser($userAgent);
+        $os = new Os($userAgent);
+        $browser = new Browser($userAgent);
 
         return implode('-', [$os->getName(), $browser->getName(), $browser->getVersion()]);
     }

@@ -21,10 +21,14 @@
 
 namespace Mageplaza\TwoFactorAuth\Controller\Adminhtml\Google;
 
+use Exception;
 use Google\Authenticator\GoogleAuthenticator;
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
+use Magento\Framework\App\ResponseInterface;
+use Magento\Framework\Controller\ResultInterface;
 use Mageplaza\TwoFactorAuth\Helper\Data as HelperData;
+use Psr\Cache\InvalidArgumentException;
 
 /**
  * Class Register
@@ -46,16 +50,15 @@ class Register extends Action
     public function __construct(
         Context $context,
         GoogleAuthenticator $googleAuthenticator
-    )
-    {
+    ) {
         $this->_googleAuthenticator = $googleAuthenticator;
 
         parent::__construct($context);
     }
 
     /**
-     * @return \Magento\Framework\App\ResponseInterface|\Magento\Framework\Controller\ResultInterface
-     * @throws \Psr\Cache\InvalidArgumentException
+     * @return ResponseInterface|ResultInterface
+     * @throws InvalidArgumentException
      */
     public function execute()
     {
@@ -70,7 +73,7 @@ class Register extends Action
             } else {
                 $result = ['status' => 'invalid'];
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $result = ['status' => 'error', 'error' => $e->getMessage()];
         }
 

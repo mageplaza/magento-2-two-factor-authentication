@@ -47,8 +47,7 @@ class AuthLogin extends Template
         Context $context,
         HelperData $helperData,
         array $data = []
-    )
-    {
+    ) {
         $this->_helperData = $helperData;
 
         parent::__construct($context, $data);
@@ -67,8 +66,8 @@ class AuthLogin extends Template
      */
     public function getTrustedLifetime()
     {
-        $lifetime = ($this->enableTrustedDevice())
-            ? ($this->_helperData->getConfigGeneral('trust_time')) ?: 30
+        $lifetime = $this->enableTrustedDevice()
+            ? ($this->_helperData->getConfigGeneral('trust_time') ?: 30)
             : 0;
 
         return $lifetime;

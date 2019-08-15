@@ -21,8 +21,10 @@
 
 namespace Mageplaza\TwoFactorAuth\Controller\Adminhtml\Google;
 
+use Exception;
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
+use Magento\Framework\Controller\Result\Redirect;
 use Mageplaza\TwoFactorAuth\Model\TrustedFactory;
 
 /**
@@ -45,15 +47,14 @@ class DeleteTrusted extends Action
     public function __construct(
         Context $context,
         TrustedFactory $trustedFactory
-    )
-    {
+    ) {
         $this->_trustedFactory = $trustedFactory;
 
         parent::__construct($context);
     }
 
     /**
-     * @return \Magento\Framework\Controller\Result\Redirect
+     * @return Redirect
      */
     public function execute()
     {
@@ -65,7 +66,7 @@ class DeleteTrusted extends Action
                     ->delete();
 
                 $this->messageManager->addSuccess(__('The selected Trusted Device has been deleted.'));
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $this->messageManager->addError($e->getMessage());
                 $resultRedirect->setPath('adminhtml/system_account/index');
 

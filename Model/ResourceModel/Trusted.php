@@ -21,6 +21,8 @@
 
 namespace Mageplaza\TwoFactorAuth\Model\ResourceModel;
 
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Model\AbstractModel;
 use Magento\Framework\Model\ResourceModel\Db\AbstractDb;
 use Magento\Framework\Model\ResourceModel\Db\Context;
 use Magento\Framework\Stdlib\DateTime\DateTime;
@@ -47,8 +49,7 @@ class Trusted extends AbstractDb
         Context $context,
         DateTime $dateTime,
         $connectionName = null
-    )
-    {
+    ) {
         $this->_dateTime = $dateTime;
 
         parent::__construct($context, $connectionName);
@@ -65,11 +66,11 @@ class Trusted extends AbstractDb
     }
 
     /**
-     * @param \Magento\Framework\Model\AbstractModel $object
+     * @param AbstractModel $object
      *
      * @return $this
      */
-    protected function _beforeSave(\Magento\Framework\Model\AbstractModel $object)
+    protected function _beforeSave(AbstractModel $object)
     {
         if (!$object->getCreatedAt()) {
             $object->setCreatedAt($this->_dateTime->date());
@@ -84,7 +85,7 @@ class Trusted extends AbstractDb
      * @param $deviceIp
      *
      * @return string
-     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws LocalizedException
      */
     public function getExistTrusted($userId, $deviceName, $deviceIp)
     {
@@ -94,7 +95,7 @@ class Trusted extends AbstractDb
             ->where('user_id = :user_id')
             ->where('name = :name')
             ->where('device_ip = :device_ip');
-        $binds = ['user_id' => (int)$userId, 'name' => $deviceName, 'device_ip' => $deviceIp];
+        $binds = ['user_id' => (int) $userId, 'name' => $deviceName, 'device_ip' => $deviceIp];
 
         return $adapter->fetchOne($select, $binds);
     }

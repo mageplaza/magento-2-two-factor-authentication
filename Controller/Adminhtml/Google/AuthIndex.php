@@ -24,6 +24,7 @@ namespace Mageplaza\TwoFactorAuth\Controller\Adminhtml\Google;
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
 use Magento\Framework\Session\SessionManager;
+use Magento\Framework\View\Result\Page;
 use Magento\Framework\View\Result\PageFactory;
 use Mageplaza\TwoFactorAuth\Helper\Data as HelperData;
 
@@ -36,7 +37,7 @@ class AuthIndex extends Action
     /**
      * Page result factory
      *
-     * @var \Magento\Framework\View\Result\PageFactory
+     * @var PageFactory
      */
     public $resultPageFactory;
 
@@ -63,8 +64,7 @@ class AuthIndex extends Action
         PageFactory $resultPageFactory,
         SessionManager $storageSession,
         HelperData $helperData
-    )
-    {
+    ) {
         $this->resultPageFactory = $resultPageFactory;
         $this->_storageSession = $storageSession;
         $this->_helperData = $helperData;
@@ -75,13 +75,11 @@ class AuthIndex extends Action
     /**
      * execute the action
      *
-     * @return \Magento\Backend\Model\View\Result\Page|\Magento\Framework\View\Result\Page
+     * @return \Magento\Backend\Model\View\Result\Page|Page
      */
     public function execute()
     {
-        $resultPage = $this->resultPageFactory->create();
-
-        return $resultPage;
+        return $this->resultPageFactory->create();
     }
 
     /**
@@ -91,8 +89,6 @@ class AuthIndex extends Action
      */
     protected function _isAllowed()
     {
-        $user = $this->_storageSession->getData('user');
-
-        return ($user) ? true : false;
+        return (bool) $this->_storageSession->getData('user');
     }
 }

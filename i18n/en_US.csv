@@ -1,1 +1,45 @@
+"This admin account has already been registered.","This admin account has already been registered."
+"Disable Two-Factor Authentication","Disable Two-Factor Authentication"
+"Please download the authentication app (such as Authy, Google Authentication) to scan this QR code.","Please download the authentication app (such as Authy, Google Authentication) to scan this QR code."
+"Cannot scan the code?","Cannot scan the code?"
+"You can add the entry manually, please provide the following details to the application on your phone.","You can add the entry manually, please provide the following details to the application on your phone."
+"Account: %1","Account: %1"
+"Key: %1","Key: %1"
+"Time based: Yes","Time based: Yes"
+"Confirmation Code","Confirmation Code"
+"Use the code provided by your authentication app.","Use the code provided by your authentication app."
+Register,Register
+"All other open sessions for this account were terminated.","All other open sessions for this account were terminated."
+"Invalid key.","Invalid key."
+"The selected Trusted Device has been deleted.","The selected Trusted Device has been deleted."
+"The selected Trusted Device to delete was not found.","The selected Trusted Device to delete was not found."
+"Forced 2FA is enabled, so please register the 2FA authentication.","Forced 2FA is enabled, so please register the 2FA authentication."
+"You saved the account.","You saved the account."
+"An error occurred while saving account.","An error occurred while saving account."
+"You did not sign in correctly or your account is temporarily disabled.","You did not sign in correctly or your account is temporarily disabled."
+Security,Security
+"Two-Factor Authentication","Two-Factor Authentication"
+"Trusted Devices","Trusted Devices"
+"Authentication code","Authentication code"
+"Enter the code from the authentication app on your mobile phone.","Enter the code from the authentication app on your mobile phone."
+"Trust this device within %1 day(s).","Trust this device within %1 day(s)."
+"Verify code","Verify code"
+"Device Name","Device Name"
+IP,IP
+"Last Logged In","Last Logged In"
+Actions,Actions
+Remove,Remove
+"There is no trusted device.","There is no trusted device."
+"Invalid Code","Invalid Code"
+"Two-factor authentication has been registered for this admin account successfully.","Two-factor authentication has been registered for this admin account successfully."
 General,General
+Enable,Enable
+"Select <b>Yes</b> to enable this module.","Select <b>Yes</b> to enable this module."
+"Force to Use 2FA","Force to Use 2FA"
+"If <b>Yes</b>, all admin accounts are required to register 2FA.","If <b>Yes</b>, all admin accounts are required to register 2FA."
+"Enable Trusted Device","Enable Trusted Device"
+"Trusted device will not be required second-factor authentication within specific trusted time.","Trusted device will not be required second-factor authentication within specific trusted time."
+"Trusted Time","Trusted Time"
+"Set trusted time by days.","Set trusted time by days."
+Whitelist(s),Whitelist(s)
+"Enter IP(s) which is allowed to sign in without 2FA. Separated with commas. Eg: 123.123.0.*,10.22.*.*","Enter IP(s) which is allowed to sign in without 2FA. Separated with commas. Eg: 123.123.0.*,10.22.*.*"

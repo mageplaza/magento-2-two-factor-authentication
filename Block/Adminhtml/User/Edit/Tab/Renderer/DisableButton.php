@@ -26,6 +26,7 @@ use Magento\Framework\Data\Form\Element\CollectionFactory;
 use Magento\Framework\Data\Form\Element\Factory;
 use Magento\Framework\Escaper;
 use Magento\Framework\Registry;
+use Magento\User\Model\User;
 use Mageplaza\TwoFactorAuth\Helper\Data as HelperData;
 
 /**
@@ -61,8 +62,7 @@ class DisableButton extends AbstractElement
         Registry $coreRegistry,
         HelperData $helperData,
         $data = []
-    )
-    {
+    ) {
         $this->_coreRegistry = $coreRegistry;
         $this->_helperData = $helperData;
 
@@ -78,11 +78,11 @@ class DisableButton extends AbstractElement
      */
     public function getElementHtml()
     {
-        /** @var $model \Magento\User\Model\User */
+        /** @var $model User */
         $model = $this->_coreRegistry->registry('mp_permissions_user');
-        $isHidden = ($model->getMpTfaStatus()) ? '' : 'hidden';
-        $isDisabled = ($this->_helperData->getConfigGeneral('force_2fa')) ? 'disabled' : '';
-        $isRegistered = ($model->getMpTfaStatus()) ? __('This admin account has already been registered.') : '';
+        $isHidden = $model->getMpTfaStatus() ? '' : 'hidden';
+        $isDisabled = $this->_helperData->getConfigGeneral('force_2fa') ? 'disabled' : '';
+        $isRegistered = $model->getMpTfaStatus() ? __('This admin account has already been registered.') : '';
         $html = '';
         $html .= '<button id="' . $this->getHtmlId() . '" type="button" ' . $isDisabled . ' class="' . $isHidden . '">';
         $html .= '<span>' . __('Disable Two-Factor Authentication') . '</span>';
