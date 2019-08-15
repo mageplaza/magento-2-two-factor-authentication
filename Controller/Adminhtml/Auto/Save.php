@@ -26,7 +26,6 @@ use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Controller\ResultInterface;
-use Magento\Framework\Exception\NotFoundException;
 use Magento\User\Model\User;
 use Mageplaza\TwoFactorAuth\Helper\Data as HelperData;
 
@@ -36,10 +35,23 @@ use Mageplaza\TwoFactorAuth\Helper\Data as HelperData;
  */
 class Save extends Action
 {
+    /**
+     * @var HelperData
+     */
     public $helperData;
 
+    /**
+     * @var User
+     */
     protected $_user;
 
+    /**
+     * Save constructor.
+     *
+     * @param Context $context
+     * @param HelperData $helper
+     * @param User $user
+     */
     public function __construct(
         Context $context,
         HelperData $helper,
@@ -47,6 +59,7 @@ class Save extends Action
     ) {
         $this->helperData = $helper;
         $this->_user = $user;
+
         parent::__construct($context);
     }
 
@@ -55,8 +68,7 @@ class Save extends Action
      *
      * Note: Request will be added as operation argument in future
      *
-     * @return ResultInterface|ResponseInterface
-     * @throws NotFoundException
+     * @return ResponseInterface|ResultInterface
      */
     public function execute()
     {
@@ -75,7 +87,7 @@ class Save extends Action
                     $result = ['notify' => $e->getMessage()];
                 }
 
-                return $this->getResponse()->representJson($this->helperData->jsonEncode($result));
+                return $this->getResponse()->representJson(HelperData::jsonEncode($result));
             }
         }
     }

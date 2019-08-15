@@ -66,8 +66,8 @@ class AuthLogin extends Template
      */
     public function getTrustedLifetime()
     {
-        $lifetime = ($this->enableTrustedDevice())
-            ? ($this->_helperData->getConfigGeneral('trust_time')) ?: 30
+        $lifetime = $this->enableTrustedDevice()
+            ? ($this->_helperData->getConfigGeneral('trust_time') ?: 30)
             : 0;
 
         return $lifetime;

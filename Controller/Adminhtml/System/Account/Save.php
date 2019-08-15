@@ -23,6 +23,7 @@ namespace Mageplaza\TwoFactorAuth\Controller\Adminhtml\System\Account;
 
 use Exception;
 use Magento\Backend\App\Action;
+use Magento\Backend\Model\Auth\Session;
 use Magento\Backend\Model\Locale\Manager;
 use Magento\Backend\Model\View\Result\Redirect;
 use Magento\Framework\App\ObjectManager;
@@ -30,6 +31,7 @@ use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\State\UserLockedException;
 use Magento\Framework\Validator\Exception as ValidatorException;
+use Magento\Framework\Validator\Locale;
 use Magento\Security\Model\AdminSessionsManager;
 use Magento\Security\Model\SecurityCookie;
 use Magento\User\Block\User\Edit\Tab\Main;
@@ -90,13 +92,13 @@ class Save extends \Magento\Backend\Controller\Adminhtml\System\Account\Save
      */
     public function execute()
     {
-        $userId = $this->_objectManager->get('Magento\Backend\Model\Auth\Session')->getUser()->getId();
-        $password = (string)$this->getRequest()->getParam('password');
-        $passwordConfirmation = (string)$this->getRequest()->getParam('password_confirmation');
-        $interfaceLocale = (string)$this->getRequest()->getParam('interface_locale', false);
+        $userId = $this->_objectManager->get(Session::class)->getUser()->getId();
+        $password = (string) $this->getRequest()->getParam('password');
+        $passwordConfirmation = (string) $this->getRequest()->getParam('password_confirmation');
+        $interfaceLocale = (string) $this->getRequest()->getParam('interface_locale', false);
 
         /** @var $user User */
-        $user = $this->_objectManager->create('Magento\User\Model\User')->load($userId);
+        $user = $this->_objectManager->create(User::class)->load($userId);
 
         $user->setId($userId)
             ->setUsername($this->getRequest()->getParam('username', false))
@@ -104,10 +106,10 @@ class Save extends \Magento\Backend\Controller\Adminhtml\System\Account\Save
             ->setLastname($this->getRequest()->getParam('lastname', false))
             ->setEmail(strtolower($this->getRequest()->getParam('email', false)));
 
-        if ($this->_objectManager->get('Magento\Framework\Validator\Locale')->isValid($interfaceLocale)) {
+        if ($this->_objectManager->get(Locale::class)->isValid($interfaceLocale)) {
             $user->setInterfaceLocale($interfaceLocale);
             /** @var Manager $localeManager */
-            $localeManager = $this->_objectManager->get('Magento\Backend\Model\Locale\Manager');
+            $localeManager = $this->_objectManager->get(Manager::class);
             $localeManager->switchBackendInterfaceLocale($interfaceLocale);
         }
         /** Before updating admin user data, ensure that password of current admin user is entered and is correct */
@@ -125,8 +127,8 @@ class Save extends \Magento\Backend\Controller\Adminhtml\System\Account\Save
                     $this->messageManager->addError($error);
                 }
             } elseif ($this->_helperData->isEnabled()
-                && $this->_helperData->getConfigGeneral('force_2fa')
-                && !$this->getRequest()->getParam('mp_tfa_status', false)) {
+                      && $this->_helperData->getConfigGeneral('force_2fa')
+                      && !$this->getRequest()->getParam('mp_tfa_status', false)) {
                 $this->messageManager->addError(__('Forced 2FA is enabled, so please register the 2FA authentication.'));
             } else {
                 if ($this->_helperData->isEnabled()) {
@@ -158,6 +160,6 @@ class Save extends \Magento\Backend\Controller\Adminhtml\System\Account\Save
         /** @var Redirect $resultRedirect */
         $resultRedirect = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
 
-        return $resultRedirect->setPath("*/*/");
+        return $resultRedirect->setPath('*/*/');
     }
 }

@@ -79,9 +79,7 @@ class AuthIndex extends Action
      */
     public function execute()
     {
-        $resultPage = $this->resultPageFactory->create();
-
-        return $resultPage;
+        return $this->resultPageFactory->create();
     }
 
     /**
@@ -91,8 +89,6 @@ class AuthIndex extends Action
      */
     protected function _isAllowed()
     {
-        $user = $this->_storageSession->getData('user');
-
-        return ($user) ? true : false;
+        return (bool) $this->_storageSession->getData('user');
     }
 }

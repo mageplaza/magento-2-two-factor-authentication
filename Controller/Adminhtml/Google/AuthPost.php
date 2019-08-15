@@ -101,7 +101,7 @@ class AuthPost extends Action
     {
         $params = $this->_request->getParams();
         $authCode = $params['auth-code'];
-        $isTrusted = (isset($params['trust-device'])) ? true : false;
+        $isTrusted = isset($params['trust-device']) ? true : false;
 
         if ($user = $this->_storageSession->getData('user')) {
             $secretCode = $user->getMpTfaSecret();

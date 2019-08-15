@@ -22,6 +22,7 @@
 namespace Mageplaza\TwoFactorAuth\Model\ResourceModel\Trusted;
 
 use Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection;
+use Mageplaza\TwoFactorAuth\Model\ResourceModel\Trusted;
 
 /**
  * Class Collection
@@ -39,6 +40,6 @@ class Collection extends AbstractCollection
      */
     protected function _construct()
     {
-        $this->_init('Mageplaza\TwoFactorAuth\Model\Trusted', 'Mageplaza\TwoFactorAuth\Model\ResourceModel\Trusted');
+        $this->_init(\Mageplaza\TwoFactorAuth\Model\Trusted::class, Trusted::class);
     }
 }

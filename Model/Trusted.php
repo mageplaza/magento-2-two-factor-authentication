@@ -62,7 +62,7 @@ class Trusted extends AbstractModel
      */
     protected function _construct()
     {
-        $this->_init('Mageplaza\TwoFactorAuth\Model\ResourceModel\Trusted');
+        $this->_init(ResourceModel\Trusted::class);
     }
 
     /**

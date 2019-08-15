@@ -44,10 +44,10 @@ use Sinergi\BrowserDetector\UserAgent;
  */
 class Data extends AbstractData
 {
-    const CONFIG_MODULE_PATH = 'mptwofactorauth';
-    const XML_PATH_FORCE_2FA = 'force_2fa';
+    const CONFIG_MODULE_PATH    = 'mptwofactorauth';
+    const XML_PATH_FORCE_2FA    = 'force_2fa';
     const XML_PATH_WHITELIST_IP = 'whitelist_ip';
-    const MP_GOOGLE_AUTH = 'mp_google_auth';
+    const MP_GOOGLE_AUTH        = 'mp_google_auth';
 
     /**
      * @var TimezoneInterface
@@ -133,9 +133,8 @@ class Data extends AbstractData
     public function getWhitelistIpsConfig($scopeId = null)
     {
         $whitelistIp = $this->getConfigGeneral(self::XML_PATH_WHITELIST_IP, $scopeId);
-        $whitelistIps = explode(',', $whitelistIp);
 
-        return $whitelistIps;
+        return explode(',', $whitelistIp);
     }
 
     /**
@@ -168,14 +167,14 @@ class Data extends AbstractData
         if (strpos($range, '*') !== false) {
             $low = $high = $range;
             if (strpos($range, '-') !== false) {
-                list($low, $high) = explode('-', $range, 2);
+                [$low, $high] = explode('-', $range, 2);
             }
             $low = str_replace('*', '0', $low);
             $high = str_replace('*', '255', $high);
             $range = $low . '-' . $high;
         }
         if (strpos($range, '-') !== false) {
-            list($low, $high) = explode('-', $range, 2);
+            [$low, $high] = explode('-', $range, 2);
 
             return $this->ipCompare($ip, $low, 1) && $this->ipcompare($ip, $high, -1);
         }
@@ -198,14 +197,14 @@ class Data extends AbstractData
 
         for ($i = 0; $i < 4; $i++) {
             if ($ip1Arr[$i] < $ip2Arr[$i]) {
-                return ($op == -1);
+                return ($op === -1);
             }
             if ($ip1Arr[$i] > $ip2Arr[$i]) {
-                return ($op == 1);
+                return ($op === 1);
             }
         }
 
-        return ($op == 0);
+        return ($op === 0);
     }
 
     /**

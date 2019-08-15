@@ -103,11 +103,11 @@ class QrCode extends AbstractElement
 
         $description = __('Please download the authentication app (such as Authy, Google Authentication) to scan this QR code.') . '</p>';
         $img = $this->_helperData->generateUri($this->getUri($accountName, $secret, $userEmail));
-        $info1 = __("Cannot scan the code?");
-        $info2 = __("You can add the entry manually, please provide the following details to the application on your phone.");
-        $info3 = __("Account: %1", $accountName);
-        $info4 = __("Key: %1", implode(' ', str_split($secret, 4)));
-        $info5 = __("Time based: Yes");
+        $info1 = __('Cannot scan the code?');
+        $info2 = __('You can add the entry manually, please provide the following details to the application on your phone.');
+        $info3 = __('Account: %1', $accountName);
+        $info4 = __('Key: %1', implode(' ', str_split($secret, 4)));
+        $info5 = __('Time based: Yes');
         $confirmLabel = __('Confirmation Code');
         $confirmNote = __('Use the code provided by your authentication app.');
         $buttonLabel = __('Register');
@@ -140,16 +140,6 @@ class QrCode extends AbstractElement
 </div>
 HTML;
 
-//        $html .= '<div class="mp-tfa-qrcode-img">';
-//        $html .= $this->_helperData->generateUri($this->getUri($accountName, $secret, $userEmail));
-//        $html .= '</div><div class="mp-tfa-qrcode-description mp-bg-light"><p>';
-//        $html .= __("Cannot scan the code?") . '<br>';
-//        $html .= __("You can add the entry manually, please provide the following details to the application on your phone.") . '<br>';
-//        $html .= __("Account: %1", $accountName) . '<br>';
-//        $html .= __("Key: %1", implode(' ', str_split($secret, 4))) . '<br>';
-//        $html .= __("Time based: Yes") . '</p>';
-//        $html .= '</div>';
-
         return $html;
     }
 
@@ -162,6 +152,6 @@ HTML;
      */
     public function getUri($label, $secretKey, $issuer)
     {
-        return "otpauth://totp/" . rawurlencode($label) . "?secret=" . $secretKey . "&issuer=" . rawurlencode($issuer);
+        return 'otpauth://totp/' . rawurlencode($label) . '?secret=' . $secretKey . '&issuer=' . rawurlencode($issuer);
     }
 }

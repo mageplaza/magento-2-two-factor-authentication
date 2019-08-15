@@ -163,15 +163,19 @@ class Auth extends \Magento\Backend\Model\Auth
                 $trusted = $this->_trustedFactory->create();
                 $ipAddress = $this->_remoteAddress->getRemoteAddress();
                 $existTrusted = $trusted->getResource()
-                    ->getExistTrusted($this->getCredentialStorage()->getId(), $this->_helperData->getDeviceName(), $ipAddress);
+                    ->getExistTrusted(
+                        $this->getCredentialStorage()->getId(),
+                        $this->_helperData->getDeviceName(),
+                        $ipAddress
+                    );
                 if ($existTrusted
                     && $this->_helperData->getConfigGeneral('trust_device')) {
                     $currentDevice = $trusted->load($existTrusted);
                     $currentDeviceCreateAt = new \DateTime($currentDevice->getCreatedAt(), new DateTimeZone('UTC'));
                     $currentDateObj = new \DateTime($this->_dateTime->date(), new DateTimeZone('UTC'));
                     $dateDiff = date_diff($currentDateObj, $currentDeviceCreateAt);
-                    $dateDiff = (int)$dateDiff->days;
-                    if ($dateDiff > (int)$this->_helperData->getConfigGeneral('trust_time')) {
+                    $dateDiff = (int) $dateDiff->days;
+                    if ($dateDiff > (int) $this->_helperData->getConfigGeneral('trust_time')) {
                         $currentDevice->delete();
                     } else {
                         $currentDevice->setLastLogin($this->_dateTime->date())->save();
@@ -220,9 +224,7 @@ class Auth extends \Magento\Backend\Model\Auth
                 'backend_auth_user_login_failed',
                 ['user_name' => $username, 'exception' => $e]
             );
-            self::throwException(
-                $e->getMessage() ?: __('You did not sign in correctly or your account is temporarily disabled.')
-            );
+            self::throwException(__('You did not sign in correctly or your account is temporarily disabled.'));
         }
     }
 }

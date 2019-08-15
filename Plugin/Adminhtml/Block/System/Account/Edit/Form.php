@@ -29,6 +29,9 @@ use Magento\Framework\Registry;
 use Magento\Framework\View\LayoutInterface;
 use Magento\User\Model\User;
 use Magento\User\Model\UserFactory;
+use Mageplaza\TwoFactorAuth\Block\Adminhtml\User\Edit\Tab\Renderer\DisableButton;
+use Mageplaza\TwoFactorAuth\Block\Adminhtml\User\Edit\Tab\Renderer\QrCode;
+use Mageplaza\TwoFactorAuth\Block\Adminhtml\User\Edit\Tab\Renderer\TrustedDevices;
 use Mageplaza\TwoFactorAuth\Helper\Data as HelperData;
 
 /**
@@ -121,28 +124,21 @@ class Form
                 'after_html' => 'Brian tran'
             ]);
 
-            $mpTfaFieldset->addField('mp_tfa_secret_temp', '\Mageplaza\TwoFactorAuth\Block\Adminhtml\User\Edit\Tab\Renderer\QrCode', [
+            $mpTfaFieldset->addField('mp_tfa_secret_temp', QrCode::class, [
                 'name' => 'mp_tfa_secret_temp'
             ]);
             $mpTfaFieldset->addField('mp_tfa_secret_temp_hidden', 'hidden', ['name' => 'mp_tfa_secret_temp_hidden']);
             $mpTfaFieldset->addField('mp_tfa_secret', 'hidden', ['name' => 'mp_tfa_secret']);
             $mpTfaFieldset->addField('mp_tfa_status', 'hidden', ['name' => 'mp_tfa_status']);
-//            $mpTfaFieldset->addField('mp_tfa_one_code', 'text', [
-//                'name'  => 'mp_tfa_one_code',
-//                'label' => __('Confirmation Code'),
-//                'title' => __('Confirmation Code'),
-//                'note'  => __('Use the code provided by your authentication app.')
-//            ]);
-//            $mpTfaFieldset->addField('mp_tfa_register', '\Mageplaza\TwoFactorAuth\Block\Adminhtml\User\Edit\Tab\Renderer\RegisterButton', [
-//                'name' => 'mp_tfa_register'
-//            ]);
 
-            $mpTfaFieldset->addField('mp_tfa_disable', '\Mageplaza\TwoFactorAuth\Block\Adminhtml\User\Edit\Tab\Renderer\DisableButton', [
+            $mpTfaFieldset->addField('mp_tfa_disable', DisableButton::class, [
                 'name' => 'mp_tfa_disable'
             ]);
 
             if ($user->getData('mp_tfa_enable')) {
-                $mpTfaChildFieldset = $mpTfaFieldset->addFieldset('mp_tfa_trust_device', ['legend' => __('Trusted Devices')]);
+                $mpTfaChildFieldset = $mpTfaFieldset->addFieldset('mp_tfa_trust_device', [
+                    'legend' => __('Trusted Devices')
+                ]);
                 $mpTfaChildFieldset->addField('mp_tfa_trusted_device', 'label', [
                     'name' => 'mp_tfa_trusted_device',
                 ])->setAfterElementHtml($this->getTrustedDeviceHtml($user));
@@ -167,7 +163,7 @@ class Form
     public function getTrustedDeviceHtml($model)
     {
         return $this->_layout
-            ->createBlock('\Mageplaza\TwoFactorAuth\Block\Adminhtml\User\Edit\Tab\Renderer\TrustedDevices')
+            ->createBlock(TrustedDevices::class)
             ->setUserObject($model)
             ->toHtml();
     }
