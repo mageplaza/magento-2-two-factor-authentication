@@ -14,7 +14,7 @@
 
 **Q: I got error: Mageplaza_Core has been already defined**
 
-A: Read solution: https://github.com/mageplaza/module-core/issues/3
+A: Read solution [here](https://github.com/mageplaza/module-core/issues/3)
 
 **Q: How many steps admin has to pass to access admin data?**
 
