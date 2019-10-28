@@ -35,7 +35,7 @@ use Magento\Framework\Event\ManagerInterface;
 use Magento\Framework\Exception\AuthenticationException;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\Plugin\AuthenticationException as PluginAuthenticationException;
-use Magento\Framework\HTTP\PhpEnvironment\RemoteAddress;
+use Magento\Framework\HTTP\PhpEnvironment\Request;
 use Magento\Framework\Session\SessionManager;
 use Magento\Framework\Stdlib\DateTime\DateTime;
 use Magento\Framework\UrlInterface;
@@ -47,9 +47,9 @@ use Mageplaza\TwoFactorAuth\Helper\Data as HelperData;
 class Auth extends \Magento\Backend\Model\Auth
 {
     /**
-     * @var RemoteAddress
+     * @var Request
      */
-    protected $_remoteAddress;
+    protected $request;
 
     /**
      * @var DateTime
@@ -102,7 +102,7 @@ class Auth extends \Magento\Backend\Model\Auth
      * @param CredentialStorageInterface $credentialStorage
      * @param ScopeConfigInterface $coreConfig
      * @param ModelFactory $modelFactory
-     * @param RemoteAddress $remoteAddress
+     * @param Request $request
      * @param DateTime $dateTime
      * @param UrlInterface $url
      * @param ResponseInterface $response
@@ -118,7 +118,7 @@ class Auth extends \Magento\Backend\Model\Auth
         CredentialStorageInterface $credentialStorage,
         ScopeConfigInterface $coreConfig,
         ModelFactory $modelFactory,
-        RemoteAddress $remoteAddress,
+        Request $request,
         DateTime $dateTime,
         UrlInterface $url,
         ResponseInterface $response,
@@ -127,7 +127,7 @@ class Auth extends \Magento\Backend\Model\Auth
         HelperData $helperData,
         TrustedFactory $trustedFactory
     ) {
-        $this->_remoteAddress = $remoteAddress;
+        $this->request = $request;
         $this->_dateTime = $dateTime;
         $this->_url = $url;
         $this->_response = $response;
@@ -161,7 +161,7 @@ class Auth extends \Magento\Backend\Model\Auth
             if ($this->getCredentialStorage()->getId()) {
                 /** @var Trusted $trusted */
                 $trusted = $this->_trustedFactory->create();
-                $ipAddress = $this->_remoteAddress->getRemoteAddress();
+                $ipAddress = $this->request->getClientIp();
                 $existTrusted = $trusted->getResource()
                     ->getExistTrusted(
                         $this->getCredentialStorage()->getId(),
