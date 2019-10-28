@@ -29,6 +29,7 @@ use Magento\Framework\Message\ManagerInterface;
 use Magento\Framework\Stdlib\DateTime\DateTime;
 use Mageplaza\TwoFactorAuth\Helper\Data;
 use Mageplaza\TwoFactorAuth\Model\TrustedFactory;
+use Magento\Framework\HTTP\PhpEnvironment\Request;
 
 /**
  * Class UserLoginSuccess
@@ -62,12 +63,18 @@ class UserLoginSuccess implements ObserverInterface
     protected $helper;
 
     /**
+     * @var Request
+     */
+    protected $request;
+
+    /**
      * UserLoginSuccess constructor.
      *
      * @param RemoteAddress $remoteAddress
      * @param DateTime $dateTime
      * @param ManagerInterface $messageManager
      * @param TrustedFactory $trustedFactory
+     * @param Request $request
      * @param Data $helper
      */
     public function __construct(
@@ -75,6 +82,7 @@ class UserLoginSuccess implements ObserverInterface
         DateTime $dateTime,
         ManagerInterface $messageManager,
         TrustedFactory $trustedFactory,
+        Request $request,
         Data $helper
     ) {
         $this->_remoteAddress = $remoteAddress;
@@ -82,6 +90,7 @@ class UserLoginSuccess implements ObserverInterface
         $this->_messageManager = $messageManager;
         $this->_trustedFactory = $trustedFactory;
         $this->helper = $helper;
+        $this->request = $request;
     }
 
     /**
@@ -94,7 +103,15 @@ class UserLoginSuccess implements ObserverInterface
         if ($user && $isTrusted) {
             $trusted = $this->_trustedFactory->create();
             try {
-                $trusted->setDeviceIp($this->_remoteAddress->getRemoteAddress())
+                $ipLogin = explode(',', $this->request->getClientIp());
+                if (count($ipLogin) > 1) {
+                    if (($key = array_search('127.0.0.1', $ipLogin)) !== false) {
+                        unset($ipLogin[$key]);
+                    }
+                }
+                $ipLogin = implode(',', $ipLogin);
+
+                $trusted->setDeviceIp($ipLogin)
                     ->setLastLogin($this->_dateTime->date())
                     ->setName($this->helper->getDeviceName())
                     ->setUserId($user->getId())
