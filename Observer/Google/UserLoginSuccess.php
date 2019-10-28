@@ -24,7 +24,6 @@ namespace Mageplaza\TwoFactorAuth\Observer\Google;
 use Exception;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
-use Magento\Framework\HTTP\PhpEnvironment\RemoteAddress;
 use Magento\Framework\Message\ManagerInterface;
 use Magento\Framework\Stdlib\DateTime\DateTime;
 use Mageplaza\TwoFactorAuth\Helper\Data;
@@ -37,11 +36,6 @@ use Magento\Framework\HTTP\PhpEnvironment\Request;
  */
 class UserLoginSuccess implements ObserverInterface
 {
-    /**
-     * @var RemoteAddress
-     */
-    protected $_remoteAddress;
-
     /**
      * @var DateTime
      */
@@ -70,7 +64,6 @@ class UserLoginSuccess implements ObserverInterface
     /**
      * UserLoginSuccess constructor.
      *
-     * @param RemoteAddress $remoteAddress
      * @param DateTime $dateTime
      * @param ManagerInterface $messageManager
      * @param TrustedFactory $trustedFactory
@@ -78,14 +71,12 @@ class UserLoginSuccess implements ObserverInterface
      * @param Data $helper
      */
     public function __construct(
-        RemoteAddress $remoteAddress,
         DateTime $dateTime,
         ManagerInterface $messageManager,
         TrustedFactory $trustedFactory,
         Request $request,
         Data $helper
     ) {
-        $this->_remoteAddress = $remoteAddress;
         $this->_dateTime = $dateTime;
         $this->_messageManager = $messageManager;
         $this->_trustedFactory = $trustedFactory;
