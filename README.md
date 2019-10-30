@@ -185,14 +185,3 @@ Admins need to go to **Account Setting** to set **QR/Pin code**
 - User admin can also remove that period by clicking the `Remove` button
 
 
-#### 7.3. How to install extension library via composer using manual method
-
-Run the following command lines to install library:
-
-```
-composer require donatj/phpuseragentparser
-composer require sonata-project/google-authenticator:2.0.0
-composer require endroid/qr-code:2.5
-php bin/magento setup:upgrade
-php bin/magento setup:static-content:deploy
-```
