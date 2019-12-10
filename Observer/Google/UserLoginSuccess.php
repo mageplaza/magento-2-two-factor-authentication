@@ -24,11 +24,11 @@ namespace Mageplaza\TwoFactorAuth\Observer\Google;
 use Exception;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
+use Magento\Framework\HTTP\PhpEnvironment\Request;
 use Magento\Framework\Message\ManagerInterface;
 use Magento\Framework\Stdlib\DateTime\DateTime;
 use Mageplaza\TwoFactorAuth\Helper\Data;
 use Mageplaza\TwoFactorAuth\Model\TrustedFactory;
-use Magento\Framework\HTTP\PhpEnvironment\Request;
 
 /**
  * Class UserLoginSuccess
