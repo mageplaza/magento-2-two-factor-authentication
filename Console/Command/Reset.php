@@ -62,7 +62,7 @@ class Reset extends Command
     {
         $this->addArgument('user', InputArgument::REQUIRED, 'Admin User Name');
 
-        $this->setName('mageplaza-2authen:reset')
+        $this->setName('mageplaza-2fa:reset')
             ->setDescription('Reset Mageplaza 2 Factor Authentication for Admin User');
     }
 
