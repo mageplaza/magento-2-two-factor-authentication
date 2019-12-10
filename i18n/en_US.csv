@@ -9,6 +9,7 @@
 "Confirmation Code","Confirmation Code"
 "Use the code provided by your authentication app.","Use the code provided by your authentication app."
 Register,Register
+"User ""%1"" does not exist","User ""%1"" does not exist"
 "All other open sessions for this account were terminated.","All other open sessions for this account were terminated."
 "Invalid key.","Invalid key."
 "The selected Trusted Device has been deleted.","The selected Trusted Device has been deleted."
