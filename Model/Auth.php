@@ -180,7 +180,7 @@ class Auth extends \Magento\Backend\Model\Auth
                         $currentDeviceCreateAt = new \DateTime($currentDevice->getCreatedAt(), new DateTimeZone('UTC'));
                         $currentDateObj = new \DateTime($this->_dateTime->date(), new DateTimeZone('UTC'));
                         $dateDiff = date_diff($currentDateObj, $currentDeviceCreateAt);
-                        $dateDiff = (int) $dateDiff->days;
+                        $dateDiff = $dateDiff->format('%d.%h%i%s');
                         if ($dateDiff > (int) $this->_helperData->getConfigGeneral('trust_time')) {
                             $currentDevice->delete();
                         } else {
