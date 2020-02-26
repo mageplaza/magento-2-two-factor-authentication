@@ -28,10 +28,11 @@
                 <user_guide>two-factors-authentication</user_guide>
             </module>
             <general>
-                <enabled>1</enabled>
+                <enabled>0</enabled>
                 <force_2fa>0</force_2fa>
                 <trust_device>0</trust_device>
                 <trust_time>30</trust_time>
+                <whitelist_ip></whitelist_ip>
             </general>
         </mptwofactorauth>
     </default>
