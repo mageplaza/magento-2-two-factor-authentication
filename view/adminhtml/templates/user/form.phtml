@@ -92,6 +92,7 @@
                             showLoader: true,
                             success: function (results) {
                                 $('.field-mp_tfa_disable .mp-success-messages').html($t('Two-factor authentication has been registered for this admin account successfully.'));
+                                $('.field-mp_tfa_disable .mp-error-messages').empty();
                             },
                             error: function (results) {
                                 $('.field-mp_tfa_register .mp-error-messages').html(results.error);
