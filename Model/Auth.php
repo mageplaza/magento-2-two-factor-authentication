@@ -36,6 +36,7 @@ use Magento\Framework\Exception\AuthenticationException;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\Plugin\AuthenticationException as PluginAuthenticationException;
 use Magento\Framework\HTTP\PhpEnvironment\Request;
+use Magento\Framework\Model\AbstractModel;
 use Magento\Framework\Session\SessionManager;
 use Magento\Framework\Stdlib\DateTime\DateTime;
 use Magento\Framework\UrlInterface;
@@ -176,6 +177,7 @@ class Auth extends \Magento\Backend\Model\Auth
                         );
                     if ($existTrusted
                         && $this->_helperData->getConfigGeneral('trust_device')) {
+                        /** @var AbstractModel $currentDevice */
                         $currentDevice = $trusted->load($existTrusted);
                         $currentDeviceCreateAt = new \DateTime($currentDevice->getCreatedAt(), new DateTimeZone('UTC'));
                         $currentDateObj = new \DateTime($this->_dateTime->date(), new DateTimeZone('UTC'));

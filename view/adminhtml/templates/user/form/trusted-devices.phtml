@@ -26,34 +26,34 @@ use Mageplaza\TwoFactorAuth\Block\Adminhtml\User\Edit\Tab\Renderer\TrustedDevice
 
 <?php
 $_trustedDevices = $block->getTrustedCollection();
-if ($_trustedDevices && count($_trustedDevices)) :
+if ($_trustedDevices && count($_trustedDevices)):
     ?>
     <div class="table-wrapper mp-tfa-trusted-devices">
         <table class="data table table-devices-items" id="my-devices-table">
             <thead>
             <tr>
-                <th scope="col" class="col mp-device-name"><?= __('Device Name') ?></th>
-                <th scope="col" class="col mp-device-ip"><?= __('IP') ?></th>
-                <th scope="col" class="col mp-device-last-login"><?= __('Last Logged In') ?></th>
+                <th scope="col" class="col mp-device-name"><?= /* @noEscape */ __('Device Name') ?></th>
+                <th scope="col" class="col mp-device-ip"><?= /* @noEscape */ __('IP') ?></th>
+                <th scope="col" class="col mp-device-last-login"><?= /* @noEscape */ __('Last Logged In') ?></th>
                 <th scope="col" class="col mp-device-action"></th>
             </tr>
             </thead>
             <tbody>
-            <?php foreach ($_trustedDevices as $_trustedDevice) : ?>
+            <?php foreach ($_trustedDevices as $_trustedDevice): ?>
                 <tr>
                     <td data-th="<?= $block->escapeHtml(__('Device Name')) ?>" class="col mp-device-name">
-                        <?= $_trustedDevice->getName() ?>
+                        <?= /* @noEscape */ $_trustedDevice->getName() ?>
                     </td>
                     <td data-th="<?= $block->escapeHtml(__('IP')) ?>" class="col mp-device-ip">
-                        <?= $_trustedDevice->getDeviceIp() ?>
+                        <?= /* @noEscape */ $_trustedDevice->getDeviceIp() ?>
                     </td>
                     <td data-th="<?= $block->escapeHtml(__('Last Logged In')) ?>" class="col mp-device-last-login">
-                        <?= $block->getFormattedDate($_trustedDevice->getLastLogin()) ?>
+                        <?= /* @noEscape */ $block->getFormattedDate($_trustedDevice->getLastLogin()) ?>
                     </td>
                     <td data-th="<?= $block->escapeHtml(__('Actions')) ?>" class="col mp-device-action">
-                        <button type="button" id="mp-device-detele-<?= $_trustedDevice->getId() ?>"
-                                onclick="setLocation('<?= $block->getDeleteUrl($_trustedDevice->getId()) ?>')">
-                            <span><?= __('Remove') ?></span>
+                        <button type="button" id="mp-device-detele-<?= /* @noEscape */ $_trustedDevice->getId() ?>"
+                                onclick="setLocation('<?= /* @noEscape */$block->getDeleteUrl($_trustedDevice->getId()) ?>')">
+                            <span><?= /* @noEscape */ __('Remove') ?></span>
                         </button>
                     </td>
                 </tr>
@@ -61,7 +61,7 @@ if ($_trustedDevices && count($_trustedDevices)) :
             </tbody>
         </table>
     </div>
-<?php else : ?>
-    <div class="message info empty"><span><?= /* @escapeNotVerified */ __('There is no trusted device.') ?></span></div>
+<?php else: ?>
+    <div class="message info empty"><span><?= /* @noEscape */ __('There is no trusted device.') ?></span></div>
 <?php endif ?>
 
