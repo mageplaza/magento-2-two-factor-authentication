@@ -65,7 +65,8 @@
                 userId = $('#user_id').val();
 
             $.ajax({
-                url: '<?= /* @noEscape */ $block->getUrl('mptwofactorauth/google/register', ['form_key' => $block->getFormKey()]);?>',
+                url: '<?= /* @noEscape */
+                    $block->getUrl('mptwofactorauth/google/register', ['form_key' => $block->getFormKey()]);?>',
                 data: {
                     secret_code: secretCodeTemp,
                     confirm_code: confirmCode,
@@ -84,7 +85,8 @@
                         tfaEnableField.hide();
                         disableBtn.removeClass('hidden');
                         $.ajax({
-                            url: '<?= /* @noEscape */ $block->getUrl('mptwofactorauth/auto/save', ['form_key' => $block->getFormKey()]);?>',
+                            url: '<?= /* @noEscape */
+                                $block->getUrl('mptwofactorauth/auto/save', ['form_key' => $block->getFormKey()]);?>',
                             data: {
                                 secret_code: secretCodeTemp,
                                 user_id: userId
@@ -92,7 +94,8 @@
                             showLoader: true,
                             success: function (results) {
                                 $('.field-mp_tfa_disable .mp-success-messages').html(
-                                    $t('Two-factor authentication has been registered for this admin account successfully.')
+                                    $t('Two-factor authentication has been' +
+                                        ' registered for this admin account successfully.')
                                 );
                                 $('.field-mp_tfa_disable .mp-error-messages').empty();
                             },

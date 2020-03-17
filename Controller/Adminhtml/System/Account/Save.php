@@ -129,7 +129,8 @@ class Save extends \Magento\Backend\Controller\Adminhtml\System\Account\Save
             } elseif ($this->_helperData->isEnabled()
                       && $this->_helperData->getConfigGeneral('force_2fa')
                       && !$this->getRequest()->getParam('mp_tfa_status', false)) {
-                $this->messageManager->addError(__('Forced 2FA is enabled, so please register the 2FA authentication.'));
+                $this->messageManager->addError(__('Forced 2FA is enabled
+                , so please register the 2FA authentication.'));
             } else {
                 if ($this->_helperData->isEnabled()) {
                     $user->setMpTfaEnable($this->getRequest()->getParam('mp_tfa_enable', false))

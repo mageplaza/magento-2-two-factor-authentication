@@ -52,7 +52,8 @@ if ($_trustedDevices && count($_trustedDevices)):
                     </td>
                     <td data-th="<?= $block->escapeHtml(__('Actions')) ?>" class="col mp-device-action">
                         <button type="button" id="mp-device-detele-<?= /* @noEscape */ $_trustedDevice->getId() ?>"
-                                onclick="setLocation('<?= /* @noEscape */$block->getDeleteUrl($_trustedDevice->getId()) ?>')">
+                                onclick="setLocation('<?= /* @noEscape */
+                                $block->getDeleteUrl($_trustedDevice->getId()) ?>')">
                             <span><?= /* @noEscape */ __('Remove') ?></span>
                         </button>
                     </td>

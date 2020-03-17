@@ -122,7 +122,9 @@ class AuthPost extends Action
                     /** security auth */
                     $this->_sessionsManager->processLogin();
                     if ($this->_sessionsManager->getCurrentSession()->isOtherSessionsTerminated()) {
-                        $this->messageManager->addWarning(__('All other open sessions for this account were terminated.'));
+                        $this->messageManager->addWarning(__(
+                            'All other open sessions for this account were terminated.'
+                        ));
                     }
 
                     return $this->_getRedirect($this->_backendUrl->getStartupPageUrl());
