@@ -79,9 +79,9 @@ class Save extends \Magento\Backend\Controller\Adminhtml\System\Account\Save
     {
         if (!($this->securityCookie instanceof SecurityCookie)) {
             return ObjectManager::getInstance()->get(SecurityCookie::class);
-        } else {
-            return $this->securityCookie;
         }
+
+        return $this->securityCookie;
     }
 
     /**
@@ -122,6 +122,7 @@ class Save extends \Magento\Backend\Controller\Adminhtml\System\Account\Save
                 $user->setPasswordConfirmation($passwordConfirmation);
             }
             $errors = $user->validate();
+            $moduleIsEnable = $this->_helperData->isEnabled();
             if ($errors !== true && !empty($errors)) {
                 foreach ($errors as $error) {
                     $this->messageManager->addError($error);
@@ -132,7 +133,7 @@ class Save extends \Magento\Backend\Controller\Adminhtml\System\Account\Save
                 $this->messageManager->addError(__('Forced 2FA is enabled
                 , so please register the 2FA authentication.'));
             } else {
-                if ($this->_helperData->isEnabled()) {
+                if ($moduleIsEnable) {
                     $user->setMpTfaEnable($this->getRequest()->getParam('mp_tfa_enable', false))
                         ->setMpTfaSecret($this->getRequest()->getParam('mp_tfa_secret', false))
                         ->setMpTfaStatus($this->getRequest()->getParam('mp_tfa_status', false));
