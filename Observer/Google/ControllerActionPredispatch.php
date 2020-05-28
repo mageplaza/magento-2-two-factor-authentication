@@ -93,12 +93,12 @@ class ControllerActionPredispatch implements ObserverInterface
         ManagerInterface $messageManager,
         HelperData $helperData
     ) {
-        $this->url = $url;
-        $this->authSession = $authSession;
-        $this->actionFlag = $actionFlag;
+        $this->url             = $url;
+        $this->authSession     = $authSession;
+        $this->actionFlag      = $actionFlag;
         $this->_storageSession = $storageSession;
         $this->_messageManager = $messageManager;
-        $this->_helperData = $helperData;
+        $this->_helperData     = $helperData;
     }
 
     /**
@@ -123,7 +123,7 @@ class ControllerActionPredispatch implements ObserverInterface
             return;
         }
 
-        $user = $this->getUser();
+        $user                    = $this->getUser();
         $allowForce2faActionList = [
             'adminhtml_system_account_index',
             'adminhtml_system_account_save',

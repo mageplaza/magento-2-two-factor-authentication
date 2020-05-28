@@ -81,8 +81,8 @@ class QrCode extends AbstractElement
     ) {
         $this->_coreRegistry = $coreRegistry;
         $this->_storeManager = $storeManager;
-        $this->_helperData = $helperData;
-        $this->request = $request;
+        $this->_helperData   = $helperData;
+        $this->request       = $request;
 
         parent::__construct($factoryElement, $factoryCollection, $escaper, $data);
 
@@ -97,22 +97,22 @@ class QrCode extends AbstractElement
         /** @var $model User */
         $user = $this->_coreRegistry->registry('mp_permissions_user');
 
-        $secret = $this->getValue();
-        $userEmail = $user->getEmail();
+        $secret      = $this->getValue();
+        $userEmail   = $user->getEmail();
         $accountName = $this->request->getHttpHost() . ':' . $userEmail;
 
-        $description = __('Please download the authentication app (such as Authy, Google Authentication
+        $description  = __('Please download the authentication app (such as Authy, Google Authentication
         ) to scan this QR code.') . '</p>';
-        $img = $this->_helperData->generateUri($this->getUri($accountName, $secret, $userEmail));
-        $info1 = __('Cannot scan the code?');
-        $info2 = __('You can add the entry manually
+        $img          = $this->_helperData->generateUri($this->getUri($accountName, $secret, $userEmail));
+        $info1        = __('Cannot scan the code?');
+        $info2        = __('You can add the entry manually
         , please provide the following details to the application on your phone.');
-        $info3 = __('Account: %1', $accountName);
-        $info4 = __('Key: %1', implode(' ', str_split($secret, 4)));
-        $info5 = __('Time based: Yes');
+        $info3        = __('Account: %1', $accountName);
+        $info4        = __('Key: %1', implode(' ', str_split($secret, 4)));
+        $info5        = __('Time based: Yes');
         $confirmLabel = __('Confirmation Code');
-        $confirmNote = __('Use the code provided by your authentication app.');
-        $buttonLabel = __('Register');
+        $confirmNote  = __('Use the code provided by your authentication app.');
+        $buttonLabel  = __('Register');
 
         $html = <<<HTML
 <div class="mp-tfa">

@@ -89,11 +89,11 @@ class Form
         HelperData $helperData
     ) {
         $this->_enableDisable = $enableDisable;
-        $this->_coreRegistry = $coreRegistry;
-        $this->_layout = $layout;
-        $this->_authSession = $authSession;
-        $this->_userFactory = $userFactory;
-        $this->_helperData = $helperData;
+        $this->_coreRegistry  = $coreRegistry;
+        $this->_layout        = $layout;
+        $this->_authSession   = $authSession;
+        $this->_userFactory   = $userFactory;
+        $this->_helperData    = $helperData;
     }
 
     /**
@@ -109,11 +109,11 @@ class Form
         $form = $subject->getForm();
         /** @var $model User */
         $userId = $this->_authSession->getUser()->getId();
-        $user = $this->_userFactory->create()->load($userId);
+        $user   = $this->_userFactory->create()->load($userId);
         $user->unsetData('password');
         $this->_coreRegistry->register('mp_permissions_user', $user);
         $secretFactory = new GoogleAuthenticator();
-        $secret = ($user->getMpTfaSecret()) ?: $secretFactory->generateSecret();
+        $secret        = ($user->getMpTfaSecret()) ?: $secretFactory->generateSecret();
         if (is_object($form) && $this->_helperData->isEnabled()) {
             $mpTfaFieldset = $form->addFieldset('mp_tfa_security', ['legend' => __('Security')]);
             $mpTfaFieldset->addField('mp_tfa_enable', 'select', [
@@ -144,9 +144,9 @@ class Form
                 ])->setAfterElementHtml($this->getTrustedDeviceHtml($user));
             }
 
-            $data = $user->getData();
+            $data                       = $user->getData();
             $data['mp_tfa_secret_temp'] = $data['mp_tfa_secret_temp_hidden'] = $secret;
-            $data['mp_tfa_status'] = $user->getMpTfaStatus();
+            $data['mp_tfa_status']      = $user->getMpTfaStatus();
 
             $form->setValues($data);
             $subject->setForm($form);

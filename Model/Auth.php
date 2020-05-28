@@ -128,13 +128,13 @@ class Auth extends \Magento\Backend\Model\Auth
         HelperData $helperData,
         TrustedFactory $trustedFactory
     ) {
-        $this->request = $request;
-        $this->_dateTime = $dateTime;
-        $this->_url = $url;
-        $this->_response = $response;
+        $this->request         = $request;
+        $this->_dateTime       = $dateTime;
+        $this->_url            = $url;
+        $this->_response       = $response;
         $this->_storageSession = $storageSession;
-        $this->actionFlag = $actionFlag;
-        $this->_helperData = $helperData;
+        $this->actionFlag      = $actionFlag;
+        $this->_helperData     = $helperData;
         $this->_trustedFactory = $trustedFactory;
 
         parent::__construct($eventManager, $backendData, $authStorage, $credentialStorage, $coreConfig, $modelFactory);
@@ -161,7 +161,7 @@ class Auth extends \Magento\Backend\Model\Auth
             $this->getCredentialStorage()->login($username, $password);
             if ($this->getCredentialStorage()->getId()) {
                 /** @var Trusted $trusted */
-                $trusted = $this->_trustedFactory->create();
+                $trusted   = $this->_trustedFactory->create();
                 $ipAddress = explode(',', $this->request->getClientIp());
                 if (count($ipAddress) > 1) {
                     if (($key = array_search('127.0.0.1', $ipAddress)) !== false) {
@@ -178,11 +178,11 @@ class Auth extends \Magento\Backend\Model\Auth
                     if ($existTrusted
                         && $this->_helperData->getConfigGeneral('trust_device')) {
                         /** @var AbstractModel $currentDevice */
-                        $currentDevice = $trusted->load($existTrusted);
+                        $currentDevice         = $trusted->load($existTrusted);
                         $currentDeviceCreateAt = new \DateTime($currentDevice->getCreatedAt(), new DateTimeZone('UTC'));
-                        $currentDateObj = new \DateTime($this->_dateTime->date(), new DateTimeZone('UTC'));
-                        $dateDiff = date_diff($currentDateObj, $currentDeviceCreateAt);
-                        $dateDiff = $dateDiff->format('%d.%h%i%s');
+                        $currentDateObj        = new \DateTime($this->_dateTime->date(), new DateTimeZone('UTC'));
+                        $dateDiff              = date_diff($currentDateObj, $currentDeviceCreateAt);
+                        $dateDiff              = $dateDiff->format('%d.%h%i%s');
                         if ($dateDiff > (int) $this->_helperData->getConfigGeneral('trust_time')) {
                             $currentDevice->delete();
                         } else {

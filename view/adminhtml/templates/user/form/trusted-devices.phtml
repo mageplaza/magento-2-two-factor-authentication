@@ -26,7 +26,7 @@ use Mageplaza\TwoFactorAuth\Block\Adminhtml\User\Edit\Tab\Renderer\TrustedDevice
 
 <?php
 $_trustedDevices = $block->getTrustedCollection();
-if ($_trustedDevices && count($_trustedDevices)):
+if ($_trustedDevices && count($_trustedDevices)) :
     ?>
     <div class="table-wrapper mp-tfa-trusted-devices">
         <table class="data table table-devices-items" id="my-devices-table">
@@ -39,7 +39,7 @@ if ($_trustedDevices && count($_trustedDevices)):
             </tr>
             </thead>
             <tbody>
-            <?php foreach ($_trustedDevices as $_trustedDevice): ?>
+            <?php foreach ($_trustedDevices as $_trustedDevice) : ?>
                 <tr>
                     <td data-th="<?= $block->escapeHtml(__('Device Name')) ?>" class="col mp-device-name">
                         <?= /* @noEscape */ $_trustedDevice->getName() ?>
@@ -62,7 +62,7 @@ if ($_trustedDevices && count($_trustedDevices)):
             </tbody>
         </table>
     </div>
-<?php else: ?>
+<?php else : ?>
     <div class="message info empty"><span><?= /* @noEscape */ __('There is no trusted device.') ?></span></div>
 <?php endif ?>
 

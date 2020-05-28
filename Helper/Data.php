@@ -81,7 +81,7 @@ class Data extends AbstractData
         TimezoneInterface $timezone,
         TrustedFactory $trustedFactory
     ) {
-        $this->_localeDate = $timezone;
+        $this->_localeDate     = $timezone;
         $this->_trustedFactory = $trustedFactory;
 
         parent::__construct($context, $objectManager, $storeManager);
@@ -167,14 +167,14 @@ class Data extends AbstractData
         if (strpos($range, '*') !== false) {
             $low = $high = $range;
             if (strpos($range, '-') !== false) {
-                list($low, $high) = explode('-', $range, 2);
+                [$low, $high] = explode('-', $range, 2);
             }
-            $low = str_replace('*', '0', $low);
-            $high = str_replace('*', '255', $high);
+            $low   = str_replace('*', '0', $low);
+            $high  = str_replace('*', '255', $high);
             $range = $low . '-' . $high;
         }
         if (strpos($range, '-') !== false) {
-            list($low, $high) = explode('-', $range, 2);
+            [$low, $high] = explode('-', $range, 2);
 
             return $this->ipCompare($ip, $low, 1) && $this->ipcompare($ip, $high, -1);
         }
@@ -215,8 +215,8 @@ class Data extends AbstractData
         $userAgent = new UserAgent(
             $this->getObject(Header::class)->getHttpUserAgent()
         );
-        $os = new Os($userAgent);
-        $browser = new Browser($userAgent);
+        $os        = new Os($userAgent);
+        $browser   = new Browser($userAgent);
 
         return implode('-', [$os->getName(), $browser->getName(), $browser->getVersion()]);
     }
