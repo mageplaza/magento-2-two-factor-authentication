@@ -81,8 +81,8 @@ class QrCode extends AbstractElement
     ) {
         $this->_coreRegistry = $coreRegistry;
         $this->_storeManager = $storeManager;
-        $this->_helperData = $helperData;
-        $this->request = $request;
+        $this->_helperData   = $helperData;
+        $this->request       = $request;
 
         parent::__construct($factoryElement, $factoryCollection, $escaper, $data);
 
@@ -97,20 +97,22 @@ class QrCode extends AbstractElement
         /** @var $model User */
         $user = $this->_coreRegistry->registry('mp_permissions_user');
 
-        $secret = $this->getValue();
-        $userEmail = $user->getEmail();
+        $secret      = $this->getValue();
+        $userEmail   = $user->getEmail();
         $accountName = $this->request->getHttpHost() . ':' . $userEmail;
 
-        $description = __('Please download the authentication app (such as Authy, Google Authentication) to scan this QR code.') . '</p>';
-        $img = $this->_helperData->generateUri($this->getUri($accountName, $secret, $userEmail));
-        $info1 = __('Cannot scan the code?');
-        $info2 = __('You can add the entry manually, please provide the following details to the application on your phone.');
-        $info3 = __('Account: %1', $accountName);
-        $info4 = __('Key: %1', implode(' ', str_split($secret, 4)));
-        $info5 = __('Time based: Yes');
+        $description  = __('Please download the authentication app (such as Authy, Google Authentication
+        ) to scan this QR code.') . '</p>';
+        $img          = $this->_helperData->generateUri($this->getUri($accountName, $secret, $userEmail));
+        $info1        = __('Cannot scan the code?');
+        $info2        = __('You can add the entry manually
+        , please provide the following details to the application on your phone.');
+        $info3        = __('Account: %1', $accountName);
+        $info4        = __('Key: %1', implode(' ', str_split($secret, 4)));
+        $info5        = __('Time based: Yes');
         $confirmLabel = __('Confirmation Code');
-        $confirmNote = __('Use the code provided by your authentication app.');
-        $buttonLabel = __('Register');
+        $confirmNote  = __('Use the code provided by your authentication app.');
+        $buttonLabel  = __('Register');
 
         $html = <<<HTML
 <div class="mp-tfa">
@@ -131,8 +133,11 @@ class QrCode extends AbstractElement
     <div class="mp-tfa-validate">
         <label for="mp_tfa_one_code" class="mp-tfa-validate-label">{$confirmLabel}</label>
         <div class="mp-tfa-validate-code">
-            <input id="mp_tfa_one_code" name="mp_tfa_one_code" title="Confirmation Code" type="text" class="mp-tfa-validate-input input-text admin__control-text">
-            <button type="button" id="mp_tfa_register" class="mp_tfa_register primary"><span class="mp-white">{$buttonLabel}</span></button>
+            <input id="mp_tfa_one_code" name="mp_tfa_one_code" title="Confirmation Code"
+             type="text" class="mp-tfa-validate-input input-text admin__control-text">
+            <button type="button" id="mp_tfa_register" class="mp_tfa_register primary">
+                <span class="mp-white">{$buttonLabel}</span>
+            </button>
             <div style="clear: both"></div>
         </div>
         <div class="note admin__field-note" id="mp_tfa_one_code-note">{$confirmNote}</div>

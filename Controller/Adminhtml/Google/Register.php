@@ -62,9 +62,9 @@ class Register extends Action
      */
     public function execute()
     {
-        $data = $this->getRequest()->getParams();
+        $data         = $this->getRequest()->getParams();
         $inputOneCode = $data['confirm_code'];
-        $secretCode = $data['secret_code'];
+        $secretCode   = $data['secret_code'];
 
         try {
             $checkResult = $this->_googleAuthenticator->checkCode($secretCode, $inputOneCode);

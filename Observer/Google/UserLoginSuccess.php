@@ -77,11 +77,11 @@ class UserLoginSuccess implements ObserverInterface
         Request $request,
         Data $helper
     ) {
-        $this->_dateTime = $dateTime;
+        $this->_dateTime       = $dateTime;
         $this->_messageManager = $messageManager;
         $this->_trustedFactory = $trustedFactory;
-        $this->helper = $helper;
-        $this->request = $request;
+        $this->helper          = $helper;
+        $this->request         = $request;
     }
 
     /**
@@ -89,7 +89,7 @@ class UserLoginSuccess implements ObserverInterface
      */
     public function execute(Observer $observer)
     {
-        $user = $observer->getEvent()->getUser();
+        $user      = $observer->getEvent()->getUser();
         $isTrusted = $observer->getEvent()->getMpIsTrusted();
         if ($user && $isTrusted) {
             $trusted = $this->_trustedFactory->create();

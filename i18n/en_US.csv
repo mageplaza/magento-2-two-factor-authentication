@@ -1,8 +1,12 @@
 "This admin account has already been registered.","This admin account has already been registered."
 "Disable Two-Factor Authentication","Disable Two-Factor Authentication"
-"Please download the authentication app (such as Authy, Google Authentication) to scan this QR code.","Please download the authentication app (such as Authy, Google Authentication) to scan this QR code."
+"Please download the authentication app (such as Authy, Google Authentication
+        ) to scan this QR code.","Please download the authentication app (such as Authy, Google Authentication
+        ) to scan this QR code."
 "Cannot scan the code?","Cannot scan the code?"
-"You can add the entry manually, please provide the following details to the application on your phone.","You can add the entry manually, please provide the following details to the application on your phone."
+"You can add the entry manually
+        , please provide the following details to the application on your phone.","You can add the entry manually
+        , please provide the following details to the application on your phone."
 "Account: %1","Account: %1"
 "Key: %1","Key: %1"
 "Time based: Yes","Time based: Yes"
@@ -14,10 +18,13 @@ Register,Register
 "Invalid key.","Invalid key."
 "The selected Trusted Device has been deleted.","The selected Trusted Device has been deleted."
 "The selected Trusted Device to delete was not found.","The selected Trusted Device to delete was not found."
-"Forced 2FA is enabled, so please register the 2FA authentication.","Forced 2FA is enabled, so please register the 2FA authentication."
+"Forced 2FA is enabled
+                , so please register the 2FA authentication.","Forced 2FA is enabled
+                , so please register the 2FA authentication."
 "You saved the account.","You saved the account."
 "An error occurred while saving account.","An error occurred while saving account."
 "You did not sign in correctly or your account is temporarily disabled.","You did not sign in correctly or your account is temporarily disabled."
+"Forced 2FA is enabled, so please register the 2FA authentication.","Forced 2FA is enabled, so please register the 2FA authentication."
 Security,Security
 "Two-Factor Authentication","Two-Factor Authentication"
 "Trusted Devices","Trusted Devices"
@@ -32,7 +39,6 @@ Actions,Actions
 Remove,Remove
 "There is no trusted device.","There is no trusted device."
 "Invalid Code","Invalid Code"
-"Two-factor authentication has been registered for this admin account successfully.","Two-factor authentication has been registered for this admin account successfully."
 General,General
 Enable,Enable
 "Select <b>Yes</b> to enable this module.","Select <b>Yes</b> to enable this module."

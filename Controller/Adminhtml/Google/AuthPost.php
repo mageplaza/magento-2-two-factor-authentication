@@ -85,10 +85,10 @@ class AuthPost extends Action
         TrustedFactory $trustedFactory
     ) {
         $this->_googleAuthenticator = $googleAuthenticator;
-        $this->_storageSession = $storageSession;
-        $this->_sessionsManager = $sessionsManager;
-        $this->_remoteAddress = $remoteAddress;
-        $this->_trustedFactory = $trustedFactory;
+        $this->_storageSession      = $storageSession;
+        $this->_sessionsManager     = $sessionsManager;
+        $this->_remoteAddress       = $remoteAddress;
+        $this->_trustedFactory      = $trustedFactory;
 
         parent::__construct($context);
     }
@@ -99,8 +99,8 @@ class AuthPost extends Action
      */
     public function execute()
     {
-        $params = $this->_request->getParams();
-        $authCode = $params['auth-code'];
+        $params    = $this->_request->getParams();
+        $authCode  = $params['auth-code'];
         $isTrusted = isset($params['trust-device']) ? true : false;
 
         if ($user = $this->_storageSession->getData('user')) {
@@ -122,7 +122,9 @@ class AuthPost extends Action
                     /** security auth */
                     $this->_sessionsManager->processLogin();
                     if ($this->_sessionsManager->getCurrentSession()->isOtherSessionsTerminated()) {
-                        $this->messageManager->addWarning(__('All other open sessions for this account were terminated.'));
+                        $this->messageManager->addWarning(__(
+                            'All other open sessions for this account were terminated.'
+                        ));
                     }
 
                     return $this->_getRedirect($this->_backendUrl->getStartupPageUrl());

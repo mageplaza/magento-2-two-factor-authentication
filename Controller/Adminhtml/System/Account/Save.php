@@ -79,9 +79,9 @@ class Save extends \Magento\Backend\Controller\Adminhtml\System\Account\Save
     {
         if (!($this->securityCookie instanceof SecurityCookie)) {
             return ObjectManager::getInstance()->get(SecurityCookie::class);
-        } else {
-            return $this->securityCookie;
         }
+
+        return $this->securityCookie;
     }
 
     /**
@@ -92,10 +92,10 @@ class Save extends \Magento\Backend\Controller\Adminhtml\System\Account\Save
      */
     public function execute()
     {
-        $userId = $this->_objectManager->get(Session::class)->getUser()->getId();
-        $password = (string) $this->getRequest()->getParam('password');
+        $userId               = $this->_objectManager->get(Session::class)->getUser()->getId();
+        $password             = (string) $this->getRequest()->getParam('password');
         $passwordConfirmation = (string) $this->getRequest()->getParam('password_confirmation');
-        $interfaceLocale = (string) $this->getRequest()->getParam('interface_locale', false);
+        $interfaceLocale      = (string) $this->getRequest()->getParam('interface_locale', false);
 
         /** @var $user User */
         $user = $this->_objectManager->create(User::class)->load($userId);
@@ -114,24 +114,26 @@ class Save extends \Magento\Backend\Controller\Adminhtml\System\Account\Save
         }
         /** Before updating admin user data, ensure that password of current admin user is entered and is correct */
         $currentUserPasswordField = Main::CURRENT_USER_PASSWORD_FIELD;
-        $currentUserPassword = $this->getRequest()->getParam($currentUserPasswordField);
+        $currentUserPassword      = $this->getRequest()->getParam($currentUserPasswordField);
         try {
             $user->performIdentityCheck($currentUserPassword);
             if ($password !== '') {
                 $user->setPassword($password);
                 $user->setPasswordConfirmation($passwordConfirmation);
             }
-            $errors = $user->validate();
+            $errors         = $user->validate();
+            $moduleIsEnable = $this->_helperData->isEnabled();
             if ($errors !== true && !empty($errors)) {
                 foreach ($errors as $error) {
                     $this->messageManager->addError($error);
                 }
             } elseif ($this->_helperData->isEnabled()
-                      && $this->_helperData->getConfigGeneral('force_2fa')
-                      && !$this->getRequest()->getParam('mp_tfa_status', false)) {
-                $this->messageManager->addError(__('Forced 2FA is enabled, so please register the 2FA authentication.'));
+                && $this->_helperData->getConfigGeneral('force_2fa')
+                && !$this->getRequest()->getParam('mp_tfa_status', false)) {
+                $this->messageManager->addError(__('Forced 2FA is enabled
+                , so please register the 2FA authentication.'));
             } else {
-                if ($this->_helperData->isEnabled()) {
+                if ($moduleIsEnable) {
                     $user->setMpTfaEnable($this->getRequest()->getParam('mp_tfa_enable', false))
                         ->setMpTfaSecret($this->getRequest()->getParam('mp_tfa_secret', false))
                         ->setMpTfaStatus($this->getRequest()->getParam('mp_tfa_status', false));

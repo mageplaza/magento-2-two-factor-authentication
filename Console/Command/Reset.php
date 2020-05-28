@@ -72,7 +72,7 @@ class Reset extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $userName = $input->getArgument('user');
-        $user = $this->userFactory->create()->loadByUsername($userName);
+        $user     = $this->userFactory->create()->loadByUsername($userName);
 
         try {
             if (!$user || !$user->getId()) {

@@ -58,7 +58,7 @@ class Save extends Action
         User $user
     ) {
         $this->helperData = $helper;
-        $this->_user = $user;
+        $this->_user      = $user;
 
         parent::__construct($context);
     }
