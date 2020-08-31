@@ -21,7 +21,9 @@
 
 namespace Mageplaza\TwoFactorAuth\Helper;
 
-use BaconQrCode\Renderer\Image\Svg;
+use BaconQrCode\Renderer\Image\SvgImageBackEnd;
+use BaconQrCode\Renderer\ImageRenderer;
+use BaconQrCode\Renderer\RendererStyle\RendererStyle;
 use BaconQrCode\Writer;
 use DateTime;
 use DateTimeZone;
@@ -144,10 +146,11 @@ class Data extends AbstractData
      */
     public function generateUri($secret)
     {
-        $renderer = new Svg();
-        $renderer->setHeight(171);
-        $renderer->setWidth(171);
-        $renderer->setMargin(0);
+        $renderer = new ImageRenderer(
+            new RendererStyle(171, 0),
+            new SvgImageBackEnd()
+        );
+
         $writer = new Writer($renderer);
 
         return $writer->writeString($secret);
