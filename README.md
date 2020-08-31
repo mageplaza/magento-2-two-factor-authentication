@@ -46,6 +46,12 @@ php bin/magento setup:upgrade
 php bin/magento setup:static-content:deploy
 ```
 
+For versions below Magento version 2.4.0, it requires to install the library of bacon-qr-code via composer by the following command
+
+```
+composer require bacon/bacon-qr-code
+```
+
 ## 4. Highlight Features 
 
 ### Two steps to access
