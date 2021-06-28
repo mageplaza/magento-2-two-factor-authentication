@@ -1,6 +1,6 @@
-# Magento 2 Two Factor Authentication Free Extension
+# Magento 2 Two Factor Authentication Extension FREE
 
-[Two-Factor Authentication](http://www.mageplaza.com/magento-2-two-factor-authentication/) from Mageplaza is built to ensure the highest security for your Magento 2 stores. The extension can force using 2FA or auto skip 2FA request for trusted devices. Mobile compatibility is also supported in this module.  
+[Magento 2 Two-Factor Authentication](http://www.mageplaza.com/magento-2-two-factor-authentication/) from Mageplaza is built to ensure the highest security for your Magento 2 stores. The extension can force using 2FA or auto skip 2FA request for trusted devices. Mobile compatibility is also supported in this module.  
 
 ## 1. Documentation
 
@@ -52,7 +52,7 @@ For versions below Magento version 2.4.0, it requires to install the library of 
 composer require bacon/bacon-qr-code
 ```
 
-## 4. Highlight Features 
+## 4. Highlight Features of Magento 2 Two Factor Authentication
 
 ### Two steps to access
 
@@ -60,7 +60,7 @@ composer require bacon/bacon-qr-code
 
 #### Forcing to use Two-factor authentication  
 
-Two Factor Authentication (2FA) supports backend store data to be better protected with two steps of verification. If forcing feature is enable, admins are required to set up two-factor authentication before they have the ability to access all data from backend panel. 
+[Magento 2 Two Factor Authentication](https://marketplace.magento.com/mageplaza-module-two-factors-authentication.html) (2FA) supports backend store data to be better protected with two steps of verification. If forcing feature is enable, admins are required to set up two-factor authentication before they have the ability to access all data from backend panel. 
 
 #### Support from mobile authentication apps
 To activate two-factor authentication, the support from mobile authentication apps is needed. Admins need to download apps such as Authy, Duo, Google Authentication. After registering authenticator accounts by scanning QR code or manually entering the provided key, the app will create a unique verification code which is used to confirm the admin account. 
@@ -68,7 +68,7 @@ To activate two-factor authentication, the support from mobile authentication ap
 
 ### No requirement if being trusted 
 
-![](https://i.imgur.com/NRYkNWv.png)
+![Magento 2 Two Factor Authentication](https://i.imgur.com/NRYkNWv.png)
 
 #### Activate trusted device function, set trusted time 
 To save time for trusted admin accounts after the first time login, Trusted device function is supported. After this feature is configured well, via a click to require trust for next login, the device will be listed to trusted list and not be required authentication code in a specific time. 
@@ -78,7 +78,7 @@ As a result,  after the first time confirming the account successfully, as long 
 
 ### Trusted device list 
 
-![](https://i.imgur.com/BTCvGnz.png)
+![Magento 2 Two Factor Authentication](https://i.imgur.com/BTCvGnz.png)
 
 It is easy to manage all trusted verified admin roles by the Trusted Device list. The information of logged users are recorded clearly with the following details:
 
@@ -89,7 +89,7 @@ It is easy to manage all trusted verified admin roles by the Trusted Device list
 
 Besides, super admin or store owners can easily remove any admin accounts from the trusted device in case there is any account updates. Therefore, admin panel can be protected well from the ill-intentioned access. 
 
-## 5. More Features
+## 5. More Features of Magento 2 2FA
 
 ### Force Using 2FA 
 Enable/ Disable requiring users to register 2FA
@@ -119,26 +119,26 @@ Be well responsive to mobiles, desktop, tablets, and other screen sizes.
 - View Trusted Device list 
 - Remove an admin account from the Trusted Device list
 
-## 7. User Guide
+## 7. Magento 2 Two Factor Authentication User Guide
 
-### How to use
+### How to use Two Factor Authentication
 
 When logging in the backend, admin users need to fill in the authentication factors
 
-![](https://i.imgur.com/eD6CJJZ.png)
+![Magento 2 Two Factor Authentication](https://i.imgur.com/eD6CJJZ.png)
 
 When turn on Trusted Device, authentication request page looks like this:
 
-![](https://i.imgur.com/LTusIgC.png)
+![Magento 2 Two Factor Authentication](https://i.imgur.com/LTusIgC.png)
 
 
-### How to Configure
+### How to Configure Two Factor Authentication
 
 #### 7.1. Configuration
 
 From **Admin panel**, go to `Stores > Configuration > Mageplaza > Two factor Authentication`
 
-![](https://i.imgur.com/6V0ncoR.png)
+![Magento 2 Two Factor Authentication](https://i.imgur.com/6V0ncoR.png)
 
 - **Enable**: Select `Yes` to activate the module
 
@@ -171,7 +171,7 @@ Admins need to go to **Account Setting** to set **QR/Pin code**
 
 ##### **Register 2FA**:
 
-![](https://i.imgur.com/pXtezSd.png)
+![Magento 2 Two Factor Authentication](https://i.imgur.com/pXtezSd.png)
 
 - After enabling 2FA, admins need to use the **Authy app or Google Authenticator** on the phone to scan the QR code or enter the Key into the app to get the confirmation code.
 - After QR code is saved in the app, it automatically generates confirmation code. Admin needs to get that code and enter the it to register
@@ -182,7 +182,7 @@ Admins need to go to **Account Setting** to set **QR/Pin code**
 
 ##### **Check and remove Trusted Devices**:
 
-![](https://i.imgur.com/rG9dRFD.png)
+![Magento 2 Two Factor Authentication](https://i.imgur.com/rG9dRFD.png)
 
 
 - Log the browser on the machine with certain IPs that can be trusted and the last time the user logs in with this browser
@@ -190,4 +190,26 @@ Admins need to go to **Account Setting** to set **QR/Pin code**
 - Over time of trust time, device will be automatically removed from the list
 - User admin can also remove that period by clicking the `Remove` button
 
+**Get more Free extension on Github:**
+- [Magento 2 SEO extension](https://github.com/mageplaza/magento-2-seo)
+- [Magento 2 Social Login](https://github.com/mageplaza/magento-2-social-login)
+- [Magento 2 Product Slider](https://github.com/mageplaza/magento-2-product-slider)
+- [Magento 2 Gdpr](https://github.com/mageplaza/magento-2-gdpr)
+- [Magento 2 Security extension](https://github.com/mageplaza/magento-2-security)
+- [Magento 2 Google ReCaptcha](https://github.com/mageplaza/magento-2-google-recaptcha)
+- [Magento 2 Blog extension](https://github.com/mageplaza/magento-2-blog)
+- [Magento 2 Twitter Widget](https://github.com/mageplaza/magento-2-twitter-widget)
+- [Magento 2 Banner Slider](https://github.com/mageplaza/magento-2-banner-slider)
 
+**[Explore Magento 2 modules on Marketplace](https://marketplace.magento.com/partner/Mageplaza):**
+- [Magento 2 Currency Formatter](https://marketplace.magento.com/mageplaza-module-currency-formatter.html)
+- [Magento 2 Multi Flat Rates](https://marketplace.magento.com/mageplaza-module-multi-flat-rates.html)
+- [Magento 2 Name Your Price](https://marketplace.magento.com/mageplaza-module-name-your-price.html)
+- [Magento 2 Instagram Feed](https://marketplace.magento.com/mageplaza-module-instagram-feed.html)
+- [Magento 2 Share Cart](https://marketplace.magento.com/mageplaza-module-share-cart.html)
+- [Magento 2 Same Order Number](https://marketplace.magento.com/mageplaza-module-same-order-number.html)
+- [Magento 2 One Step Checkout](https://marketplace.magento.com/mageplaza-magento-2-one-step-checkout-extension.html)
+- [Magento 2 PDF Invoice](https://marketplace.magento.com/mageplaza-module-pdf-invoice.html)
+- [Magento 2 Auto Related Products](https://marketplace.magento.com/mageplaza-module-automatic-related-products.html)
+- [Magento 2 SEO extension](https://marketplace.magento.com/mageplaza-magento-2-seo-extension.html)
+- [Magento 2 Gift Card](https://marketplace.magento.com/mageplaza-module-gift-card.html)
