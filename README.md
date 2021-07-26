@@ -40,11 +40,20 @@ A: Yes, you can easily see from admin backend and click on remove button to do a
 
 Install via composer (recommend): Run the following command in Magento 2 root folder:
 
+With Marketing Automation (recommend):
 ```
 composer require mageplaza/module-two-factor-authentication
 php bin/magento setup:upgrade
 php bin/magento setup:static-content:deploy
 ```
+
+Without Marketing Automation:
+```
+composer require mageplaza/module-two-factor-authentication
+php bin/magento setup:upgrade
+php bin/magento setup:static-content:deploy
+```
+
 
 For versions below Magento version 2.4.0, it requires to install the library of bacon-qr-code via composer by the following command
 
