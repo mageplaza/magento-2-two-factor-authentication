@@ -22,6 +22,9 @@
 namespace Mageplaza\TwoFactorAuth\Helper;
 
 use BaconQrCode\Renderer\Image\Svg;
+use BaconQrCode\Renderer\ImageRenderer;
+use BaconQrCode\Renderer\Image\SvgImageBackEnd;
+use BaconQrCode\Renderer\RendererStyle\RendererStyle;
 use BaconQrCode\Writer;
 use DateTime;
 use DateTimeZone;
@@ -71,7 +74,6 @@ class Data extends AbstractData
      * @param ObjectManagerInterface $objectManager
      * @param StoreManagerInterface $storeManager
      * @param TimezoneInterface $timezone
-     * @param Header $header
      * @param TrustedFactory $trustedFactory
      */
     public function __construct(
@@ -88,7 +90,7 @@ class Data extends AbstractData
     }
 
     /**
-     * @param $userId
+     * @param int $userId
      *
      * @return Collection
      */
@@ -102,7 +104,7 @@ class Data extends AbstractData
     }
 
     /**
-     * @param $date
+     * @param string $date
      *
      * @return DateTime
      * @throws Exception
@@ -138,12 +140,22 @@ class Data extends AbstractData
     }
 
     /**
-     * @param $secret
+     * @param string $secret
      *
      * @return string
      */
     public function generateUri($secret)
     {
+        if ($this->versionCompare('2.3.7')) {
+            $renderer = new ImageRenderer(
+                new RendererStyle(171, 0),
+                new SvgImageBackEnd()
+            );
+            $writer   = new Writer($renderer);
+
+            return $writer->writeString($secret);
+        }
+
         $renderer = new Svg();
         $renderer->setHeight(171);
         $renderer->setWidth(171);
@@ -154,13 +166,12 @@ class Data extends AbstractData
     }
 
     /**
-     * Check Ip
+     * Check IP
      *
-     * @param $ip
-     * @param $range
+     * @param string $ip
+     * @param string $range
      *
      * @return bool
-     * @SuppressWarnings(PHPMD.ShortVariable)
      */
     public function checkIp($ip, $range)
     {
@@ -183,12 +194,11 @@ class Data extends AbstractData
     }
 
     /**
-     * @param $ip1
-     * @param $ip2
+     * @param string $ip1
+     * @param string $ip2
      * @param int $op
      *
      * @return bool
-     * @SuppressWarnings(PHPMD.ShortVariable)
      */
     private function ipCompare($ip1, $ip2, $op = 0)
     {
