@@ -130,13 +130,17 @@ class Data extends AbstractData
     /**
      * @param null $scopeId
      *
-     * @return mixed
+     * @return array
      */
-    public function getWhitelistIpsConfig($scopeId = null)
+    public function getWhitelistIpsConfig($scopeId = null) : array
     {
         $whitelistIp = $this->getConfigGeneral(self::XML_PATH_WHITELIST_IP, $scopeId);
 
-        return explode(',', $whitelistIp);
+        if ($whitelistIp !== null) {
+            return explode(',', $whitelistIp);
+        }
+
+        return [];
     }
 
     /**
