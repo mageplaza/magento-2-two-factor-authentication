@@ -136,7 +136,7 @@ class Data extends AbstractData
     {
         $whitelistIp = $this->getConfigGeneral(self::XML_PATH_WHITELIST_IP, $scopeId);
 
-        return explode(',', $whitelistIp);
+        return explode(',', (string)$whitelistIp);
     }
 
     /**
@@ -170,14 +170,14 @@ class Data extends AbstractData
         if (strpos($range, '*') !== false) {
             $low = $high = $range;
             if (strpos($range, '-') !== false) {
-                [$low, $high] = explode('-', $range, 2);
+                [$low, $high] = explode('-', (string)$range, 2);
             }
             $low   = str_replace('*', '0', $low);
             $high  = str_replace('*', '255', $high);
             $range = $low . '-' . $high;
         }
         if (strpos($range, '-') !== false) {
-            [$low, $high] = explode('-', $range, 2);
+            [$low, $high] = explode('-', (string)$range, 2);
 
             return $this->ipCompare($ip, $low, 1) && $this->ipcompare($ip, $high, -1);
         }
@@ -195,8 +195,8 @@ class Data extends AbstractData
      */
     private function ipCompare($ip1, $ip2, $op = 0)
     {
-        $ip1Arr = explode('.', $ip1);
-        $ip2Arr = explode('.', $ip2);
+        $ip1Arr = explode('.', (string)$ip1);
+        $ip2Arr = explode('.', (string)$ip2);
 
         for ($i = 0; $i < 4; $i++) {
             if ($ip1Arr[$i] < $ip2Arr[$i]) {

@@ -2,12 +2,12 @@
   "name": "mageplaza/module-two-factor-authentication",
   "description": "Magento 2 Two Factors Authentication Extension",
   "require": {
-    "mageplaza/module-core": "^1.4.12",
+    "mageplaza/module-core": "^1.5.0",
     "sinergi/browser-detector": "*",
     "sonata-project/google-authenticator": "^2.3.0"
   },
   "type": "magento2-module",
-  "version": "4.0.3",
+  "version": "4.0.4",
   "license": "proprietary",
   "authors": [
     {
