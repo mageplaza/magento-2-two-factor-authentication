@@ -122,7 +122,7 @@ class AuthPost extends Action
                     /** security auth */
                     $this->_sessionsManager->processLogin();
                     if ($this->_sessionsManager->getCurrentSession()->isOtherSessionsTerminated()) {
-                        $this->messageManager->addWarning(__(
+                        $this->messageManager->addWarningMessage(__(
                             'All other open sessions for this account were terminated.'
                         ));
                     }
@@ -130,12 +130,12 @@ class AuthPost extends Action
                     return $this->_getRedirect($this->_backendUrl->getStartupPageUrl());
                 } else {
                     $this->_storageSession->setData(HelperData::MP_GOOGLE_AUTH, false);
-                    $this->messageManager->addError(__('Invalid key.'));
+                    $this->messageManager->addErrorMessage(__('Invalid key.'));
 
                     return $this->_getRedirect('mptwofactorauth/google/authindex');
                 }
             } catch (Exception $e) {
-                $this->messageManager->addError($e->getMessage());
+                $this->messageManager->addErrorMessage($e->getMessage());
 
                 return $this->_getRedirect('mptwofactorauth/google/authindex');
             }

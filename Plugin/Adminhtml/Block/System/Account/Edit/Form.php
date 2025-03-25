@@ -120,8 +120,7 @@ class Form
                 'name'       => 'mp_tfa_enable',
                 'label'      => __('Two-Factor Authentication'),
                 'title'      => __('Two-Factor Authentication'),
-                'values'     => $this->_enableDisable->toOptionArray(),
-                'after_html' => 'Brian tran'
+                'values'     => $this->_enableDisable->toOptionArray()
             ]);
 
             $mpTfaFieldset->addField('mp_tfa_secret_temp', QrCode::class, [

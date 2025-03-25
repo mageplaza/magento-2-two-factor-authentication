@@ -65,15 +65,15 @@ class DeleteTrusted extends Action
                     ->load($trustedId)
                     ->delete();
 
-                $this->messageManager->addSuccess(__('The selected Trusted Device has been deleted.'));
+                $this->messageManager->addSuccessMessage(__('The selected Trusted Device has been deleted.'));
             } catch (Exception $e) {
-                $this->messageManager->addError($e->getMessage());
+                $this->messageManager->addErrorMessage($e->getMessage());
                 $resultRedirect->setPath('adminhtml/system_account/index');
 
                 return $resultRedirect;
             }
         } else {
-            $this->messageManager->addError(__('The selected Trusted Device to delete was not found.'));
+            $this->messageManager->addErrorMessage(__('The selected Trusted Device to delete was not found.'));
         }
 
         $resultRedirect->setPath('adminhtml/system_account/index');
