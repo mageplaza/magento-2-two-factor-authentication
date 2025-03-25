@@ -108,7 +108,7 @@ class UserLoginSuccess implements ObserverInterface
                     ->setUserId($user->getId())
                     ->save();
             } catch (Exception $e) {
-                $this->_messageManager->addError($e->getMessage());
+                $this->_messageManager->addErrorMessage($e->getMessage());
             }
         }
     }
