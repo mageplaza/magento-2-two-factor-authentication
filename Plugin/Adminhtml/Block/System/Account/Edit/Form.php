@@ -22,7 +22,7 @@
 namespace Mageplaza\TwoFactorAuth\Plugin\Adminhtml\Block\System\Account\Edit;
 
 use Closure;
-use Google\Authenticator\GoogleAuthenticator;
+use Sonata\GoogleAuthenticator\GoogleAuthenticator;
 use Magento\Backend\Model\Auth\Session;
 use Magento\Config\Model\Config\Source\Enabledisable;
 use Magento\Framework\Registry;

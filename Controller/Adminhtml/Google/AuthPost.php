@@ -22,7 +22,7 @@
 namespace Mageplaza\TwoFactorAuth\Controller\Adminhtml\Google;
 
 use Exception;
-use Google\Authenticator\GoogleAuthenticator;
+use Sonata\GoogleAuthenticator\GoogleAuthenticator;
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
 use Magento\Backend\Model\View\Result\Redirect;

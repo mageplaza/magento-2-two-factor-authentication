@@ -36,9 +36,9 @@ use Magento\Store\Model\StoreManagerInterface;
 use Mageplaza\Core\Helper\AbstractData;
 use Mageplaza\TwoFactorAuth\Model\ResourceModel\Trusted\Collection;
 use Mageplaza\TwoFactorAuth\Model\TrustedFactory;
-use Sinergi\BrowserDetector\Browser;
-use Sinergi\BrowserDetector\Os;
-use Sinergi\BrowserDetector\UserAgent;
+use Mageplaza\TwoFactorAuth\BrowserDetector\Browser;
+use Mageplaza\TwoFactorAuth\BrowserDetector\Os;
+use Mageplaza\TwoFactorAuth\BrowserDetector\UserAgent;
 
 /**
  * Class Data
