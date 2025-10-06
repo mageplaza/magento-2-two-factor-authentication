@@ -86,5 +86,7 @@ class Reset extends Command
         } catch (Exception $e) {
             $output->writeln("<error>{$e->getMessage()}</error>");
         }
+
+        return self::SUCCESS;
     }
 }
