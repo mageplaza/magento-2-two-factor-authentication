@@ -24,10 +24,13 @@ namespace Mageplaza\TwoFactorAuth\Controller\Adminhtml\Auto;
 use Exception;
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
+use Magento\Backend\Model\Auth\Session;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Controller\ResultInterface;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\User\Model\User;
 use Mageplaza\TwoFactorAuth\Helper\Data as HelperData;
+use Sonata\GoogleAuthenticator\GoogleAuthenticator;
 
 /**
  * Class Save
@@ -46,19 +49,35 @@ class Save extends Action
     protected $_user;
 
     /**
+     * @var Session
+     */
+    protected $_authSession;
+
+    /**
+     * @var GoogleAuthenticator
+     */
+    protected $_googleAuthenticator;
+
+    /**
      * Save constructor.
      *
      * @param Context $context
      * @param HelperData $helper
      * @param User $user
+     * @param Session $authSession
+     * @param GoogleAuthenticator $googleAuthenticator
      */
     public function __construct(
         Context $context,
         HelperData $helper,
-        User $user
+        User $user,
+        Session $authSession,
+        GoogleAuthenticator $googleAuthenticator
     ) {
-        $this->helperData = $helper;
-        $this->_user      = $user;
+        $this->helperData           = $helper;
+        $this->_user                = $user;
+        $this->_authSession         = $authSession;
+        $this->_googleAuthenticator = $googleAuthenticator;
 
         parent::__construct($context);
     }
@@ -77,7 +96,13 @@ class Save extends Action
             $data = $this->getRequest()->getParams();
             if ($this->helperData->isEnabled()) {
                 try {
-                    $this->_user->load($data['user_id']);
+                    if (empty($data['secret_code'])
+                        || empty($data['confirm_code'])
+                        || !$this->_googleAuthenticator->checkCode($data['secret_code'], $data['confirm_code'])
+                    ) {
+                        throw new LocalizedException(__('Invalid Code'));
+                    }
+                    $this->_user->load($this->_authSession->getUser()->getId());
                     $this->_user->setMpTfaEnable('1');
                     $this->_user->setMpTfaSecret($data['secret_code']);
                     $this->_user->setMpTfaStatus('1');

@@ -24,10 +24,9 @@ namespace Mageplaza\TwoFactorAuth\Test\Unit\Observer\Google;
 use Magento\Backend\Model\Auth\Session;
 use Magento\Backend\Model\UrlInterface;
 use Magento\Framework\App\Action\AbstractAction;
-use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\ActionFlag;
-use Magento\Framework\App\RequestInterface;
-use Magento\Framework\App\ResponseInterface;
+use Magento\Framework\App\Request\Http as HttpRequest;
+use Magento\Framework\App\Response\Http as HttpResponse;
 use Magento\Framework\Event;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Message\ManagerInterface;
@@ -66,35 +65,30 @@ class ControllerActionPredispatchTest extends TestCase
     /** @var ControllerActionPredispatch */
     protected $model;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->urlInterfaceMock = $this->getMockBuilder(UrlInterface::class)
             ->disableOriginalConstructor()
-            ->setMethods([])
             ->getMock();
 
         $this->authSessionMock = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getUser'])->getMock();
+            ->onlyMethods(['__call'])->getMock();
 
         $this->actionFlagMock = $this->getMockBuilder(ActionFlag::class)
             ->disableOriginalConstructor()
-            ->setMethods([])
             ->getMock();
 
         $this->storageSessionMock = $this->getMockBuilder(SessionManager::class)
             ->disableOriginalConstructor()
-            ->setMethods([])
             ->getMock();
 
         $this->managerInterfaceMock = $this->getMockBuilder(ManagerInterface::class)
             ->disableOriginalConstructor()
-            ->setMethods([])
             ->getMock();
 
         $this->helperDataMock = $this->getMockBuilder(HelperData::class)
             ->disableOriginalConstructor()
-            ->setMethods([])
             ->getMock();
 
         $helper = new ObjectManager($this);
@@ -114,52 +108,37 @@ class ControllerActionPredispatchTest extends TestCase
 
     public function testForceTwoAuthFactorChange()
     {
-        $userMpTfaStatus = 0;
-
-        /** @var Observer|PHPUnit_Framework_MockObject_MockObject $eventObserverMock */
-        $eventObserverMock = $this->getMockBuilder(Observer::class)
-            ->disableOriginalConstructor()
-            ->setMethods([])
-            ->getMock();
-
-        /** @var Event|PHPUnit_Framework_MockObject_MockObject */
-        $eventMock = $this->getMockBuilder(Event::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['getControllerAction', 'getRequest'])
-            ->getMock();
-
         $userObjMock = $this->getMockBuilder(User::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getMpTfaStatus'])
+            ->onlyMethods([])
             ->getMock();
+        $userObjMock->setData('mp_tfa_status', 0);
 
-        $responseObjMock = $this->getMockBuilder(ResponseInterface::class)
-            ->setMethods(['setRedirect'])
-            ->getMockForAbstractClass();
+        $responseObjMock = $this->getMockBuilder(HttpResponse::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['setRedirect'])
+            ->getMock();
+        $responseObjMock->expects($this->once())->method('setRedirect');
 
-        $userObjMock->expects($this->any())->method('getMpTfaStatus')->willReturn($userMpTfaStatus);
         $this->helperDataMock->expects($this->once())->method('isEnabled')->willReturn(true);
         $this->helperDataMock->expects($this->once())->method('getForceTfaConfig')->willReturn(true);
-        $this->authSessionMock->expects($this->once())->method('getUser')->willReturn($userObjMock);
+        $this->authSessionMock->expects($this->once())->method('__call')
+            ->with('getUser')
+            ->willReturn($userObjMock);
 
-        $eventObserverMock->expects($this->atLeastOnce())->method('getEvent')->willReturn($eventMock);
-        /** @var Action|PHPUnit_Framework_MockObject_MockObject $controllerMock */
-        $controllerMock = $this->getMockBuilder(AbstractAction::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['getRedirect', 'getRequest', 'getResponse'])
-            ->getMockForAbstractClass();
-
+        $controllerMock = $this->createMock(AbstractAction::class);
         $controllerMock->expects($this->any())->method('getResponse')->willReturn($responseObjMock);
 
-        /** @var RequestInterface|PHPUnit_Framework_MockObject_MockObject $requestMock */
-        $requestMock = $this->getMockBuilder(RequestInterface::class)
+        $requestMock = $this->getMockBuilder(HttpRequest::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getFullActionName'])
-            ->getMockForAbstractClass();
+            ->onlyMethods(['getFullActionName'])
+            ->getMock();
         $requestMock->expects($this->any())->method('getFullActionName')->willReturn('not_in_array');
-        $eventMock->expects($this->once())->method('getControllerAction')->willReturn($controllerMock);
-        $eventMock->expects($this->once())->method('getRequest')->willReturn($requestMock);
 
-        $this->model->execute($eventObserverMock);
+        $eventObserver = new Observer([
+            'event' => new Event(['controller_action' => $controllerMock, 'request' => $requestMock])
+        ]);
+
+        $this->model->execute($eventObserver);
     }
 }

@@ -33,6 +33,7 @@ use Magento\Framework\Session\SessionManager;
 use Magento\Security\Model\AdminSessionsManager;
 use Mageplaza\TwoFactorAuth\Helper\Data as HelperData;
 use Mageplaza\TwoFactorAuth\Model\TrustedFactory;
+use Mageplaza\TwoFactorAuth\Model\TwoFactorLockout;
 use Psr\Cache\InvalidArgumentException;
 
 /**
@@ -67,6 +68,11 @@ class AuthPost extends Action
     protected $_trustedFactory;
 
     /**
+     * @var TwoFactorLockout
+     */
+    protected $_lockout;
+
+    /**
      * AuthPost constructor.
      *
      * @param Context $context
@@ -75,6 +81,7 @@ class AuthPost extends Action
      * @param AdminSessionsManager $sessionsManager
      * @param RemoteAddress $remoteAddress
      * @param TrustedFactory $trustedFactory
+     * @param TwoFactorLockout $lockout
      */
     public function __construct(
         Context $context,
@@ -82,13 +89,15 @@ class AuthPost extends Action
         SessionManager $storageSession,
         AdminSessionsManager $sessionsManager,
         RemoteAddress $remoteAddress,
-        TrustedFactory $trustedFactory
+        TrustedFactory $trustedFactory,
+        TwoFactorLockout $lockout
     ) {
         $this->_googleAuthenticator = $googleAuthenticator;
         $this->_storageSession      = $storageSession;
         $this->_sessionsManager     = $sessionsManager;
         $this->_remoteAddress       = $remoteAddress;
         $this->_trustedFactory      = $trustedFactory;
+        $this->_lockout             = $lockout;
 
         parent::__construct($context);
     }
@@ -106,8 +115,14 @@ class AuthPost extends Action
         if ($user = $this->_storageSession->getData('user')) {
             $secretCode = $user->getMpTfaSecret();
             try {
+                $currentUser = $this->_lockout->reload($user);
+                if ($this->_lockout->isLocked($currentUser)) {
+                    return $this->_restartLogin();
+                }
+
                 $checkResult = $this->_googleAuthenticator->checkCode($secretCode, $authCode);
                 if ($checkResult) {
+                    $this->_lockout->reset($currentUser);
                     $this->_storageSession->setData(HelperData::MP_GOOGLE_AUTH, true);
 
                     /** perform login */
@@ -130,6 +145,10 @@ class AuthPost extends Action
                     return $this->_getRedirect($this->_backendUrl->getStartupPageUrl());
                 } else {
                     $this->_storageSession->setData(HelperData::MP_GOOGLE_AUTH, false);
+                    if ($this->_lockout->recordFailure($currentUser)) {
+                        return $this->_restartLogin();
+                    }
+
                     $this->messageManager->addErrorMessage(__('Invalid key.'));
 
                     return $this->_getRedirect('mptwofactorauth/google/authindex');
@@ -142,6 +161,20 @@ class AuthPost extends Action
         }
 
         return $this->_getRedirect('mptwofactorauth/google/authindex');
+    }
+
+    /**
+     * @return Redirect
+     */
+    private function _restartLogin()
+    {
+        $this->_storageSession->unsetData('user');
+        $this->messageManager->addErrorMessage(__(
+            'The account sign-in was incorrect or your account is disabled temporarily. '
+            . 'Please wait and try again later.'
+        ));
+
+        return $this->_getRedirect('adminhtml/auth/login');
     }
 
     /**

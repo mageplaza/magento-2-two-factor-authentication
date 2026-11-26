@@ -23,10 +23,12 @@ namespace Mageplaza\TwoFactorAuth\Controller\Adminhtml\Google;
 
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
+use Magento\Backend\Model\View\Result\Redirect;
 use Magento\Framework\Session\SessionManager;
 use Magento\Framework\View\Result\Page;
 use Magento\Framework\View\Result\PageFactory;
 use Mageplaza\TwoFactorAuth\Helper\Data as HelperData;
+use Mageplaza\TwoFactorAuth\Model\TwoFactorLockout;
 
 /**
  * Class AuthIndex
@@ -52,22 +54,30 @@ class AuthIndex extends Action
     protected $_helperData;
 
     /**
+     * @var TwoFactorLockout
+     */
+    protected $_lockout;
+
+    /**
      * AuthIndex constructor.
      *
      * @param Context $context
      * @param PageFactory $resultPageFactory
      * @param SessionManager $storageSession
      * @param HelperData $helperData
+     * @param TwoFactorLockout $lockout
      */
     public function __construct(
         Context $context,
         PageFactory $resultPageFactory,
         SessionManager $storageSession,
-        HelperData $helperData
+        HelperData $helperData,
+        TwoFactorLockout $lockout
     ) {
         $this->resultPageFactory = $resultPageFactory;
         $this->_storageSession   = $storageSession;
         $this->_helperData       = $helperData;
+        $this->_lockout          = $lockout;
 
         parent::__construct($context);
     }
@@ -75,10 +85,21 @@ class AuthIndex extends Action
     /**
      * execute the action
      *
-     * @return \Magento\Backend\Model\View\Result\Page|Page
+     * @return \Magento\Backend\Model\View\Result\Page|Page|Redirect
      */
     public function execute()
     {
+        $user = $this->_storageSession->getData('user');
+        if ($user && $this->_lockout->isLocked($this->_lockout->reload($user))) {
+            $this->_storageSession->unsetData('user');
+            $this->messageManager->addErrorMessage(__(
+                'The account sign-in was incorrect or your account is disabled temporarily. '
+                . 'Please wait and try again later.'
+            ));
+
+            return $this->resultRedirectFactory->create()->setPath('adminhtml/auth/login');
+        }
+
         return $this->resultPageFactory->create();
     }
 

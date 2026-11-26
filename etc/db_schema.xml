@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+  <table name="admin_user" resource="default">
+    <column xsi:type="int" name="mp_tfa_enable" nullable="true" default="0" comment="Mageplaza TFA Enable"/>
+    <column xsi:type="int" name="mp_tfa_status" nullable="true" default="0" comment="Mageplaza TFA Status"/>
+    <column xsi:type="varchar" name="mp_tfa_secret" nullable="true" length="255" comment="Mageplaza TFA Secret Code"/>
+    <column xsi:type="smallint" name="mp_tfa_failures" unsigned="true" nullable="false" default="0" comment="Mageplaza TFA Failures"/>
+  </table>
+  <table name="mageplaza_twofactorauth_trusted" resource="default" engine="innodb" comment="Trusted Device Table">
+    <column xsi:type="int" name="trusted_id" padding="10" unsigned="true" nullable="false" identity="true" comment="Trusted ID"/>
+    <column xsi:type="int" name="user_id" unsigned="true" nullable="false" comment="User ID"/>
+    <column xsi:type="varchar" name="name" nullable="false" length="255" comment="Device Name"/>
+    <column xsi:type="varchar" name="device_ip" nullable="true" length="255" comment="Device IP"/>
+    <column xsi:type="varchar" name="token_hash" nullable="true" length="64" comment="Trusted Device Token Hash"/>
+    <column xsi:type="timestamp" name="last_login" nullable="true" comment="Device Last Login"/>
+    <column xsi:type="timestamp" name="created_at" nullable="true" comment="Trusted Created At"/>
+    <constraint xsi:type="primary" referenceId="PRIMARY">
+      <column name="trusted_id"/>
+    </constraint>
+    <constraint xsi:type="foreign" referenceId="MAGEPLAZA_TFA_TRUSTED_USER_ID_ADMIN_USER_USER_ID" table="mageplaza_twofactorauth_trusted" column="user_id" referenceTable="admin_user" referenceColumn="user_id" onDelete="CASCADE"/>
+    <index referenceId="MAGEPLAZA_TWOFACTORAUTH_TRUSTED_TRUSTED_ID" indexType="btree">
+      <column name="trusted_id"/>
+    </index>
+    <index referenceId="MAGEPLAZA_TWOFACTORAUTH_TRUSTED_USER_ID" indexType="btree">
+      <column name="user_id"/>
+    </index>
+  </table>
+</schema>

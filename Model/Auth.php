@@ -35,7 +35,6 @@ use Magento\Framework\Event\ManagerInterface;
 use Magento\Framework\Exception\AuthenticationException;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\Plugin\AuthenticationException as PluginAuthenticationException;
-use Magento\Framework\HTTP\PhpEnvironment\Request;
 use Magento\Framework\Model\AbstractModel;
 use Magento\Framework\Session\SessionManager;
 use Magento\Framework\Stdlib\DateTime\DateTime;
@@ -47,11 +46,6 @@ use Mageplaza\TwoFactorAuth\Helper\Data as HelperData;
  */
 class Auth extends \Magento\Backend\Model\Auth
 {
-    /**
-     * @var Request
-     */
-    protected $request;
-
     /**
      * @var DateTime
      */
@@ -95,6 +89,16 @@ class Auth extends \Magento\Backend\Model\Auth
     protected $_isTrusted = false;
 
     /**
+     * @var ClientIp
+     */
+    protected $_clientIp;
+
+    /**
+     * @var TrustedToken
+     */
+    protected $_trustedToken;
+
+    /**
      * Auth constructor.
      *
      * @param ManagerInterface $eventManager
@@ -103,7 +107,6 @@ class Auth extends \Magento\Backend\Model\Auth
      * @param CredentialStorageInterface $credentialStorage
      * @param ScopeConfigInterface $coreConfig
      * @param ModelFactory $modelFactory
-     * @param Request $request
      * @param DateTime $dateTime
      * @param UrlInterface $url
      * @param ResponseInterface $response
@@ -111,6 +114,8 @@ class Auth extends \Magento\Backend\Model\Auth
      * @param ActionFlag $actionFlag
      * @param HelperData $helperData
      * @param TrustedFactory $trustedFactory
+     * @param ClientIp $clientIp
+     * @param TrustedToken $trustedToken
      */
     public function __construct(
         ManagerInterface $eventManager,
@@ -119,16 +124,16 @@ class Auth extends \Magento\Backend\Model\Auth
         CredentialStorageInterface $credentialStorage,
         ScopeConfigInterface $coreConfig,
         ModelFactory $modelFactory,
-        Request $request,
         DateTime $dateTime,
         UrlInterface $url,
         ResponseInterface $response,
         SessionManager $storageSession,
         ActionFlag $actionFlag,
         HelperData $helperData,
-        TrustedFactory $trustedFactory
+        TrustedFactory $trustedFactory,
+        ClientIp $clientIp,
+        TrustedToken $trustedToken
     ) {
-        $this->request         = $request;
         $this->_dateTime       = $dateTime;
         $this->_url            = $url;
         $this->_response       = $response;
@@ -136,6 +141,8 @@ class Auth extends \Magento\Backend\Model\Auth
         $this->actionFlag      = $actionFlag;
         $this->_helperData     = $helperData;
         $this->_trustedFactory = $trustedFactory;
+        $this->_clientIp       = $clientIp;
+        $this->_trustedToken   = $trustedToken;
 
         parent::__construct($eventManager, $backendData, $authStorage, $credentialStorage, $coreConfig, $modelFactory);
     }
@@ -160,62 +167,25 @@ class Auth extends \Magento\Backend\Model\Auth
             $this->_initCredentialStorage();
             $this->getCredentialStorage()->login($username, $password);
             if ($this->getCredentialStorage()->getId()) {
-                /** @var Trusted $trusted */
-                $trusted   = $this->_trustedFactory->create();
-                $ipAddress = explode(',', $this->request->getClientIp());
-                if (count($ipAddress) > 1) {
-                    if (($key = array_search('127.0.0.1', $ipAddress)) !== false) {
-                        unset($ipAddress[$key]);
-                    }
-                }
-                foreach ($ipAddress as $ipLogin) {
-                    $existTrusted = $trusted->getResource()
-                        ->getExistTrusted(
-                            $this->getCredentialStorage()->getId(),
-                            $this->_helperData->getDeviceName(),
-                            $ipLogin
-                        );
-                    if ($existTrusted
-                        && $this->_helperData->getConfigGeneral('trust_device')) {
-                        /** @var AbstractModel $currentDevice */
-                        $currentDevice         = $trusted->load($existTrusted);
-                        $currentDeviceCreateAt = new \DateTime($currentDevice->getCreatedAt(), new DateTimeZone('UTC'));
-                        $currentDateObj        = new \DateTime($this->_dateTime->date(), new DateTimeZone('UTC'));
-                        $dateDiff              = date_diff($currentDateObj, $currentDeviceCreateAt);
-                        $dateDiff              = $dateDiff->format('%d.%h%i%s');
-                        if ($dateDiff > (int) $this->_helperData->getConfigGeneral('trust_time')) {
-                            $currentDevice->delete();
-                        } else {
-                            $currentDevice->setLastLogin($this->_dateTime->date())->save();
-                            $this->_isTrusted = true;
-                        }
-                    }
-                    $ipsAddress = $this->_helperData->getWhitelistIpsConfig();
-                    foreach ($ipsAddress as $item) {
-                        if ($this->_helperData->checkIp($ipLogin, $item)) {
-                            $this->_isTrusted = true;
-                            break;
-                        }
-                    }
-                    /** verify auth code */
-                    if ($this->_helperData->isEnabled()
-                        && $this->getCredentialStorage()->getMpTfaStatus()
-                        && !$this->_isTrusted) {
-                        $user = $this->getCredentialStorage();
-                        $this->actionFlag->set('', Action::FLAG_NO_DISPATCH, true);
-                        $this->_storageSession->setData('user', $user);
-                        $url = $this->_url->getUrl('mptwofactorauth/google/authindex');
-                        $this->_response->setRedirect($url);
-                        /** login process  */
-                    } else {
-                        $this->getAuthStorage()->setUser($this->getCredentialStorage());
-                        $this->getAuthStorage()->processLogin();
+                $this->_isTrusted = $this->isWhitelisted($this->_clientIp->getIp())
+                    || $this->isTrustedDevice((int) $this->getCredentialStorage()->getId());
 
-                        $this->_eventManager->dispatch(
-                            'backend_auth_user_login_success',
-                            ['user' => $this->getCredentialStorage()]
-                        );
-                    }
+                if ($this->_helperData->isEnabled()
+                    && $this->getCredentialStorage()->getMpTfaStatus()
+                    && !$this->_isTrusted) {
+                    $user = $this->getCredentialStorage();
+                    $this->actionFlag->set('', Action::FLAG_NO_DISPATCH, true);
+                    $this->_storageSession->setData('user', $user);
+                    $url = $this->_url->getUrl('mptwofactorauth/google/authindex');
+                    $this->_response->setRedirect($url);
+                } else {
+                    $this->getAuthStorage()->setUser($this->getCredentialStorage());
+                    $this->getAuthStorage()->processLogin();
+
+                    $this->_eventManager->dispatch(
+                        'backend_auth_user_login_success',
+                        ['user' => $this->getCredentialStorage()]
+                    );
                 }
             }
 
@@ -235,5 +205,62 @@ class Auth extends \Magento\Backend\Model\Auth
             );
             self::throwException(__('You did not sign in correctly or your account is temporarily disabled.'));
         }
+    }
+
+    /**
+     * @param string $ip
+     *
+     * @return bool
+     */
+    protected function isWhitelisted($ip)
+    {
+        if ($ip === '') {
+            return false;
+        }
+
+        foreach ($this->_helperData->getWhitelistIpsConfig() as $item) {
+            $item = trim($item);
+            if ($item !== '' && $this->_helperData->checkIp($ip, $item)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @param int $userId
+     *
+     * @return bool
+     * @throws Exception
+     */
+    protected function isTrustedDevice($userId)
+    {
+        $token = $this->_trustedToken->getCookie();
+        if ($token === '' || !$this->_helperData->getConfigGeneral('trust_device')) {
+            return false;
+        }
+
+        /** @var Trusted $trusted */
+        $trusted   = $this->_trustedFactory->create();
+        $trustedId = $trusted->getResource()->getTrustedIdByToken($userId, $this->_trustedToken->hash($token));
+        if (!$trustedId) {
+            return false;
+        }
+
+        /** @var AbstractModel $currentDevice */
+        $currentDevice = $trusted->load($trustedId);
+        $createdAt     = new \DateTime($currentDevice->getCreatedAt(), new DateTimeZone('UTC'));
+        $now           = new \DateTime($this->_dateTime->date(), new DateTimeZone('UTC'));
+        $lifetime      = (int) $this->_helperData->getConfigGeneral('trust_time') * 86400;
+        if ($now->getTimestamp() - $createdAt->getTimestamp() > $lifetime) {
+            $currentDevice->delete();
+
+            return false;
+        }
+
+        $currentDevice->setLastLogin($this->_dateTime->date())->save();
+
+        return true;
     }
 }

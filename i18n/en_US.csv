@@ -50,3 +50,5 @@ Enable,Enable
 "Set trusted time by days.","Set trusted time by days."
 Whitelist(s),Whitelist(s)
 "Enter IP(s) which is allowed to sign in without 2FA. Separated with commas. Eg: 123.123.0.*,10.22.*.*","Enter IP(s) which is allowed to sign in without 2FA. Separated with commas. Eg: 123.123.0.*,10.22.*.*"
+
+"The account sign-in was incorrect or your account is disabled temporarily. Please wait and try again later.","The account sign-in was incorrect or your account is disabled temporarily. Please wait and try again later."

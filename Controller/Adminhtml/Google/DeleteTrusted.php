@@ -24,6 +24,7 @@ namespace Mageplaza\TwoFactorAuth\Controller\Adminhtml\Google;
 use Exception;
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
+use Magento\Backend\Model\Auth\Session;
 use Magento\Framework\Controller\Result\Redirect;
 use Mageplaza\TwoFactorAuth\Model\TrustedFactory;
 
@@ -39,16 +40,24 @@ class DeleteTrusted extends Action
     protected $_trustedFactory;
 
     /**
+     * @var Session
+     */
+    protected $_authSession;
+
+    /**
      * DeleteTrusted constructor.
      *
      * @param Context $context
      * @param TrustedFactory $trustedFactory
+     * @param Session $authSession
      */
     public function __construct(
         Context $context,
-        TrustedFactory $trustedFactory
+        TrustedFactory $trustedFactory,
+        Session $authSession
     ) {
         $this->_trustedFactory = $trustedFactory;
+        $this->_authSession    = $authSession;
 
         parent::__construct($context);
     }
@@ -61,9 +70,15 @@ class DeleteTrusted extends Action
         $resultRedirect = $this->resultRedirectFactory->create();
         if ($trustedId = $this->getRequest()->getParam('trusted_id')) {
             try {
-                $this->_trustedFactory->create()
-                    ->load($trustedId)
-                    ->delete();
+                $trusted = $this->_trustedFactory->create()->load($trustedId);
+                $userId  = (int) $this->_authSession->getUser()->getId();
+                if (!$trusted->getId() || (int) $trusted->getUserId() !== $userId) {
+                    $this->messageManager->addErrorMessage(__('The selected Trusted Device to delete was not found.'));
+                    $resultRedirect->setPath('adminhtml/system_account/index');
+
+                    return $resultRedirect;
+                }
+                $trusted->delete();
 
                 $this->messageManager->addSuccessMessage(__('The selected Trusted Device has been deleted.'));
             } catch (Exception $e) {

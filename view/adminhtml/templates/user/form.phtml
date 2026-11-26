@@ -89,7 +89,7 @@
                                 $block->getUrl('mptwofactorauth/auto/save', ['form_key' => $block->getFormKey()]);?>',
                             data: {
                                 secret_code: secretCodeTemp,
-                                user_id: userId
+                                confirm_code: confirmCode
                             },
                             showLoader: true,
                             success: function (results) {

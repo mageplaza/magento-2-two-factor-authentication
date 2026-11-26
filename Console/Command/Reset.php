@@ -69,7 +69,7 @@ class Reset extends Command
     /**
      * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $userName = $input->getArgument('user');
         $user     = $this->userFactory->create()->loadByUsername($userName);

@@ -42,10 +42,10 @@ if ($_trustedDevices && count($_trustedDevices)) :
             <?php foreach ($_trustedDevices as $_trustedDevice) : ?>
                 <tr>
                     <td data-th="<?= $block->escapeHtml(__('Device Name')) ?>" class="col mp-device-name">
-                        <?= /* @noEscape */ $_trustedDevice->getName() ?>
+                        <?= $block->escapeHtml($_trustedDevice->getName()) ?>
                     </td>
                     <td data-th="<?= $block->escapeHtml(__('IP')) ?>" class="col mp-device-ip">
-                        <?= /* @noEscape */ $_trustedDevice->getDeviceIp() ?>
+                        <?= $block->escapeHtml($_trustedDevice->getDeviceIp()) ?>
                     </td>
                     <td data-th="<?= $block->escapeHtml(__('Last Logged In')) ?>" class="col mp-device-last-login">
                         <?= /* @noEscape */ $block->getFormattedDate($_trustedDevice->getLastLogin()) ?>

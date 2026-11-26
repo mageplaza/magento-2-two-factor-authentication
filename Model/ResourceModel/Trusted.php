@@ -80,23 +80,26 @@ class Trusted extends AbstractDb
     }
 
     /**
-     * @param $userId
-     * @param $deviceName
-     * @param $deviceIp
+     * @param int $userId
+     * @param string $tokenHash
      *
-     * @return string
+     * @return string|false
      * @throws LocalizedException
      */
-    public function getExistTrusted($userId, $deviceName, $deviceIp)
+    public function getTrustedIdByToken($userId, $tokenHash)
     {
         $adapter = $this->getConnection();
         $select  = $adapter->select()
-            ->from($this->getMainTable(), 'trusted_id')
+            ->from($this->getMainTable(), ['trusted_id', 'token_hash'])
             ->where('user_id = :user_id')
-            ->where('name = :name')
-            ->where('device_ip = :device_ip');
-        $binds   = ['user_id' => (int) $userId, 'name' => $deviceName, 'device_ip' => $deviceIp];
+            ->where('token_hash IS NOT NULL');
 
-        return $adapter->fetchOne($select, $binds);
+        foreach ($adapter->fetchAll($select, ['user_id' => (int) $userId]) as $row) {
+            if (hash_equals((string) $row['token_hash'], (string) $tokenHash)) {
+                return $row['trusted_id'];
+            }
+        }
+
+        return false;
     }
 }

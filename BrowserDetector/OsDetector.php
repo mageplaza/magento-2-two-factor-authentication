@@ -95,7 +95,7 @@ class OsDetector implements DetectorInterface
     {
         if (stripos($userAgent->getUserAgentString(), 'CPU OS') !== false ||
             stripos($userAgent->getUserAgentString(), 'iPhone OS') !== false &&
-            stripos($userAgent->getUserAgentString(), 'OS X')) {
+            stripos($userAgent->getUserAgentString(), 'OS X') !== false) {
             $os->setName($os::IOS);
             if (preg_match('/CPU( iPhone)? OS ([\d_]*)/i', $userAgent->getUserAgentString(), $matches)) {
                 $os->setVersion(str_replace('_', '.', $matches[2]));

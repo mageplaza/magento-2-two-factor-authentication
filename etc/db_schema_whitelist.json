@@ -1,0 +1,30 @@
+{
+    "admin_user": {
+        "column": {
+            "mp_tfa_enable": true,
+            "mp_tfa_status": true,
+            "mp_tfa_secret": true,
+            "mp_tfa_failures": true
+        }
+    },
+    "mageplaza_twofactorauth_trusted": {
+        "column": {
+            "trusted_id": true,
+            "user_id": true,
+            "name": true,
+            "device_ip": true,
+            "token_hash": true,
+            "last_login": true,
+            "created_at": true
+        },
+        "index": {
+            "MAGEPLAZA_TWOFACTORAUTH_TRUSTED_TRUSTED_ID": true,
+            "MAGEPLAZA_TWOFACTORAUTH_TRUSTED_USER_ID": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "MAGEPLAZA_TWOFACTORAUTH_TRUSTED_USER_ID_ADMIN_USER_USER_ID": true,
+            "MAGEPLAZA_TWOFACTORAUTH_TRUSTED_USER_ID_NAME_DEVICE_IP": true
+        }
+    }
+}

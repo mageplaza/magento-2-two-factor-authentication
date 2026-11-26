@@ -24,11 +24,12 @@ namespace Mageplaza\TwoFactorAuth\Observer\Google;
 use Exception;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
-use Magento\Framework\HTTP\PhpEnvironment\Request;
 use Magento\Framework\Message\ManagerInterface;
 use Magento\Framework\Stdlib\DateTime\DateTime;
 use Mageplaza\TwoFactorAuth\Helper\Data;
+use Mageplaza\TwoFactorAuth\Model\ClientIp;
 use Mageplaza\TwoFactorAuth\Model\TrustedFactory;
+use Mageplaza\TwoFactorAuth\Model\TrustedToken;
 
 /**
  * Class UserLoginSuccess
@@ -57,9 +58,14 @@ class UserLoginSuccess implements ObserverInterface
     protected $helper;
 
     /**
-     * @var Request
+     * @var ClientIp
      */
-    protected $request;
+    protected $_clientIp;
+
+    /**
+     * @var TrustedToken
+     */
+    protected $_trustedToken;
 
     /**
      * UserLoginSuccess constructor.
@@ -67,21 +73,24 @@ class UserLoginSuccess implements ObserverInterface
      * @param DateTime $dateTime
      * @param ManagerInterface $messageManager
      * @param TrustedFactory $trustedFactory
-     * @param Request $request
      * @param Data $helper
+     * @param ClientIp $clientIp
+     * @param TrustedToken $trustedToken
      */
     public function __construct(
         DateTime $dateTime,
         ManagerInterface $messageManager,
         TrustedFactory $trustedFactory,
-        Request $request,
-        Data $helper
+        Data $helper,
+        ClientIp $clientIp,
+        TrustedToken $trustedToken
     ) {
         $this->_dateTime       = $dateTime;
         $this->_messageManager = $messageManager;
         $this->_trustedFactory = $trustedFactory;
         $this->helper          = $helper;
-        $this->request         = $request;
+        $this->_clientIp       = $clientIp;
+        $this->_trustedToken   = $trustedToken;
     }
 
     /**
@@ -94,19 +103,21 @@ class UserLoginSuccess implements ObserverInterface
         if ($user && $isTrusted) {
             $trusted = $this->_trustedFactory->create();
             try {
-                $ipLogin = explode(',', $this->request->getClientIp());
-                if (count($ipLogin) > 1) {
-                    if (($key = array_search('127.0.0.1', $ipLogin)) !== false) {
-                        unset($ipLogin[$key]);
-                    }
-                }
-                $ipLogin = implode(',', $ipLogin);
-
+                $ipLogin = $this->_clientIp->getIp();
+                $name    = $this->helper->getDeviceName();
+                $token   = $this->_trustedToken->generate();
                 $trusted->setDeviceIp($ipLogin)
                     ->setLastLogin($this->_dateTime->date())
-                    ->setName($this->helper->getDeviceName())
+                    ->setCreatedAt($this->_dateTime->date())
+                    ->setName($name)
                     ->setUserId($user->getId())
+                    ->setTokenHash($this->_trustedToken->hash($token))
                     ->save();
+
+                $this->_trustedToken->setCookie(
+                    $token,
+                    (int) $this->helper->getConfigGeneral('trust_time')
+                );
             } catch (Exception $e) {
                 $this->_messageManager->addErrorMessage($e->getMessage());
             }
